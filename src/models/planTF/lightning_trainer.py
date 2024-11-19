@@ -21,7 +21,27 @@ from src.optim.warmup_cos_lr import WarmupCosLR
 
 logger = logging.getLogger(__name__)
 
+"""
+ 调用路径:
+ python run_training.py py_func=train +training=train_planTF  ->  - override /custom_trainer: planTF 
+         ->_target_: src.models.planTF.lightning_trainer.LightningTrainer
 
+    class LightningTrainer(pl.LightningModule):(对 PlanningModel(TorchModuleWrapper) 进行包装)
+    def __init__(
+        self,
+        model: TorchModuleWrapper,
+"""
+"""
+在 LightningTrainer 类中，模仿学习的具体实现可以通过以下函数找到：
+
+前向传播：在 _step 函数中，通过调用 self.forward(features["feature"].data) 实现。
+计算损失：在 _step 函数中，通过调用 self._compute_objectives(res, features["feature"].data) 实现。
+计算度量指标：在 _step 函数中，通过调用 self._compute_metrics(res, features["feature"].data, prefix) 实现。
+记录损失和度量指标：在 _step 函数中，通过调用 self._log_step(losses["loss"], losses, metrics, prefix) 实现。
+总结
+在 LightningTrainer 类中，模仿学习的具体实现主要体现在 training_step、_step 和 on_fit_start 函数中。
+通过前向传播、计算损失、计算度量指标和记录损失与度量指标，这些函数共同实现了模仿学习的训练过程。
+"""
 class LightningTrainer(pl.LightningModule):
     def __init__(
         self,

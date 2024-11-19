@@ -32,3 +32,6 @@ imitation_planner:
       max_agents: 32
 
   planner_ckpt:
+# 在 planTF.yaml 文件中存在两层结构是为了更好地组织和配置复杂的系统。
+# 顶层结构 imitation_planner 用于配置具体的规划器实例，而嵌套结构 planner 用于配置与规划器相关的模型实例。
+# 通过这种分层管理，可以更清晰地组织配置项，并便于复用和扩展。

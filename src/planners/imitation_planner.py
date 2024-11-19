@@ -25,7 +25,24 @@ from src.feature_builders.common.utils import rotate_round_z_axis
 
 from .planner_utils import global_trajectory_to_states, load_checkpoint
 
+"""
+似乎只在模拟中使用: plantf_single_scenarios.sh 脚本中,planner=planTF 参数用于指定配置文件中的 planner 配置项为 planTF。
+这意味着在运行 run_simulation.py 脚本时,
+Hydra 会将 planner 配置项设置为 planTF,并根据 planTF 的配置来初始化和使用规划器。planTF\config\planner\planTF.yaml
+而class PlanningModel(TorchModuleWrapper)似乎被直接用在train中:
+    具体情况:在运行以下命令时：
+        python run_training.py py_func=train +training=train_planTF
+        Hydra 将加载 default_training.yaml 和 train_planTF.yaml 文件，并将它们合并。
+        由于 train_planTF.yaml 中使用了 override /model: planTF,  
+        Hydra 将加载 planTF\config\model\planTF.yaml 文件中的 model 配置，并覆盖默认的 model 配置。
+        所以 run_training.py的main函数里面engine = build_training_engine(cfg, worker)调用的
+           build_torch_module_wrapper(cfg.model) 的参数cfg.model 将包含 planTF\config\model\planTF.yaml中的 model 配置项:
+           _target_: src.models.planTF.planning_model.PlanningModel,  
+也就是说
+    run_training.py中通过配置文件 直接调用PlanningModel
+    run_simulation.py中通过配置文件 先调用ImitationPlanner间接调用PlanningModel
 
+"""
 class ImitationPlanner(AbstractPlanner):
     """
     Long-term IL-based trajectory planner, with short-term RL-based trajectory tracker.
@@ -89,6 +106,9 @@ class ImitationPlanner(AbstractPlanner):
         return DetectionsTracks  # type: ignore
 
     def _planning(self, current_input: PlannerInput):
+        """"
+        输入数据格式变化过程:current_input-> planner_feature-> planner_feature_torch(forward输入格式)-> out-> local_trajectory
+        """
         self._start_time = time.perf_counter()
         planner_feature = self._planner_feature_builder.get_features_from_simulation(
             current_input, self._initialization

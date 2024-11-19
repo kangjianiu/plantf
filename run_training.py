@@ -25,7 +25,14 @@ logger = logging.getLogger(__name__)
 # If set, use the env. variable to overwrite the default dataset and experiment paths
 set_default_path()
 
-
+"""
+在运行以下命令时：
+python run_training.py py_func=train +training=train_planTF
+Hydra 将加载 default_training.yaml 和 train_planTF.yaml 文件，并将它们合并。
+由于 train_planTF.yaml 中使用了 override /model: planTF,  Hydra 将加载 planTF.yaml 文件中的 model 配置，
+并覆盖默认的 model 配置。
+所以 cfg.model 将包含 planTF\config\model\planTF.yaml中的 model 配置项
+"""
 @hydra.main(config_path="./config", config_name="default_training")
 def main(cfg: DictConfig) -> Optional[TrainingEngine]:
     """

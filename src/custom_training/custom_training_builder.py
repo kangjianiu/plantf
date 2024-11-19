@@ -148,7 +148,18 @@ def build_lightning_module(
     :return: built object.
     """
     # Create the complete Module
-    if "custom_trainer" in cfg:
+    if "custom_trainer" in cfg:   
+        
+        """
+        cfg.custom_trainer:  _target_: src.models.planTF.lightning_trainer.LightningTrainerclass 类:(pl.LightningModule)
+        调用路径:
+        python run_training.py py_func=train +training=train_planTF  ->  - override /custom_trainer: planTF 
+                ->_target_: src.models.planTF.lightning_trainer.LightningTrainer(pl.LightningModule)
+
+        如果包含 custom_trainer 配置项，使用 instantiate 函数根据配置实例化自定义训练器。
+        instantiate 函数会根据 cfg.custom_trainer 中的 _target_ 字段指定的类来创建实例，
+        并传递其他参数（如 model、lr、weight_decay、epochs 和 warmup_epochs）。
+        """
         model = instantiate(
             cfg.custom_trainer,
             model=torch_module_wrapper,
@@ -244,15 +255,18 @@ def build_training_engine(cfg: DictConfig, worker: WorkerPool) -> TrainingEngine
     """
     logger.info("Building training engine...")
 
+    # 不用操心
     trainer = build_custom_trainer(cfg)
 
-    # Create model
+    # Create model  实例化自己实现的   PlanningModel    (TorchModuleWrapper)
     torch_module_wrapper = build_torch_module_wrapper(cfg.model)
+    #cfg.model :planTF\config\model\planTF.yaml:_target_: src.models.planTF.planning_model.PlanningModel(TorchModuleWrapper)
 
     # Build the datamodule
     datamodule = build_lightning_datamodule(cfg, worker, torch_module_wrapper)
 
     # Build lightning module
+    # 根据cfg.custom_trainer 和PlanningModel实例化自己实现的   LightningTrainer   类:(pl.LightningModule)
     model = build_lightning_module(cfg, torch_module_wrapper)
 
     engine = TrainingEngine(trainer=trainer, datamodule=datamodule, model=model)

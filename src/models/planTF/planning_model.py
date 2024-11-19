@@ -93,7 +93,26 @@ class PlanningModel(TorchModuleWrapper):
         elif isinstance(m, nn.Embedding):
             nn.init.normal_(m.weight, mean=0.0, std=0.02)
 
-    def forward(self, data):
+    def forward(self, data
+                ):
+        
+        """
+        功能：实现模型的前向传播逻辑。
+        步骤：
+        提取代理和地图的位置信息和掩码。
+        计算位置嵌入。
+        编码代理和地图信息。
+        将编码后的信息与位置嵌入相加。
+        通过 Transformer 编码器层处理。
+        归一化处理。
+        解码预测的轨迹和概率。
+        预测代理的未来状态。
+        返回预测结果。
+        总结:
+        这个文件定义了一个名为 PlanningModel 的类，它继承自 TorchModuleWrapper，用于实现一个基于 Transformer 的规划模型。
+        该模型包括位置嵌入、代理编码器、地图编码器、Transformer 编码器层、轨迹解码器和代理预测器。
+        模型通过前向传播方法处理输入数据，生成预测的轨迹和代理的未来状态。
+        """
         agent_pos = data["agent"]["position"][:, :, self.history_steps - 1]
         agent_heading = data["agent"]["heading"][:, :, self.history_steps - 1]
         agent_mask = data["agent"]["valid_mask"][:, :, : self.history_steps]
