@@ -6,12 +6,13 @@ from conditional_unet1d import ConditionalUnet1D
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
 import torch.optim as optim
 import torch.nn as nn
-filename  = '/home/users/xingyu.zhang/workspace/SD-origin/scripts/planning_train_train_all_de.pkl'
+filename  = '/home/users/xingyu.zhang/workspace/SD-origin/scripts/planning_eval_all_de_with_anchor.pkl'
 features = pickle.load(open(filename, 'rb'))
 instance_features = []
+from tqdm import tqdm
 map_instance_features = []
 
-device = torch.device("cuda:5")
+device = torch.device("cuda:6")
 
 for i in range(len(features)):
     instance_features.append(features[i]['instance_feature'])
@@ -23,8 +24,6 @@ class FeaturesDataset(Dataset):
         #     self.features = pickle.load(f)
         with open(labels_file, 'rb') as f:
             self.labels = pickle.load(f)
-        self.instance_features = instance_features
-        self.map_instance_features = map_instance_features
         
         # # 确保特征和标签长度一致
         # assert len(self.features) == len(self.labels), "Features and labels must have the same length"
@@ -35,21 +34,22 @@ class FeaturesDataset(Dataset):
 
     def __getitem__(self, idx):
         # 根据索引返回特征和对应的标签
-        instance_feature = self.instance_features[idx].to(device)
-        map_instance_feature = self.map_instance_features[idx].to(device)
-        trajs = self.labels[idx]['ego_trajs'].squeeze(0).to(device)
+        instance_feature = instance_features[idx].to(device)
+        map_instance_feature = map_instance_features[idx].to(device)
+        trajs = self.labels[idx]['ego_trajs'].to(device)
         return instance_feature, map_instance_feature,trajs
 
-dataset = FeaturesDataset('/home/users/xingyu.zhang/workspace/SD-origin/scripts/features_train_train_all_de.pkl')
 
-dataloader = DataLoader(dataset, batch_size=32, shuffle=True, num_workers=0)
+dataset = FeaturesDataset('/home/users/xingyu.zhang/workspace/SD-origin/scripts/features_eval_all_de_with_anchor.pkl')
 
-print(dataloader)
-
+dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
 
 model = CrossAttentionUnetModel(feature_dim=256)
 
-train_scheduler = DDPMScheduler(
+checkpoint = torch.load('/home/users/xingyu.zhang/workspace/SparseDrive/diffusion_head/checkpoint_loss_0.005207525296216111_epoch_80_0903.pth')
+
+model.load_state_dict(checkpoint['model_state_dict'])
+inferece_scheduler = DDPMScheduler(
             num_train_timesteps=100,
             beta_start=0.0001,
             beta_end=0.02,
@@ -121,7 +121,7 @@ def apply_rotation(trajectory, rotation_matrix):
 def normalize_xy_rotation(trajectory, N=30, times=10):
         batch, num_pts, dim = trajectory.shape
         downsample_trajectory = trajectory[:, :N, :]
-        x_scale = 15
+        x_scale = 10
         y_scale = 75
         downsample_trajectory[:, :, 0] /= x_scale
         downsample_trajectory[:, :, 1] /= y_scale
@@ -139,61 +139,70 @@ def normalize_xy_rotation(trajectory, N=30, times=10):
         trajectory = resulting_trajectory.permute(0,2,1)
         return trajectory
 
-optimizer = optim.AdamW(model.parameters(), lr=5e-4)
 
-# Define the loss function (MSE Loss for DDPM)
-criterion = nn.MSELoss()
-num_epochs = 100
+def denormalize_xy_rotation(trajectory, N=30, times=10):
+        batch, num_pts, dim = trajectory.shape
+        inverse_rotated_trajectories = []
+        for i in range(times):
+            theta = 2 * torch.pi * i / 10  # 将角度均匀分布在0到2π之间
+            rotation_matrix, inverse_rotation_matrix = get_rotation_matrices(theta)
+            # 扩展旋转矩阵以匹配批次大小
+            inverse_rotation_matrix = inverse_rotation_matrix.unsqueeze(0).expand(trajectory.size(0), -1, -1).to(trajectory)
+        
+            # 只对每个 2D 坐标对进行逆旋转
+            inverse_rotated_trajectory = apply_rotation(trajectory[:, :, 2*i:2*i+2], inverse_rotation_matrix)
+            inverse_rotated_trajectories.append(inverse_rotated_trajectory)
+
+        final_trajectory = torch.cat(inverse_rotated_trajectories, 1).permute(0,2,1)
+        
+        final_trajectory = final_trajectory[:, :, :2]
+        final_trajectory[:, :, 0] *= 13
+        final_trajectory[:, :, 1] *= 55
+        return final_trajectory
+
+
+
 num_points = 6
 #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
-batch_losses = []
-for epoch in range(num_epochs):
-    losses = []
-    model.train()
-    for batch_idx, (instance_feature, map_instance_feature,trajs) in enumerate(dataloader):
-        """ 
+model.eval()
+diffusion_outputs = []
+#anchors = 32
+with torch.no_grad():
+    for batch_idx, (instance_feature, map_instance_feature,trajs) in tqdm(enumerate(dataloader)):
+        """  
         instance_feature:       对应data["agent"]   实例特征,通常是包含代理agent或自车ego vehicle特征的张量。可能包含位置、速度、加速度等信息。
         map_instance_feature:   对应 data["map"]    地图实例特征，通常是一个包含地图元素（如车道线、障碍物等）特征的张量。它可能包含位置、形状等信息。
-        trajs:                  轨迹数据，通常是一个包含代理或自车历史轨迹的张量。它可能包含多个时间步的位置信息。
+        trajs:                  历史轨迹数据，通常是一个包含代理或自车历史轨迹的张量。它可能包含多个时间步的位置信息。
+
+        生成金字塔噪声，并作为初始的扩散输出。
+        遍历扩散调度器的时间步长，使用模型预测噪声，并更新扩散输出。
+        对扩散输出进行反归一化和反旋转处理。
+        将处理后的扩散输出保存到列表中。
+        通过这种方式，代码实现了对轨迹数据的扩散处理，并生成了扩散输出。
         """
-        #print(batch_idx)
+        if batch_idx == 100:
+            break
         batch_size = instance_feature.shape[0]
         instance_feature,map_instance_feature,trajs = instance_feature.to(device),map_instance_feature.to(device),trajs.to(device)
-        device = instance_feature.device
-        trajs = normalize_xy_rotation(trajs, N=num_points, times=10) 
-        #print(trajs.shape)
-        noise = pyramid_noise_like(trajs)
-        #print(noise.shape)
-        #print(trajs.shape) 
-        timesteps = torch.randint(0, train_scheduler.num_train_timesteps, (batch_size,), dtype=torch.long,device=device)
-        noisy_traj_points = train_scheduler.add_noise(
-                original_samples=trajs,
-                noise=noise,
-                timesteps=timesteps,
-        ).float()
-        #print(timesteps)
-        noise_pred = model(instance_feature, map_instance_feature,timesteps,noisy_traj_points)
-        diffusion_loss = criterion(noise_pred, noise)
-        optimizer.zero_grad()
-        diffusion_loss.backward()
-        losses.append(diffusion_loss.item())
-        optimizer.step()
-        if batch_idx % 10 == 0:
-            print(f"Epoch [{epoch+1}/{num_epochs}], Batch [{batch_idx+1}/{len(dataloader)}], Loss: { diffusion_loss.item():.4f}")
-    average_loss = sum(losses) / len(losses)
-    batch_losses = []
-    print(f"Average Loss: {average_loss:.4f}")
-    batch_losses.append(average_loss)
-    if epoch % 20 == 0:
-        checkpoint_filename = f'checkpoint_loss_{average_loss}_epoch_{epoch}_0903.pth'
-        torch.save({
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-        }, checkpoint_filename)
 
-print(batch_losses)
-torch.save({
-    'model_state_dict': model.state_dict(),
-    'optimizer_state_dict': optimizer.state_dict(),
-}, 'checkpoint_final_with_map.pth')
+        trajs_temp =  normalize_xy_rotation(trajs.squeeze(0))
+        noise = pyramid_noise_like(trajs_temp)
+        diffusion_output = noise
+
+        for k in inferece_scheduler.timesteps[:]:
+            
+            diffusion_output = inferece_scheduler.scale_model_input(diffusion_output)
+            #先预测噪声,然后根据噪声推断上一个时间步的样本,然后再根据推断的样本和当前时间步的噪声预测噪声
+            noise_pred = model(instance_feature, map_instance_feature,k.unsqueeze(-1).repeat(diffusion_output.shape[0]).to(device),diffusion_output)
+            diffusion_output = inferece_scheduler.step(
+                        model_output=noise_pred, #扩散模型预测的当前时间步的噪声
+                        timestep=k,
+                        sample=diffusion_output #当前时间步的样本
+                ).prev_sample #根据 扩散模型预测的噪声 和 当前时间步的样本 推断的上一个时间步的样本
+        diffusion_output = denormalize_xy_rotation(diffusion_output, N=num_points, times=10)
+        diffusion_outputs.append(diffusion_output)
+
+# 可以将生成的轨迹保存为文件
+with open('generated_trajs_0912_new_test.pkl', 'wb') as f:
+    pickle.dump(diffusion_outputs, f)

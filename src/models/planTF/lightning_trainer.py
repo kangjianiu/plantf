@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from typing import Dict, Tuple, Union
 
 import pytorch_lightning as pl
@@ -22,16 +23,17 @@ from src.optim.warmup_cos_lr import WarmupCosLR
 logger = logging.getLogger(__name__)
 
 """
- 调用路径:
- python run_training.py py_func=train +training=train_planTF  ->  - override /custom_trainer: planTF 
-         ->_target_: src.models.planTF.lightning_trainer.LightningTrainer
+调用路径:
+    python run_training.py py_func=train +training=train_planTF  ->  - override /custom_trainer: planTF 
+            ->_target_: src.models.planTF.lightning_trainer.LightningTrainer
 
     class LightningTrainer(pl.LightningModule):(对 PlanningModel(TorchModuleWrapper) 进行包装)
     def __init__(
         self,
         model: TorchModuleWrapper,
-"""
-"""
+
+作用:安装pl要求再封装一层,包装planning_model.py中的PlanningModel(TorchModuleWrapper)模型
+
 在 LightningTrainer 类中，模仿学习的具体实现可以通过以下函数找到：
 
 前向传播：在 _step 函数中，通过调用 self.forward(features["feature"].data) 实现。
@@ -176,6 +178,12 @@ class LightningTrainer(pl.LightningModule):
         :param batch_idx: batch's index (unused)
         :return: model's loss tensor
         """
+        # 我加的
+        features, _, _ = batch
+        print("Features keys:", features.keys())
+        for key, value in features.items():
+            print(f"Key: {key}, Value type: {type(value)}, Value shape: {value.shape if isinstance(value, torch.Tensor) else 'N/A'}")    
+        sys.exit(0)
         return self._step(batch, "train")
 
     def validation_step(
