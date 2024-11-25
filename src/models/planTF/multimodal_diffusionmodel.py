@@ -1,24 +1,16 @@
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
-import pickle
 from diffusion_model import CrossAttentionUnetModel
-from conditional_unet1d import ConditionalUnet1D
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
-import torch.optim as optim
-import torch.nn.functional as F
-from nuplan.planning.training.modeling.torch_module_wrapper import TorchModuleWrapper
-from tqdm import tqdm
 
-device = torch.device("cuda:0")
-
-class DiffusionPlanningModel(TorchModuleWrapper):
-    def __init__(self, feature_dim=256, num_timesteps=100, device='cuda:6'):
+class MultiModalDiffusionModel(nn.Module):
+    def __init__(self, feature_dim, num_modes, future_steps):
         super().__init__()
-        self.device = torch.device(device)
-        self.model = CrossAttentionUnetModel(feature_dim).to(self.device)
+        self.num_modes = num_modes
+        self.future_steps = future_steps
+        self.trajectory_decoder = CrossAttentionUnetModel(feature_dim)
         self.scheduler = DDPMScheduler(
-            num_train_timesteps=num_timesteps,
+            num_train_timesteps=100,
             beta_start=0.0001,
             beta_end=0.02,
             beta_schedule="squaredcos_cap_v2",
@@ -34,27 +26,42 @@ class DiffusionPlanningModel(TorchModuleWrapper):
             steps_offset=0,
             rescale_betas_zero_snr=False,
         )
+        hidden = 2 * feature_dim
+        self.probability_decoder = nn.Sequential(
+            nn.Linear(feature_dim, hidden),
+            nn.LayerNorm(hidden),
+            nn.ReLU(inplace=True),
+            nn.Linear(hidden, num_modes),
+        )
 
-    def forward(self, data):
-        instance_feature = data["agent"].to(self.device)
-        map_instance_feature = data["map"].to(self.device)
-        trajs = data["trajs"].to(self.device)
+    def forward(self, instance_feature, map_instance_feature, trajs):
+        trajectories = []
+        probabilities = []
 
-        trajs_temp = self.normalize_xy_rotation(trajs.squeeze(0))
-        noise = self.pyramid_noise_like(trajs_temp)
-        diffusion_output = noise
+        for mode in range(self.num_modes):
+            trajs_temp = self.normalize_xy_rotation(trajs.squeeze(0))
+            noise = self.pyramid_noise_like(trajs_temp)
+            diffusion_output = noise
 
-        for k in self.scheduler.timesteps[:]:
-            diffusion_output = self.scheduler.scale_model_input(diffusion_output)
-            noise_pred = self.model(instance_feature, map_instance_feature, k.unsqueeze(-1).repeat(diffusion_output.shape[0]).to(self.device), diffusion_output)
-            diffusion_output = self.scheduler.step(
-                model_output=noise_pred,
-                timestep=k,
-                sample=diffusion_output
-            ).prev_sample
+            for k in self.scheduler.timesteps[:]:
+                diffusion_output = self.scheduler.scale_model_input(diffusion_output)
+                noise_pred = self.trajectory_decoder(instance_feature, map_instance_feature, k.unsqueeze(-1).repeat(diffusion_output.shape[0]).to(instance_feature.device), diffusion_output)
+                diffusion_output = self.scheduler.step(
+                    model_output=noise_pred,
+                    timestep=k,
+                    sample=diffusion_output
+                ).prev_sample
 
-        diffusion_output = self.denormalize_xy_rotation(diffusion_output, N=6, times=10)
-        return {"trajectory": diffusion_output}
+            trajectory = self.denormalize_xy_rotation(diffusion_output, N=self.future_steps, times=10)
+            trajectories.append(trajectory)
+
+        # 计算概率
+        probability = self.probability_decoder(instance_feature.squeeze(1))
+        probabilities.append(probability)
+
+        trajectories = torch.stack(trajectories, dim=1)  # 形状为 (batch_size, num_modes, future_steps, 2)
+        probabilities = torch.stack(probabilities, dim=1)  # 形状为 (batch_size, num_modes)
+        return trajectories, probabilities
 
     def normalize_xy_rotation(self, trajectory, N=30, times=10):
         batch, num_pts, dim = trajectory.shape
@@ -124,46 +131,3 @@ class DiffusionPlanningModel(TorchModuleWrapper):
     def apply_rotation(self, trajectory, rotation_matrix):
         rotated_trajectory = torch.einsum('bij,bkj->bik', rotation_matrix, trajectory)
         return rotated_trajectory
-
-# 示例用法
-if __name__ == "__main__":
-    filename = '/home/users/xingyu.zhang/workspace/SD-origin/scripts/planning_eval_all_de_with_anchor.pkl'
-    features = pickle.load(open(filename, 'rb'))
-    instance_features = [features[i]['instance_feature'] for i in range(len(features))]
-    map_instance_features = [features[i]['map_instance_features'] for i in range(len(features))]
-
-    class FeaturesDataset(Dataset):
-        def __init__(self, labels_file):
-            with open(labels_file, 'rb') as f:
-                self.labels = pickle.load(f)
-
-        def __len__(self):
-            return len(self.labels)
-
-        def __getitem__(self, idx):
-            instance_feature = instance_features[idx].to(device)
-            map_instance_feature = map_instance_features[idx].to(device)
-            trajs = self.labels[idx]['ego_trajs'].to(device)
-            return {
-                "agent": instance_feature,
-                "map": map_instance_feature,
-                "trajs": trajs
-            }
-
-    dataset = FeaturesDataset('/home/users/xingyu.zhang/workspace/SD-origin/scripts/features_eval_all_de_with_anchor.pkl')
-    dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
-
-    model = DiffusionPlanningModel(feature_dim=256, device='cuda:6')
-    checkpoint = torch.load('/home/users/xingyu.zhang/workspace/SparseDrive/diffusion_head/checkpoint_loss_0.005207525296216111_epoch_80_0903.pth')
-    model.model.load_state_dict(checkpoint['model_state_dict'])
-
-    diffusion_outputs = []
-    with torch.no_grad():
-        for batch_idx, data in tqdm(enumerate(dataloader)):
-            if batch_idx == 100:
-                break
-            output = model(data)
-            diffusion_outputs.append(output["trajectory"])
-
-    with open('generated_trajs_0912_new_test.pkl', 'wb') as f:
-        pickle.dump(diffusion_outputs, f)

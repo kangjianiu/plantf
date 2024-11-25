@@ -8,9 +8,9 @@ class TrajectoryDecoder(nn.Module):
         super().__init__()
 
         self.embed_dim = embed_dim
-        self.num_modes = num_modes
-        self.future_steps = future_steps
-        self.out_channels = out_channels
+        self.num_modes = num_modes # 6
+        self.future_steps = future_steps # 80
+        self.out_channels = out_channels # 4
 
         self.multimodal_proj = nn.Linear(embed_dim, num_modes * embed_dim)
 

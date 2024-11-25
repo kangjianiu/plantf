@@ -13,7 +13,7 @@ from .layers.transformer_encoder_layer import TransformerEncoderLayer
 from .modules.agent_encoder import AgentEncoder
 from .modules.map_encoder import MapEncoder
 from .modules.trajectory_decoder import TrajectoryDecoder
-
+from multimodal_diffusionmodel import MultiModalDiffusionModel
 # no meaning, required by nuplan
 trajectory_sampling = TrajectorySampling(num_poses=8, time_horizon=8, interval_length=1)
 
@@ -45,6 +45,7 @@ class PlanningModel(TorchModuleWrapper):
         self.dim = dim
         self.history_steps = history_steps
         self.future_steps = future_steps
+        self.num_modes = num_modes
 
         # 包含的模块
         self.pos_emb = build_mlp(4, [dim] * 2)
@@ -69,6 +70,7 @@ class PlanningModel(TorchModuleWrapper):
             for dp in [x.item() for x in torch.linspace(0, drop_path, encoder_depth)]
         )
         self.norm = nn.LayerNorm(dim)
+        self.trajectory_decoder_diffu = MultiModalDiffusionModel(feature_dim=dim, num_modes=num_modes, future_steps=future_steps)
 
         self.trajectory_decoder = TrajectoryDecoder(
             embed_dim=dim,
@@ -100,7 +102,7 @@ class PlanningModel(TorchModuleWrapper):
         """
         lightning_trainer引用方法:
         def forward(self, features: FeaturesType) -> TargetsType
-        
+
         res = self.forward(features["feature"].data)
 
         实现一个基于 Transformer 的规划模型。
@@ -133,13 +135,23 @@ class PlanningModel(TorchModuleWrapper):
 
         for blk in self.encoder_blocks:
             x = blk(x, key_padding_mask=key_padding_mask)
-        x = self.norm(x)
+        x = self.norm(x) # (batch_size, num_agents + num_polygons, embed_dim)
 
-        trajectory, probability = self.trajectory_decoder(x[:, 0])
+        # trajectory, probability = self.trajectory_decoder(x[:, 0]) # 主代理的嵌入表示,形状为 (batch_size, embed_dim)
         prediction = self.agent_predictor(x[:, 1:A]).view(bs, -1, self.future_steps, 2)
-        # probability 表示模型预测的轨迹模式的概率，prediction 表示模型对代理未来状态的预测。
+        # probability 表示模型预测的轨迹模式的概率，prediction 表示模型对 其他 代理未来状态的预测。
         # probability 的形状通常为 (batch_size, num_modes)，
         # prediction  的形状通常为 (batch_size, num_agents, future_steps, 2)。
+
+        instance_feature = x[:, 0].unsqueeze(1)  # 主代理的嵌入表示,形状为 (batch_size, 1, embed_dim)
+        map_instance_feature = x[:, A:]  # 地图特征,形状为 (batch_size, num_agents - A, embed_dim)
+        # 检查 data 中是否包含 "trajs" 这一项
+        if "trajs" in data:
+            trajs = data["trajs"].to(instance_feature.device)  # 历史轨迹数据
+        else:
+            raise ValueError("data 中不包含 'trajs' 这一项")
+        trajectory, probability = self.trajectory_decoder_diffu(instance_feature, map_instance_feature, trajs)
+
         out = {
             "trajectory": trajectory,
             "probability": probability,
@@ -155,3 +167,6 @@ class PlanningModel(TorchModuleWrapper):
             )
 
         return out
+# 我想用diffusion_model.py和diffusion_planning_test共同构成的扩散模型架构替换掉或者说重新设计
+# class PlanningModel里面的trajectory_decode, 同时尽量保持trajectory_decoder的输入数据不变,
+# 只输出trajectory,不需要输出probability,已知(x[:, 0]) 代表主代理的嵌入表示,形状为 (batch_size, embed_dim)
