@@ -2,7 +2,14 @@ import torch
 import torch.nn as nn
 from diffusion_model import CrossAttentionUnetModel
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
+"""
+通过引入 MultiModalDiffusionModel 类，在 PlanningModel 类中使用多模态机制来预测多条轨迹。
+MultiModalDiffusionModel 类使用 CrossAttentionUnetModel 和 DDPMScheduler 来实现扩散模型，
+并通过多次运行扩散过程生成多条轨迹。通过这种方式，模型可以同时输出多条预测的轨迹
 
+修改 MultiModalDiffusionModel 类,将 MultiModalDiffusionModel 类修改为同时
+输出 trajectory 和 probability,并确保它们之间的逻辑关系
+"""
 class MultiModalDiffusionModel(nn.Module):
     def __init__(self, feature_dim, num_modes, future_steps):
         super().__init__()
