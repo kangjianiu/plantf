@@ -1,7 +1,7 @@
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
 import torch
 import torch.nn as nn
-from conditional_unet1d import ConditionalUnet1D
+from planTF.src.models.planTF.modules.conditional_unet1d import ConditionalUnet1D
 
 
 

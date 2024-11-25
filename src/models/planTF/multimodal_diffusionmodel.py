@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from diffusion_model import CrossAttentionUnetModel
+from planTF.src.models.planTF.modules.diffusion_model import CrossAttentionUnetModel
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
 """
 通过引入 MultiModalDiffusionModel 类，在 PlanningModel 类中使用多模态机制来预测多条轨迹。
