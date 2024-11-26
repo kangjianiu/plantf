@@ -102,12 +102,7 @@ class PlanningModel(TorchModuleWrapper):
         """
         lightning_trainer引用方法:
         def forward(self, features: FeaturesType) -> TargetsType
-
         res = self.forward(features["feature"].data)
-
-        实现一个基于 Transformer 的规划模型。
-        该模型包括位置嵌入、代理编码器、地图编码器、Transformer 编码器层、轨迹解码器和代理预测器。
-        模型通过前向传播方法处理输入数据，生成预测的轨迹和代理的未来状态。
         """
         agent_pos = data["agent"]["position"][:, :, self.history_steps - 1]
         agent_heading = data["agent"]["heading"][:, :, self.history_steps - 1]
