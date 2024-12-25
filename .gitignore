@@ -161,3 +161,8 @@ wandb/
 outputs/
 *.ckpt
 checkpoints/
+
+# traj_data
+reformatted_all_db_trajectories.json
+all_db_trajectories_relative.json
+all_db_trajectories_relative_reshape.json

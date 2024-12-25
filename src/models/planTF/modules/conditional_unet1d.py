@@ -5,6 +5,7 @@ import torch.nn as nn
 import einops
 from einops.layers.torch import Rearrange
 import math
+import sys
 
 class Conv1dBlock(nn.Module):
     '''
@@ -225,21 +226,27 @@ class ConditionalUnet1D(nn.Module):
 
         # 1. time
         timesteps = timestep
+        print("timesteps1:", type(timesteps),timesteps.shape)# torch.Size([32])
         if not torch.is_tensor(timesteps):
             # TODO: this requires sync between CPU and GPU. So try to pass timesteps as tensors if you can
             timesteps = torch.tensor([timesteps], dtype=torch.long, device=sample.device)
         elif torch.is_tensor(timesteps) and len(timesteps.shape) == 0:
             timesteps = timesteps[None].to(sample.device)
+        print("timesteps2:", type(timesteps),timesteps.shape)# torch.Size([32])
         # broadcast to batch dimension in a way that's compatible with ONNX/Core ML
         timesteps = timesteps.expand(sample.shape[0])
+        print("timesteps3:", type(timesteps),timesteps.shape)# torch.Size([32])
 
         global_feature = self.diffusion_step_encoder(timesteps)
+        # 打印global_feature和global_cond形状
+        print("global_feature shape:", global_feature.shape)# global_feature shape:[32, 256]
+        print("global_cond shape:", global_cond.shape)      # global_cond shape: [32, 128]
 
         if global_cond is not None:
             global_feature = torch.cat([
                 global_feature, global_cond
             ], axis=-1)
-        
+        # global_feature shape: torch.Size([32, 256+128=384])对应RuntimeError:cannot be multiplied (32x384 and 512x128)
         # encode local features
         h_local = list()
         if local_cond is not None:
@@ -251,6 +258,7 @@ class ConditionalUnet1D(nn.Module):
             h_local.append(x)
         
         x = sample
+        print("x.shape:", x.shape) #x.shape: torch.Size([32, 20, 30])
         h = []
         for idx, (resnet, resnet2, downsample) in enumerate(self.down_modules):
             x = resnet(x, global_feature)

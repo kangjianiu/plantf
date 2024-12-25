@@ -1,7 +1,7 @@
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
 import torch
 import torch.nn as nn
-from planTF.src.models.planTF.modules.conditional_unet1d import ConditionalUnet1D
+from .conditional_unet1d import ConditionalUnet1D
 
 
 
@@ -62,9 +62,10 @@ class CrossAttentionUnetModel(nn.Module):
             return noise_pred
     """       
 
-    def forward(self, instance_feature, map_instance_feature,timesteps,noisy_traj_points):
-        batch_size = instance_feature.shape[0]
-        ego_latent = instance_feature[:,900:,:]
+    def forward(self, ego_instance_feature, map_instance_feature,timesteps,noisy_traj_points):
+        batch_size = ego_instance_feature.shape[0]
+        ego_latent = ego_instance_feature[:,:,:] # torch.Size([32, 128])
+        '''
         # map_pos = self.map_feature_pos.weight[None].repeat(batch_size, 1, 1)
         # ego_pos = self.ego_pos_latent.weight[None].repeat(batch_size, 1, 1)
         # ego_latent = self.ego_feature.weight[None].repeat(batch_size, 1, 1)
@@ -101,10 +102,19 @@ class CrossAttentionUnetModel(nn.Module):
         # ego_latent = self.map_cond_layernorm_1(ego_latent)
         # ego_latent = self.fc2(ego_latent)
         # ego_latent = self.map_cond_layernorm_2(ego_latent)
+        '''
+        # TODO：融合ego和map信息
 
+        # ==diffu==noisy_traj_points shape: torch.Size([5, 30, 20])
         global_feature = ego_latent
-        global_feature = global_feature.squeeze(1)
+        global_feature = global_feature.squeeze(1)# 本质上取决于ego_instance_feature：主代理的嵌入表示
 
+        print("==diffu==global_feature.shape :",global_feature.shape)       # torch.Size([32, 128])
+        print("==diffu==noisy_traj_points shape:", noisy_traj_points.shape) # torch.Size([32, 30, 20])
+        #  eg：noise = torch.randn(2, 6, 2)  global_feature = torch.randn(2, 256)
+        noisy_traj_points = noisy_traj_points.to('cuda')  # 将输入张量移动到 GPU
+        global_feature = global_feature.to('cuda')  # 将全局条件张量移动到 GPU
+        timesteps = timesteps.to('cuda')  # 将时间步张量移动到 GPU
         noise_pred = self.noise_pred_net(
                     sample=noisy_traj_points,
                     timestep=timesteps,
@@ -112,23 +122,23 @@ class CrossAttentionUnetModel(nn.Module):
         )
         return noise_pred
 
-if __name__ == "__main__":
-    map_feature = torch.randn(2, 100, 256)
-    instance_feature = torch.randn(2,901,256)
-    global_cond = instance_feature[:,900:,]
-    anchor_size = 32
-    repeated_tensor=global_cond.repeat(1,anchor_size,1)
+# if __name__ == "__main__":
+#     map_feature = torch.randn(2, 100, 256)
+#     instance_feature = torch.randn(2,901,256)
+#     global_cond = instance_feature[:,900:,]
+#     anchor_size = 32
+#     repeated_tensor=global_cond.repeat(1,anchor_size,1)
 
-    print(repeated_tensor.shape)
-    expanded_tensor=repeated_tensor.view(-1,256)
-    print(expanded_tensor.shape)
-    model = CrossAttentionUnetModel(256)
-    noisy_trajs = torch.randn(anchor_size * 2,6,20)
+#     print(repeated_tensor.shape)
+#     expanded_tensor=repeated_tensor.view(-1,256)
+#     print(expanded_tensor.shape)
+#     model = CrossAttentionUnetModel(256)
+#     noisy_trajs = torch.randn(anchor_size * 2,6,20)
 
-    output = model.noise_pred_net(sample=noisy_trajs, 
-                        timestep=torch.tensor([0]),
-                        global_cond=expanded_tensor)
-    print(output.shape)
+#     output = model.noise_pred_net(sample=noisy_trajs, 
+#                         timestep=torch.tensor([0]),
+#                         global_cond=expanded_tensor)
+#     print(output.shape)
     #global_feature = model(instance_feature, map_feature)
     #print(global_feature.shape)
     

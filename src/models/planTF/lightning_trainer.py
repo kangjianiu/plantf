@@ -80,9 +80,32 @@ class LightningTrainer(pl.LightningModule):
     def _step(
         self, batch: Tuple[FeaturesType, TargetsType, ScenarioListType], prefix: str
     ) -> torch.Tensor:
-        features, _, _ = batch
-        res = self.forward(features["feature"].data)
+        features, _, ScenarioList = batch
+        # batch数据里面没有历史轨迹数据
 
+        # print("ScenarioList[0]:",ScenarioList[0])
+        # ScenarioList[0]: <nuplan.planning.scenario_builder.cache.cached_scenario.CachedScenario object at 0x7fad24760520>
+        # print("dir ScenarioList[0]:",dir(ScenarioList[0]))
+        # ego_past_trajectory = ScenarioList[0].get_ego_past_trajectory(1,2)
+        # NotImplementedError: CachedScenario does not implement get_ego_past_trajectory.
+        # print("ego_past_trajectory:",ego_past_trajectory)
+        """
+        ScenarioList[0]: ['__abstractmethods__', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', 
+        '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', 
+        '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__slots__', '__str__', '__subclasshook__', '__weakref__', 
+        '_abc_impl', '_log_name', '_scenario_type', '_token', 'database_interval', 'duration_s', 'ego_vehicle_parameters', 'end_time', 
+        'get_ego_future_trajectory', 'get_ego_past_trajectory', 'get_ego_state_at_iteration', 'get_ego_trajectory_slice', 
+        'get_expert_ego_trajectory', 'get_expert_goal_state', 'get_future_timestamps', 'get_future_tracked_objects', 
+        'get_future_traffic_light_status_history', 'get_lidar_to_ego_transform', 'get_mission_goal', 'get_number_of_iterations', 
+        'get_past_sensors', 'get_past_timestamps', 'get_past_tracked_objects', 'get_past_traffic_light_status_history', 'get_route_roadblock_ids', 
+        'get_sensors_at_iteration', 'get_time_point', 'get_tracked_objects_at_iteration', 'get_tracked_objects_within_time_window_at_iteration', 
+        'get_traffic_light_status_at_iteration', 'initial_ego_state', 'initial_sensors', 'initial_tracked_objects', 'log_name', 'map_api', 
+        'scenario_name', 'scenario_type', 'start_time', 'token']
+        """
+        # Features[feature] __dict__['data'].keys(): ['agent', 'map', 'current_state', 'origin', 'angle']
+        # Features[feature] __dict__['data']['agent']: ['position', 'heading', 'velocity', 'shape', 'category', 'valid_mask', 'target']
+
+        res = self.forward(features["feature"].data)
         losses = self._compute_objectives(res, features["feature"].data)
         metrics = self._compute_metrics(res, features["feature"].data, prefix)
         self._log_step(losses["loss"], losses, metrics, prefix)
@@ -246,26 +269,59 @@ class LightningTrainer(pl.LightningModule):
             nn.LayerNorm,
             nn.Embedding,
         )
+
         for module_name, module in self.named_modules():
+            #打印module_name和module
+            #print(f"=========module_name: {module_name}\n")
             for param_name, param in module.named_parameters():
                 full_param_name = (
                     "%s.%s" % (module_name, param_name) if module_name else param_name
                 )
                 if "bias" in param_name:
                     no_decay.add(full_param_name)
+                    if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                        print(f"===0=== {full_param_name} is in bias, ===no_decay")                    
                 elif "weight" in param_name:
-                    if isinstance(module, whitelist_weight_modules):
+                    if isinstance(module, whitelist_weight_modules) and full_param_name not in no_decay:
                         decay.add(full_param_name)
-                    elif isinstance(module, blacklist_weight_modules):
+                        if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                            print(f"===1.1=== {full_param_name} is in white, ===decay")
+
+                    elif isinstance(module, blacklist_weight_modules) and full_param_name not in decay:
                         no_decay.add(full_param_name)
+                        if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                            print(f"===2=== {full_param_name} is in black, ===no_decay")                        
+                       
+                    elif "norm" in full_param_name or "emb" in full_param_name and full_param_name not in decay:
+                        no_decay.add(full_param_name)
+                        if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                            print(f"===3=== {full_param_name} is in norm or emb, ===no_decay")
+                    
+                    else:
+                        if full_param_name not in no_decay:
+                            decay.add(full_param_name)
+                            if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                                print(f"===4=== {full_param_name} is in none of any class, ===decay")
+
                 elif not ("weight" in param_name or "bias" in param_name):
                     no_decay.add(full_param_name)
+                    if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                        print(f"===5=== {full_param_name} is no weight or bias, ===no_decay")                    
         param_dict = {
             param_name: param for param_name, param in self.named_parameters()
         }
         inter_params = decay & no_decay
         union_params = decay | no_decay
+        # 打印decay 和 no_decay，inter_params，union_params的长度
+        print(f"=============\ndecay: {len(decay)}, no_decay: {len(no_decay)}, inter_params: {len(inter_params)}, union_params: {len(union_params)}")
+        # 打印下面一行的两个参数数量是否等于所有参数数量
+        print(f"param_dict.keys(): {len(param_dict.keys())}\n=====")
+        #打印inter_params
+        print(f"重复参数inter_params: {inter_params}")
+        # 打印在param_dict里面但是不在union_params里面的参数名
+        print(f"=============\n未分类参数param_dict.keys() - union_params: {param_dict.keys() - union_params}")
         assert len(inter_params) == 0
+
         assert len(param_dict.keys() - union_params) == 0
 
         optim_groups = [
