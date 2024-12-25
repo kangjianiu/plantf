@@ -105,20 +105,19 @@ class CrossAttentionUnetModel(nn.Module):
         '''
         # TODO：融合ego和map信息
 
-        # ==diffu==noisy_traj_points shape: torch.Size([5, 30, 20])
         global_feature = ego_latent
         global_feature = global_feature.squeeze(1)# 本质上取决于ego_instance_feature：主代理的嵌入表示
 
         print("==diffu==global_feature.shape :",global_feature.shape)       # torch.Size([32, 128])
-        print("==diffu==noisy_traj_points shape:", noisy_traj_points.shape) # torch.Size([32, 30, 20])
-        #  eg：noise = torch.randn(2, 6, 2)  global_feature = torch.randn(2, 256)
+        print("==diffu==noisy_traj_points shape:", noisy_traj_points.shape) # torch.Size([200, 30, 2])
         noisy_traj_points = noisy_traj_points.to('cuda')  # 将输入张量移动到 GPU
         global_feature = global_feature.to('cuda')  # 将全局条件张量移动到 GPU
         timesteps = timesteps.to('cuda')  # 将时间步张量移动到 GPU
+
         noise_pred = self.noise_pred_net(
-                    sample=noisy_traj_points,
+                    sample=noisy_traj_points,# torch.Size([200, 30, 2])
                     timestep=timesteps,
-                    global_cond=global_feature,
+                    global_cond=global_feature,#本质上取决于ego,[32, 128]
         )
         return noise_pred
 

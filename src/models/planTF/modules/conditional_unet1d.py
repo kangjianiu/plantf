@@ -234,18 +234,24 @@ class ConditionalUnet1D(nn.Module):
             timesteps = timesteps[None].to(sample.device)
         print("timesteps2:", type(timesteps),timesteps.shape)# torch.Size([32])
         # broadcast to batch dimension in a way that's compatible with ONNX/Core ML
-        timesteps = timesteps.expand(sample.shape[0])
-        print("timesteps3:", type(timesteps),timesteps.shape)# torch.Size([32])
+        #在 batch 维度上对 timesteps 做扩张，以便在同一个时间步下对每个 batch 样本都使用相同的 timesteps。
+        timesteps = timesteps.expand(global_cond.shape[0]) 
+        print("timesteps3:", type(timesteps),timesteps.shape) # timesteps1: <class 'torch.Tensor'> torch.Size([200])
 
         global_feature = self.diffusion_step_encoder(timesteps)
         # 打印global_feature和global_cond形状
-        print("global_feature shape:", global_feature.shape)# global_feature shape:[32, 256]
-        print("global_cond shape:", global_cond.shape)      # global_cond shape: [32, 128]
+        print("global_feature shape:", global_feature.shape)# 由时间步解码得到 shape:[32, 256]
+        print("global_cond shape:", global_cond.shape)      # 本质上是ego信息  shape: [32, 128]
 
         if global_cond is not None:
             global_feature = torch.cat([
                 global_feature, global_cond
             ], axis=-1)
+        """
+        File "/data/datasets/niukangjia/plantf/src/models/planTF/modules/conditional_unet1d.py", line 246, in forward
+        global_feature = torch.cat([
+        RuntimeError: Sizes of tensors must match except in dimension 1. Expected size 200 but got size 32 for tensor number 1 in the list.
+        """
         # global_feature shape: torch.Size([32, 256+128=384])对应RuntimeError:cannot be multiplied (32x384 and 512x128)
         # encode local features
         h_local = list()
@@ -258,7 +264,7 @@ class ConditionalUnet1D(nn.Module):
             h_local.append(x)
         
         x = sample
-        print("x.shape:", x.shape) #x.shape: torch.Size([32, 20, 30])
+        print("x.shape:", x.shape) #x.shape: torch.Size([200, 2, 32])
         h = []
         for idx, (resnet, resnet2, downsample) in enumerate(self.down_modules):
             x = resnet(x, global_feature)

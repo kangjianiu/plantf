@@ -1,3 +1,4 @@
+import sys
 import torch
 import torch.nn as nn
 import numpy as np
@@ -51,21 +52,23 @@ class MultiModalDiffusionModel(nn.Module):
         for i in range(self.num_modes):
 
             # 检查 trajs 的形状
-            print("==multi==trajs shape:", traj_anchors.shape)
-            if traj_anchors.shape[0] == 1:
-                trajs_temp = self.normalize_xy_rotation(traj_anchors.squeeze(0))
-            else:
-                trajs_temp = self.normalize_xy_rotation(traj_anchors)
-            print("==multi==trajs_temp shape:", trajs_temp.shape)
-            noise = self.pyramid_noise_like(trajs_temp) 
-            # torch.Size([32, 30, 20])
+            # print("==multi==trajs shape:", traj_anchors.shape)# [200, 32, 2]
+            # if traj_anchors.shape[0] == 1:
+            #     trajs_temp = self.normalize_xy_rotation(traj_anchors.squeeze(0))
+            # else:
+            #     trajs_temp = self.normalize_xy_rotation(traj_anchors)
+            # print("==multi==trajs_temp shape:", trajs_temp.shape)# 原来：[32, 30, 20]，现在：[200, 30, 2]
+            print("multimodel接受的traj_anchors的形状:", traj_anchors.shape) #[200, 30, 2]
+            noise = self.pyramid_noise_like(traj_anchors) 
             
             diffusion_output = noise
-            print("==multi==diffusion_output shape:", diffusion_output.shape) # torch.Size([32, 30, 20])
+            print("multimodel的初始噪声(diffusion_output)形状:", diffusion_output.shape) #[200, 30, 2]
+            # sys.exit(1)
 
             for k in self.scheduler.timesteps[:2]:
+                print("multi中k.shape:", k.shape)
                 diffusion_output = self.scheduler.scale_model_input(diffusion_output)
-                noise_pred = self.trajectory_decoder(ego_instance_feature, map_instance_feature, k.unsqueeze(-1).repeat(diffusion_output.shape[0]).to(ego_instance_feature.device), diffusion_output)
+                noise_pred = self.trajectory_decoder(ego_instance_feature, map_instance_feature, k.unsqueeze(-1).repeat(ego_instance_feature.shape[0]).to(ego_instance_feature.device), diffusion_output)
                 diffusion_output = self.scheduler.step(
                     model_output=noise_pred,
                     timestep=k,
@@ -123,6 +126,12 @@ class MultiModalDiffusionModel(nn.Module):
         return final_trajectory
 
     def pyramid_noise_like(self, trajectory, discount=0.9):
+        """
+        噪声张量 (noise)，形状与 trajectory 相同 (b, n, c)，并且经过归一化(标准差归一到1)后转为 float 类型。
+        会生成一种“多尺度叠加”的噪声，类似在原始尺度和缩放到更小尺寸的尺度上分别加噪，
+        而每一次在小尺寸上生成的噪声再被线性插值到原始序列长度并带上一定的衰减系数。
+        最终合并后的噪声在多层级时间分辨率上拥有随机扰动，也就是所谓的“金字塔”或“多分辨率”噪声。
+        """
         b, n, c = trajectory.shape
         trajectory_reshape = trajectory.permute(0, 2, 1)
         up_sample = torch.nn.Upsample(size=(n), mode='linear')

@@ -147,10 +147,11 @@ class PlanningModel(TorchModuleWrapper):
         map_instance_feature = x[:, A:]  # 地图特征,形状为 (batch_size, num_polygons, embed_dim)
         # x.shape: [32, 255, 128] ego_instance_feature:[32, 1, 128]map_instance_feature:[32, 222, 128]
 
-        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style.npy'
-        traj_anchors = self.load_cluster_centers(npy_file_path)
+        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_200.npy'
+        traj_anchors = self.load_cluster_centers(npy_file_path)# shape (200, 32, 2)
         print(f"共加载到 {len(traj_anchors)} 个轨迹锚点。")
-        
+        # traj_anchors转换成tensor
+        traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)
         """
         32 最终决定了ConditionalUnet1D中global_feature的维度
         ==multi==diffusion_output shape: torch.Size([32, 30, 20])
@@ -185,10 +186,12 @@ class PlanningModel(TorchModuleWrapper):
         假设文件格式与 kmeans_plan.py 输出的类似，形状可能是 ( K, 6, 2)。
         """
         cluster_centers = np.load(npy_file_path)
-        # 例如，形状是 (4, 6, 2)，表示 4个聚类中心、每个轨迹 6 个点、每个点 2D 坐标
+        print("聚类中心的形状:", cluster_centers.shape)
+        # sys.exit(1)
+        # 例如，形状是  (200, 32, 2)，表示 200个聚类中心、每个轨迹 32 个点、每个点 2 坐标
         anchor_points = []
         for i in range(cluster_centers.shape[0]):
-            # single_center 的形状是 (6, 2)，即一个轨迹锚点
+            # single_center 的形状是 (32, 2)，即一个轨迹锚点
             anchor_points.append(cluster_centers[i])
         return anchor_points
 
