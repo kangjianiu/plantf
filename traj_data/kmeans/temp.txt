@@ -1,0 +1,33 @@
+models/planTF/planning_model.py", line 166, in forward
+    trajectory, probability = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
+  /torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  models/planTF/multimodal_diffusionmodel.py", line 71, in forward
+    noise_pred = self.trajectory_decoder(ego_instance_feature, map_instance_feature, k.unsqueeze(-1).repeat(ego_instance_feature.shape[0]).to(ego_instance_feature.device), diffusion_output)
+  /torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  models/planTF/modules/diffusion_model.py", line 117, in forward
+    noise_pred = self.noise_pred_net(
+  /torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  models/planTF/modules/conditional_unet1d.py", line 270, in forward
+    x = resnet(x, global_feature)
+  /torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  models/planTF/modules/conditional_unet1d.py", line 99, in forward
+    out = self.blocks[0](x)
+  /torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  models/planTF/modules/conditional_unet1d.py", line 27, in forward
+    return self.block(x)
+  /torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  /torch/nn/modules/container.py", line 217, in forward
+    input = module(input)
+  /torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  /torch/nn/modules/conv.py", line 313, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  /torch/nn/modules/conv.py", line 309, in _conv_forward
+    return F.conv1d(input, weight, bias, self.stride,
+RuntimeError: Given groups=1, weight of size [128, 20, 3], expected input[200, 2, 32] to have 20 channels, but got 2 channels instead

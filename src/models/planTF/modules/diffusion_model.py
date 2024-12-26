@@ -38,8 +38,8 @@ class CrossAttentionUnetModel(nn.Module):
         self.map_cond_layernorm_2 = nn.LayerNorm(self.feature_dim)
 
         self.noise_pred_net = ConditionalUnet1D(
-                input_dim=20,
-                global_cond_dim=256,
+                input_dim=2,
+                global_cond_dim= 128, # 256 修改成 128，取决于-> global_cond=global_feature,#本质上取决于ego,[32, 128]
                 down_dims=[128, 256],
                 cond_predict_scale=False,
         )
@@ -109,13 +109,13 @@ class CrossAttentionUnetModel(nn.Module):
         global_feature = global_feature.squeeze(1)# 本质上取决于ego_instance_feature：主代理的嵌入表示
 
         print("==diffu==global_feature.shape :",global_feature.shape)       # torch.Size([32, 128])
-        print("==diffu==noisy_traj_points shape:", noisy_traj_points.shape) # torch.Size([200, 30, 2])
+        print("==diffu==noisy_traj_points shape:", noisy_traj_points.shape) # torch.Size([256, 32, 2])
         noisy_traj_points = noisy_traj_points.to('cuda')  # 将输入张量移动到 GPU
         global_feature = global_feature.to('cuda')  # 将全局条件张量移动到 GPU
         timesteps = timesteps.to('cuda')  # 将时间步张量移动到 GPU
-
+        
         noise_pred = self.noise_pred_net(
-                    sample=noisy_traj_points,# torch.Size([200, 30, 2])
+                    sample=noisy_traj_points,# torch.Size([256, 32, 2])
                     timestep=timesteps,
                     global_cond=global_feature,#本质上取决于ego,[32, 128]
         )

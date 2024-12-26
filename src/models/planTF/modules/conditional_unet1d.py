@@ -27,6 +27,11 @@ class Conv1dBlock(nn.Module):
         return self.block(x)
 
 class Downsample1d(nn.Module):
+    """
+    输入: [batch_size, 128, 32]
+    卷积操作: 使用 kernel_size=3, stride=2, padding=1
+    输出: [batch_size, 128, 16]
+    """
     def __init__(self, dim):
         super().__init__()
         self.conv = nn.Conv1d(dim, dim, 3, 2, 1)
@@ -58,14 +63,16 @@ class SinusoidalPosEmb(nn.Module):
 
 class ConditionalResidualBlock1D(nn.Module):
     def __init__(self, 
-            in_channels, 
-            out_channels, 
-            cond_dim,
+            in_channels, # 2    第二轮128
+            out_channels, #128   第二轮256
+            cond_dim, # 384
             kernel_size=3,
             n_groups=8,
             cond_predict_scale=False):
         super().__init__()
-
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.cond_dim = cond_dim
         self.blocks = nn.ModuleList([
             Conv1dBlock(in_channels, out_channels, kernel_size, n_groups=n_groups),
             Conv1dBlock(out_channels, out_channels, kernel_size, n_groups=n_groups),
@@ -88,16 +95,23 @@ class ConditionalResidualBlock1D(nn.Module):
         self.residual_conv = nn.Conv1d(in_channels, out_channels, 1) \
             if in_channels != out_channels else nn.Identity()
 
-    def forward(self, x, cond):
+    def forward(self, x, cond):# x:[256, 2, 32]  cond:[32, 384]   第二轮：x:[256, 128, 16]  cond:[32, 384]
         '''
             x : [ batch_size x in_channels x horizon ]
             cond : [ batch_size x cond_dim]
-
+            
             returns:
             out : [ batch_size x out_channels x horizon ]
+            
         '''
-        out = self.blocks[0](x)
-        embed = self.cond_encoder(cond)
+        out = self.blocks[0](x)          #  [256, 128, 32]     第二轮：[256, 256, 16]
+
+        embed = self.cond_encoder(cond)  # [32, 128, 1]       第二轮： [32, 256, 1]
+        # 计算out和embed的最后一个维度的除法
+        time = out.shape[-1]//embed.shape[-1] # 32//1=32
+        embed = embed.repeat(8, 1, time)   # [256, 128, 32]     第二轮：[256, 256, 16]
+        # print( "out shape:", out.shape,"embed shape:", embed.shape)           #第二轮：[256, 256, 16]，[256, 256, 16]
+
         if self.cond_predict_scale:
             embed = embed.reshape(
                 embed.shape[0], 2, self.out_channels, 1)
@@ -105,15 +119,16 @@ class ConditionalResidualBlock1D(nn.Module):
             bias = embed[:,1,...]
             out = scale * out + bias
         else:
-            out = out + embed
-        out = self.blocks[1](out)
-        out = out + self.residual_conv(x)
+            out = out + embed #
+        out = self.blocks[1](out)#  [256, 128, 32]
+        out = out + self.residual_conv(x)# [256, 128, 32]
+        # print("out shape:", out.shape)
         return out
 
 
 class ConditionalUnet1D(nn.Module):
     def __init__(self, 
-        input_dim,
+        input_dim,# 2
         local_cond_dim=None,
         global_cond_dim=None,
         diffusion_step_embed_dim=256,
@@ -123,7 +138,7 @@ class ConditionalUnet1D(nn.Module):
         cond_predict_scale=False
         ):
         super().__init__()
-        all_dims = [input_dim] + list(down_dims)
+        all_dims = [input_dim] + list(down_dims)# input_dim=2, down_dims=[128,256],所以all_dims=[2,128,256]
         start_dim = down_dims[0]
 
         dsed = diffusion_step_embed_dim
@@ -137,7 +152,15 @@ class ConditionalUnet1D(nn.Module):
         if global_cond_dim is not None:
             cond_dim += global_cond_dim
 
-        in_out = list(zip(all_dims[:-1], all_dims[1:]))
+        in_out = list(zip(all_dims[:-1], all_dims[1:]))# in_out=[(2, 128), (128, 256)]
+        # 一行打印 dsed, cond_dim, global_cond_dim
+        print(f"in_out:{in_out}")
+        print(f"dsed:{dsed}\ncond_dim:{cond_dim}\nglobal_cond_dim:{global_cond_dim}\nstart_dim:{start_dim}\nlocal_cond_dim:{local_cond_dim}")
+        #  dsed:256     cond_dim:384     global_cond_dim:128    start_dim:128
+
+        # global_feature = global_feature + global_cond     = 256 + 128 = 384 (在后面)
+        # cond_dim       = desd           + global_cond_dim = 256 + 128 = 384
+        # global_feature 由 timestep 经过 diffusion_step_encoder 得到，所以维度与参数 dsed 相同。
 
         local_cond_encoder = None
         if local_cond_dim is not None:
@@ -156,7 +179,7 @@ class ConditionalUnet1D(nn.Module):
                     cond_predict_scale=cond_predict_scale)
             ])
 
-        mid_dim = all_dims[-1]
+        mid_dim = all_dims[-1]# 256
         self.mid_modules = nn.ModuleList([
             ConditionalResidualBlock1D(
                 mid_dim, mid_dim, cond_dim=cond_dim,
@@ -171,7 +194,7 @@ class ConditionalUnet1D(nn.Module):
         ])
 
         down_modules = nn.ModuleList([])
-        for ind, (dim_in, dim_out) in enumerate(in_out):
+        for ind, (dim_in, dim_out) in enumerate(in_out):# in_out=[(2, 128), (128, 256)]
             is_last = ind >= (len(in_out) - 1)
             down_modules.append(nn.ModuleList([
                 ConditionalResidualBlock1D(
@@ -212,34 +235,32 @@ class ConditionalUnet1D(nn.Module):
         self.final_conv = final_conv
 
     def forward(self, 
-            sample: torch.Tensor, 
+            sample: torch.Tensor, #[256, 32, 2]
             timestep: Union[torch.Tensor, float, int], 
             local_cond=None, global_cond=None, **kwargs):
         """
-        x: (B,T,input_dim)
-        timestep: (B,) or int, diffusion step
+        x: (B,T,input_dim)                     #[256, 32, 2]
+        timestep: (B,) or int, diffusion step  #[32]
         local_cond: (B,T,local_cond_dim)
-        global_cond: (B,global_cond_dim)
-        output: (B,T,input_dim)
+        global_cond: (B,global_cond_dim)       #ego信息[32, 128]
+        output: (B,T,input_dim)                #应该是[256, 32, 2]
         """
-        sample = einops.rearrange(sample, 'b h t -> b t h')
+        sample = einops.rearrange(sample, 'b h t -> b t h')#  [256, 2, 32]
 
         # 1. time
         timesteps = timestep
-        print("timesteps1:", type(timesteps),timesteps.shape)# torch.Size([32])
         if not torch.is_tensor(timesteps):
             # TODO: this requires sync between CPU and GPU. So try to pass timesteps as tensors if you can
             timesteps = torch.tensor([timesteps], dtype=torch.long, device=sample.device)
         elif torch.is_tensor(timesteps) and len(timesteps.shape) == 0:
             timesteps = timesteps[None].to(sample.device)
-        print("timesteps2:", type(timesteps),timesteps.shape)# torch.Size([32])
+ 
         # broadcast to batch dimension in a way that's compatible with ONNX/Core ML
-        #在 batch 维度上对 timesteps 做扩张，以便在同一个时间步下对每个 batch 样本都使用相同的 timesteps。
         timesteps = timesteps.expand(global_cond.shape[0]) 
-        print("timesteps3:", type(timesteps),timesteps.shape) # timesteps1: <class 'torch.Tensor'> torch.Size([200])
+        print("timesteps3:",timesteps.shape) # timesteps1: torch.Size([32])
 
         global_feature = self.diffusion_step_encoder(timesteps)
-        # 打印global_feature和global_cond形状
+
         print("global_feature shape:", global_feature.shape)# 由时间步解码得到 shape:[32, 256]
         print("global_cond shape:", global_cond.shape)      # 本质上是ego信息  shape: [32, 128]
 
@@ -247,12 +268,9 @@ class ConditionalUnet1D(nn.Module):
             global_feature = torch.cat([
                 global_feature, global_cond
             ], axis=-1)
-        """
-        File "/data/datasets/niukangjia/plantf/src/models/planTF/modules/conditional_unet1d.py", line 246, in forward
-        global_feature = torch.cat([
-        RuntimeError: Sizes of tensors must match except in dimension 1. Expected size 200 but got size 32 for tensor number 1 in the list.
-        """
-        # global_feature shape: torch.Size([32, 256+128=384])对应RuntimeError:cannot be multiplied (32x384 and 512x128)
+        # 此后global_feature 同时包含了时间步信息和ego信息[32, 384]
+        print("cat之后的global_feature:", global_feature.shape)# cat之后[32, 384]
+
         # encode local features
         h_local = list()
         if local_cond is not None:
@@ -264,15 +282,22 @@ class ConditionalUnet1D(nn.Module):
             h_local.append(x)
         
         x = sample
-        print("x.shape:", x.shape) #x.shape: torch.Size([200, 2, 32])
+        print("x.shape:", x.shape) #x.shape: torch.Size([256, 2, 32])
         h = []
         for idx, (resnet, resnet2, downsample) in enumerate(self.down_modules):
-            x = resnet(x, global_feature)
+            print(f"=====x即将通过第{idx+1}轮=====\n")
+            x = resnet(x, global_feature)  # [256, 2, 32]  [32, 384]
+            print(f"x已经通过第{idx}个resnet模块,shape:{x.shape}")
+            print(f"第 {idx} 个 resnet模块 的dim_in:{resnet.in_channels} , dim_out:{resnet.out_channels} , cond_dim: {resnet.cond_dim}\n====\n")
+
             if idx == 0 and len(h_local) > 0:
                 x = x + h_local[0]
             x = resnet2(x, global_feature)
+            print(f"x已经通过第{idx}个resnet2模块,shape:{x.shape}")
+            print(f"第{idx}个resnet2模块的dim_in:{resnet2.in_channels},dim_out:{resnet2.out_channels},cond_dim:{resnet2.cond_dim}")
             h.append(x)
             x = downsample(x)
+            print(f"x已经通过第{idx}个downsample模块,shape:{x.shape}\n=========\n")
 
         for mid_module in self.mid_modules:
             x = mid_module(x, global_feature)

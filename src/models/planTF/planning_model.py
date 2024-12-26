@@ -147,8 +147,8 @@ class PlanningModel(TorchModuleWrapper):
         map_instance_feature = x[:, A:]  # 地图特征,形状为 (batch_size, num_polygons, embed_dim)
         # x.shape: [32, 255, 128] ego_instance_feature:[32, 1, 128]map_instance_feature:[32, 222, 128]
 
-        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_200.npy'
-        traj_anchors = self.load_cluster_centers(npy_file_path)# shape (200, 32, 2)
+        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_256.npy'
+        traj_anchors = self.load_cluster_centers(npy_file_path)# shape (256, 32, 2)
         print(f"共加载到 {len(traj_anchors)} 个轨迹锚点。")
         # traj_anchors转换成tensor
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)

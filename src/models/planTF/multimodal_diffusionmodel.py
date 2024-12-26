@@ -51,19 +51,22 @@ class MultiModalDiffusionModel(nn.Module):
             # 截断去噪过程，从噪声轨迹开始，对其进行2步去噪
         for i in range(self.num_modes):
 
-            # 检查 trajs 的形状
-            # print("==multi==trajs shape:", traj_anchors.shape)# [200, 32, 2]
-            # if traj_anchors.shape[0] == 1:
-            #     trajs_temp = self.normalize_xy_rotation(traj_anchors.squeeze(0))
-            # else:
-            #     trajs_temp = self.normalize_xy_rotation(traj_anchors)
-            # print("==multi==trajs_temp shape:", trajs_temp.shape)# 原来：[32, 30, 20]，现在：[200, 30, 2]
-            print("multimodel接受的traj_anchors的形状:", traj_anchors.shape) #[200, 30, 2]
+            print("multimodel接受的traj_anchors的形状:", traj_anchors.shape) #[256, 32, 2]
             noise = self.pyramid_noise_like(traj_anchors) 
             
             diffusion_output = noise
-            print("multimodel的初始噪声(diffusion_output)形状:", diffusion_output.shape) #[200, 30, 2]
-            # sys.exit(1)
+            print("multimodel的初始噪声(diffusion_output)形状:", diffusion_output.shape) #[256, 32, 2]
+
+            # # 初始噪声维度扩充为[256, 32, 20]：
+            # #   首先，确保 diffusion_output 的形状为 [256, 2, 32]
+            # diffusion_output = diffusion_output.permute(0, 2, 1)  # [256, 2, 32]
+            # #   生成额外的18个通道的随机噪声
+            # additional_noise = torch.randn(diffusion_output.size(0), 18, diffusion_output.size(2)).to(diffusion_output.device)  # [256, 18, 32]
+            # #   拼接随机噪声到初始噪声，得到新的 diffusion_output
+            # diffusion_output = torch.cat((diffusion_output, additional_noise), dim=1)  # [256, 20, 32]
+            # diffusion_output = diffusion_output.permute(0, 2, 1)  # [256, 32, 20]
+            # print("扩展后的diffusion_output形状:", diffusion_output.shape)  # 应输出 [256, 32, 20]
+
 
             for k in self.scheduler.timesteps[:2]:
                 print("multi中k.shape:", k.shape)
@@ -74,6 +77,21 @@ class MultiModalDiffusionModel(nn.Module):
                     timestep=k,
                     sample=diffusion_output
                 ).prev_sample
+                """step解释
+                假设你正在执行逆扩散过程中的一个步骤：
+                输入:
+                sample: 当前时间步 $t$ 的样本 $x_t$，形状 [batch_size, channels, height]，例如 [256, 20, 32]。
+                model_output: 模型对 $x_t$ 的预测输出，通常是噪声 $\epsilon_\theta(x_t, t)$，形状与 sample 相同。
+                timestep: 当前时间步 $t$ 的索引，例如 10。
+                过程:
+                计算相关的扩散系数 $\alpha_t$ 和 $\beta_t$。
+                根据 prediction_type,从 model_output 预测出原始样本 $x_0$ 或调整后的样本。
+                使用公式计算预测的前一个时间步的样本 $x_{t-1}$。
+                添加噪声（如果 $t > 0$）。
+                输出:
+                prev_sample: 预测的前一个时间步的样本 $x_{t-1}$，用于下一个步骤的输入。
+                pred_original_sample: 预测的原始样本 $x_0$（根据 prediction_type)。
+                """
 
             trajectory = self.denormalize_xy_rotation(diffusion_output, N=self.future_steps, times=10)
             trajectories.append(trajectory)
