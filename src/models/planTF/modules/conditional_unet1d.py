@@ -257,7 +257,7 @@ class ConditionalUnet1D(nn.Module):
  
         # broadcast to batch dimension in a way that's compatible with ONNX/Core ML
         timesteps = timesteps.expand(global_cond.shape[0]) 
-        print("timesteps3:",timesteps.shape) # timesteps1: torch.Size([32])
+        print("============unet1d开始===========\ntimesteps3:",timesteps.shape) # timesteps1: torch.Size([32])
 
         global_feature = self.diffusion_step_encoder(timesteps)
 
@@ -287,17 +287,17 @@ class ConditionalUnet1D(nn.Module):
         for idx, (resnet, resnet2, downsample) in enumerate(self.down_modules):
             print(f"=====x即将通过第{idx+1}轮=====\n")
             x = resnet(x, global_feature)  # [256, 2, 32]  [32, 384]
-            print(f"x已经通过第{idx}个resnet模块,shape:{x.shape}")
-            print(f"第 {idx} 个 resnet模块 的dim_in:{resnet.in_channels} , dim_out:{resnet.out_channels} , cond_dim: {resnet.cond_dim}\n====\n")
+            print(f"x已经通过第{idx+1}个resnet模块,shape:{x.shape}")
+            print(f"第 {idx+1} 个 resnet模块 的dim_in:{resnet.in_channels} , dim_out:{resnet.out_channels} , cond_dim: {resnet.cond_dim}")
 
             if idx == 0 and len(h_local) > 0:
                 x = x + h_local[0]
             x = resnet2(x, global_feature)
-            print(f"x已经通过第{idx}个resnet2模块,shape:{x.shape}")
-            print(f"第{idx}个resnet2模块的dim_in:{resnet2.in_channels},dim_out:{resnet2.out_channels},cond_dim:{resnet2.cond_dim}")
+            print(f"x已经通过第{idx+1}个resnet2模块,shape:{x.shape}")
+            print(f"第{idx+1}个resnet2模块的dim_in:{resnet2.in_channels},dim_out:{resnet2.out_channels},cond_dim:{resnet2.cond_dim}")
             h.append(x)
             x = downsample(x)
-            print(f"x已经通过第{idx}个downsample模块,shape:{x.shape}\n=========\n")
+            print(f"x已经通过第{idx+1}个downsample模块,shape:{x.shape}")
 
         for mid_module in self.mid_modules:
             x = mid_module(x, global_feature)
@@ -317,6 +317,7 @@ class ConditionalUnet1D(nn.Module):
         x = self.final_conv(x)
 
         x = einops.rearrange(x, 'b t h -> b h t')
+        print("x.shape:", x.shape,"\n===========unet1d结尾==========\n")
         return x
 
 

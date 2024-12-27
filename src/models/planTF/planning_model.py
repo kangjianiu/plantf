@@ -15,7 +15,7 @@ from .layers.transformer_encoder_layer import TransformerEncoderLayer
 from .modules.agent_encoder import AgentEncoder
 from .modules.map_encoder import MapEncoder
 from .modules.trajectory_decoder import TrajectoryDecoder
-from .multimodal_diffusionmodel import MultiModalDiffusionModel
+from .diffusion_model import DiffusionModel
 # no meaning, required by nuplan
 trajectory_sampling = TrajectorySampling(num_poses=8, time_horizon=8, interval_length=1)
 
@@ -72,7 +72,7 @@ class PlanningModel(TorchModuleWrapper):
             for dp in [x.item() for x in torch.linspace(0, drop_path, encoder_depth)]
         )
         self.norm = nn.LayerNorm(dim)
-        self.trajectory_decoder_diffu = MultiModalDiffusionModel(feature_dim=dim, num_modes=num_modes, future_steps=future_steps)
+        self.trajectory_decoder_diffu = DiffusionModel(feature_dim=dim, num_modes=num_modes, future_steps=future_steps)
 
         # self.trajectory_decoder = TrajectoryDecoder(
         #     embed_dim=dim,
@@ -136,35 +136,21 @@ class PlanningModel(TorchModuleWrapper):
 
         for blk in self.encoder_blocks:
             x = blk(x, key_padding_mask=key_padding_mask)
-        x = self.norm(x) # (batch_size, num_agents + num_polygons, embed_dim)
+        x = self.norm(x)                             # x: [32, 255, 128]  (batch_size, num_agents + num_polygons, embed_dim)
+        ego_instance_feature = x[:, 0].unsqueeze(1)  # [32, 1, 128]   主代理的嵌入表示,形状为 (batch_size, 1, embed_dim)
+        map_instance_feature = x[:, A:]              # [32, 222, 128] 地图特征,形状为 (batch_size, num_polygons, embed_dim)
 
         # trajectory, probability = self.trajectory_decoder(x[:, 0]) # 主代理的嵌入表示,形状为 (batch_size, embed_dim)
         prediction = self.agent_predictor(x[:, 1:A]).view(bs, -1, self.future_steps, 2)
-        # probability (batch_size, num_modes)表示模型预测的轨迹模式的概率，
-        # prediction  (batch_size, num_agents, future_steps, 2) 表示模型对其他代理未来状态的预测。
-
-        ego_instance_feature = x[:, 0].unsqueeze(1)  # 主代理的嵌入表示,形状为 (batch_size, 1, embed_dim)
-        map_instance_feature = x[:, A:]  # 地图特征,形状为 (batch_size, num_polygons, embed_dim)
-        # x.shape: [32, 255, 128] ego_instance_feature:[32, 1, 128]map_instance_feature:[32, 222, 128]
+        # prediction  [32, 32, 80, 2] (batch_size, num_agents, future_steps, 2) 表示模型对其他代理未来状态的预测。
 
         npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_256.npy'
         traj_anchors = self.load_cluster_centers(npy_file_path)# shape (256, 32, 2)
         print(f"共加载到 {len(traj_anchors)} 个轨迹锚点。")
-        # traj_anchors转换成tensor
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)
-        """
-        32 最终决定了ConditionalUnet1D中global_feature的维度
-        ==multi==diffusion_output shape: torch.Size([32, 30, 20])
-        ==multi==diffusion_output shape: torch.Size([32, 30, 20])
-        ==diffu==global_feature.shape : torch.Size([32, 128])
-        ==diffu==noisy_traj_points shape: torch.Size([32, 30, 20])
-        timesteps1: <class 'torch.Tensor'> torch.Size([32])
-        timesteps2: <class 'torch.Tensor'> torch.Size([32])
-        timesteps3: <class 'torch.Tensor'> torch.Size([32])
-        global_feature shape: torch.Size([32, 256])
-        """
-        trajectory, probability = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
 
+        trajectory, probability = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
+        # probability (batch_size, num_modes)表示模型预测的轨迹模式的概率，
         out = {
             "trajectory": trajectory,
             "probability": probability,

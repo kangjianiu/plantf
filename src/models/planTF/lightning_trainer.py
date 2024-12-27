@@ -81,27 +81,7 @@ class LightningTrainer(pl.LightningModule):
         self, batch: Tuple[FeaturesType, TargetsType, ScenarioListType], prefix: str
     ) -> torch.Tensor:
         features, _, ScenarioList = batch
-        # batch数据里面没有历史轨迹数据
-
-        # print("ScenarioList[0]:",ScenarioList[0])
-        # ScenarioList[0]: <nuplan.planning.scenario_builder.cache.cached_scenario.CachedScenario object at 0x7fad24760520>
-        # print("dir ScenarioList[0]:",dir(ScenarioList[0]))
-        # ego_past_trajectory = ScenarioList[0].get_ego_past_trajectory(1,2)
-        # NotImplementedError: CachedScenario does not implement get_ego_past_trajectory.
-        # print("ego_past_trajectory:",ego_past_trajectory)
-        """
-        ScenarioList[0]: ['__abstractmethods__', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', 
-        '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', 
-        '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__slots__', '__str__', '__subclasshook__', '__weakref__', 
-        '_abc_impl', '_log_name', '_scenario_type', '_token', 'database_interval', 'duration_s', 'ego_vehicle_parameters', 'end_time', 
-        'get_ego_future_trajectory', 'get_ego_past_trajectory', 'get_ego_state_at_iteration', 'get_ego_trajectory_slice', 
-        'get_expert_ego_trajectory', 'get_expert_goal_state', 'get_future_timestamps', 'get_future_tracked_objects', 
-        'get_future_traffic_light_status_history', 'get_lidar_to_ego_transform', 'get_mission_goal', 'get_number_of_iterations', 
-        'get_past_sensors', 'get_past_timestamps', 'get_past_tracked_objects', 'get_past_traffic_light_status_history', 'get_route_roadblock_ids', 
-        'get_sensors_at_iteration', 'get_time_point', 'get_tracked_objects_at_iteration', 'get_tracked_objects_within_time_window_at_iteration', 
-        'get_traffic_light_status_at_iteration', 'initial_ego_state', 'initial_sensors', 'initial_tracked_objects', 'log_name', 'map_api', 
-        'scenario_name', 'scenario_type', 'start_time', 'token']
-        """
+        
         # Features[feature] __dict__['data'].keys(): ['agent', 'map', 'current_state', 'origin', 'angle']
         # Features[feature] __dict__['data']['agent']: ['position', 'heading', 'velocity', 'shape', 'category', 'valid_mask', 'target']
 
