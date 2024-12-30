@@ -95,7 +95,9 @@ class ConditionalResidualBlock1D(nn.Module):
         self.residual_conv = nn.Conv1d(in_channels, out_channels, 1) \
             if in_channels != out_channels else nn.Identity()
 
-    def forward(self, x, cond):# x:[256, 2, 32]  cond:[32, 384]   第二轮：x:[256, 128, 16]  cond:[32, 384]
+    def forward(self, x, cond):
+        # 第一轮：x:[256, 4, 80] -> [batch_size,4,future_steps] , cond:[32, 384]  
+        # 第二轮：x:[256, 128, 16]                                cond:[32, 384]
         '''
             x : [ batch_size x in_channels x horizon ]
             cond : [ batch_size x cond_dim]
@@ -104,13 +106,13 @@ class ConditionalResidualBlock1D(nn.Module):
             out : [ batch_size x out_channels x horizon ]
             
         '''
-        out = self.blocks[0](x)          #  [256, 128, 32]     第二轮：[256, 256, 16]
+        out = self.blocks[0](x)          #  [32, 128, 80]     
 
-        embed = self.cond_encoder(cond)  # [32, 128, 1]       第二轮： [32, 256, 1]
+        embed = self.cond_encoder(cond)  # [32, 128, 1]       
         # 计算out和embed的最后一个维度的除法
-        time = out.shape[-1]//embed.shape[-1] # 32//1=32
-        embed = embed.repeat(8, 1, time)   # [256, 128, 32]     第二轮：[256, 256, 16]
-        # print( "out shape:", out.shape,"embed shape:", embed.shape)           #第二轮：[256, 256, 16]，[256, 256, 16]
+        # time = out.shape[-1]//embed.shape[-1] # 32//1=32
+        # embed = embed.repeat(8, 1, time)   # [256, 128, 32]     
+        # print( "out shape:", out.shape,"embed shape:", embed.shape)          
 
         if self.cond_predict_scale:
             embed = embed.reshape(
@@ -120,15 +122,15 @@ class ConditionalResidualBlock1D(nn.Module):
             out = scale * out + bias
         else:
             out = out + embed #
-        out = self.blocks[1](out)#  [256, 128, 32]
+        out = self.blocks[1](out)#  [32, 128, 32]
         out = out + self.residual_conv(x)# [256, 128, 32]
-        # print("out shape:", out.shape)
+        # # print("out shape:", out.shape)
         return out
 
 
 class ConditionalUnet1D(nn.Module):
     def __init__(self, 
-        input_dim,# 2
+        input_dim,# 4
         local_cond_dim=None,
         global_cond_dim=None,
         diffusion_step_embed_dim=256,
@@ -138,7 +140,7 @@ class ConditionalUnet1D(nn.Module):
         cond_predict_scale=False
         ):
         super().__init__()
-        all_dims = [input_dim] + list(down_dims)# input_dim=2, down_dims=[128,256],所以all_dims=[2,128,256]
+        all_dims = [input_dim] + list(down_dims)# input_dim=4, down_dims=[128,256],所以all_dims=[4,128,256]
         start_dim = down_dims[0]
 
         dsed = diffusion_step_embed_dim
@@ -152,10 +154,9 @@ class ConditionalUnet1D(nn.Module):
         if global_cond_dim is not None:
             cond_dim += global_cond_dim
 
-        in_out = list(zip(all_dims[:-1], all_dims[1:]))# in_out=[(2, 128), (128, 256)]
-        # 一行打印 dsed, cond_dim, global_cond_dim
-        print(f"in_out:{in_out}")
-        print(f"dsed:{dsed}\ncond_dim:{cond_dim}\nglobal_cond_dim:{global_cond_dim}\nstart_dim:{start_dim}\nlocal_cond_dim:{local_cond_dim}")
+        in_out = list(zip(all_dims[:-1], all_dims[1:]))# in_out=[(4, 128), (128, 256)]
+        # print(f"in_out:{in_out}")
+        # print(f"dsed:{dsed}\ncond_dim:{cond_dim}\nglobal_cond_dim:{global_cond_dim}\nstart_dim:{start_dim}\nlocal_cond_dim:{local_cond_dim}")
         #  dsed:256     cond_dim:384     global_cond_dim:128    start_dim:128
 
         # global_feature = global_feature + global_cond     = 256 + 128 = 384 (在后面)
@@ -194,7 +195,7 @@ class ConditionalUnet1D(nn.Module):
         ])
 
         down_modules = nn.ModuleList([])
-        for ind, (dim_in, dim_out) in enumerate(in_out):# in_out=[(2, 128), (128, 256)]
+        for ind, (dim_in, dim_out) in enumerate(in_out):# in_out=[(4, 128), (128, 256)]
             is_last = ind >= (len(in_out) - 1)
             down_modules.append(nn.ModuleList([
                 ConditionalResidualBlock1D(
@@ -235,9 +236,9 @@ class ConditionalUnet1D(nn.Module):
         self.final_conv = final_conv
 
     def forward(self, 
-            sample: torch.Tensor, #[256, 32, 2]
+            sample: torch.Tensor, #[batch_size, future_steps, 4][32,80,4]
             timestep: Union[torch.Tensor, float, int], 
-            local_cond=None, global_cond=None, **kwargs):
+            local_cond=None, global_cond=None, **kwargs):#global_cond :[batch_size, embed_dim]
         """
         x: (B,T,input_dim)                     #[256, 32, 2]
         timestep: (B,) or int, diffusion step  #[32]
@@ -245,7 +246,7 @@ class ConditionalUnet1D(nn.Module):
         global_cond: (B,global_cond_dim)       #ego信息[32, 128]
         output: (B,T,input_dim)                #应该是[256, 32, 2]
         """
-        sample = einops.rearrange(sample, 'b h t -> b t h')#  [256, 2, 32]
+        sample = einops.rearrange(sample, 'b h t -> b t h')#[batch_size,4,future_steps] 
 
         # 1. time
         timesteps = timestep
@@ -257,19 +258,19 @@ class ConditionalUnet1D(nn.Module):
  
         # broadcast to batch dimension in a way that's compatible with ONNX/Core ML
         timesteps = timesteps.expand(global_cond.shape[0]) 
-        print("============unet1d开始===========\ntimesteps3:",timesteps.shape) # timesteps1: torch.Size([32])
+        # print("============unet1d开始===========\ntimesteps3:",timesteps.shape) # timesteps1: torch.Size([32])
 
         global_feature = self.diffusion_step_encoder(timesteps)
 
-        print("global_feature shape:", global_feature.shape)# 由时间步解码得到 shape:[32, 256]
-        print("global_cond shape:", global_cond.shape)      # 本质上是ego信息  shape: [32, 128]
+        # print("global_feature shape:", global_feature.shape)# 由时间步解码得到 shape:[32, 256]
+        # print("global_cond shape:", global_cond.shape)      # 本质上是ego信息  shape: [32, 128]
 
         if global_cond is not None:
             global_feature = torch.cat([
                 global_feature, global_cond
             ], axis=-1)
         # 此后global_feature 同时包含了时间步信息和ego信息[32, 384]
-        print("cat之后的global_feature:", global_feature.shape)# cat之后[32, 384]
+        # print("cat之后的global_feature:", global_feature.shape)# cat之后[32, 384]
 
         # encode local features
         h_local = list()
@@ -282,22 +283,22 @@ class ConditionalUnet1D(nn.Module):
             h_local.append(x)
         
         x = sample
-        print("x.shape:", x.shape) #x.shape: torch.Size([256, 2, 32])
+        # print("x.shape:", x.shape) #[batch_size,4,future_steps] 
         h = []
         for idx, (resnet, resnet2, downsample) in enumerate(self.down_modules):
-            print(f"=====x即将通过第{idx+1}轮=====\n")
-            x = resnet(x, global_feature)  # [256, 2, 32]  [32, 384]
-            print(f"x已经通过第{idx+1}个resnet模块,shape:{x.shape}")
-            print(f"第 {idx+1} 个 resnet模块 的dim_in:{resnet.in_channels} , dim_out:{resnet.out_channels} , cond_dim: {resnet.cond_dim}")
+            # print(f"=====x即将通过第{idx+1}轮=====")
+            x = resnet(x, global_feature)  #[batch_size,4,future_steps] ,  [32, 384]
+            # print(f"x已经通过第{idx+1}个resnet模块,shape:{x.shape}")# [32, 128, 80]
+            # print(f"第 {idx+1} 个 resnet模块 的dim_in:{resnet.in_channels} , dim_out:{resnet.out_channels} , cond_dim: {resnet.cond_dim}")
 
             if idx == 0 and len(h_local) > 0:
                 x = x + h_local[0]
             x = resnet2(x, global_feature)
-            print(f"x已经通过第{idx+1}个resnet2模块,shape:{x.shape}")
-            print(f"第{idx+1}个resnet2模块的dim_in:{resnet2.in_channels},dim_out:{resnet2.out_channels},cond_dim:{resnet2.cond_dim}")
+            # print(f"x已经通过第{idx+1}个resnet2模块,shape:{x.shape}")
+            # print(f"第{idx+1}个resnet2模块的dim_in:{resnet2.in_channels},dim_out:{resnet2.out_channels},cond_dim:{resnet2.cond_dim}")
             h.append(x)
             x = downsample(x)
-            print(f"x已经通过第{idx+1}个downsample模块,shape:{x.shape}")
+            # print(f"x已经通过第{idx+1}个downsample模块,shape:{x.shape}")
 
         for mid_module in self.mid_modules:
             x = mid_module(x, global_feature)
@@ -317,7 +318,7 @@ class ConditionalUnet1D(nn.Module):
         x = self.final_conv(x)
 
         x = einops.rearrange(x, 'b t h -> b h t')
-        print("x.shape:", x.shape,"\n===========unet1d结尾==========\n")
+        # print("x.shape:", x.shape,"\n=============unet1d结尾============\n")
         return x
 
 
@@ -332,5 +333,5 @@ if __name__ == "__main__":
                 cond_predict_scale=False,
     )
     noise_pred = noise_pred_net(noise, timestep=timestep, global_cond=global_feature)
-    #print(noise_pred.shape)
+    ## print(noise_pred.shape)
 

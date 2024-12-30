@@ -183,10 +183,6 @@ class LightningTrainer(pl.LightningModule):
         """
         # 我加的
         features, _, _ = batch
-        print("Features keys:", features.keys())
-        for key, value in features.items():
-            print(f"Key: {key}, Value type: {type(value)}, Value shape: {value.shape if isinstance(value, torch.Tensor) else 'N/A'}")    
-        sys.exit(0)
         return self._step(batch, "train")
 
     def validation_step(
@@ -251,8 +247,7 @@ class LightningTrainer(pl.LightningModule):
         )
 
         for module_name, module in self.named_modules():
-            #打印module_name和module
-            #print(f"=========module_name: {module_name}\n")
+
             for param_name, param in module.named_parameters():
                 full_param_name = (
                     "%s.%s" % (module_name, param_name) if module_name else param_name

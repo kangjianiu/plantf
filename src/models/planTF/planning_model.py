@@ -144,13 +144,15 @@ class PlanningModel(TorchModuleWrapper):
         prediction = self.agent_predictor(x[:, 1:A]).view(bs, -1, self.future_steps, 2)
         # prediction  [32, 32, 80, 2] (batch_size, num_agents, future_steps, 2) 表示模型对其他代理未来状态的预测。
 
-        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_256.npy'
-        traj_anchors = self.load_cluster_centers(npy_file_path)# shape (256, 32, 2)
-        print(f"共加载到 {len(traj_anchors)} 个轨迹锚点。")
+        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_256_80_vxy.npy'
+        traj_anchors = self.load_cluster_centers(npy_file_path)# shape (256, 80, 2)
+        # print(f"共加载到 {len(traj_anchors)} 个轨迹锚点。")
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)
 
         trajectory, probability = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
         # probability (batch_size, num_modes)表示模型预测的轨迹模式的概率，
+        # 轨迹形状: torch.Size([32, 6, 80, 2])
+        # 概率形状: torch.Size([32, 6])
         out = {
             "trajectory": trajectory,
             "probability": probability,
@@ -164,6 +166,7 @@ class PlanningModel(TorchModuleWrapper):
             out["output_trajectory"] = torch.cat(
                 [output_trajectory[..., :2], angle.unsqueeze(-1)], dim=-1
             )
+            # print("最终输出的轨迹形状:", out["output_trajectory"].shape)
         return out
 
     def load_cluster_centers(self,npy_file_path: str):
@@ -172,7 +175,7 @@ class PlanningModel(TorchModuleWrapper):
         假设文件格式与 kmeans_plan.py 输出的类似，形状可能是 ( K, 6, 2)。
         """
         cluster_centers = np.load(npy_file_path)
-        print("聚类中心的形状:", cluster_centers.shape)
+        # print("聚类中心的形状:", cluster_centers.shape)
         # sys.exit(1)
         # 例如，形状是  (200, 32, 2)，表示 200个聚类中心、每个轨迹 32 个点、每个点 2 坐标
         anchor_points = []

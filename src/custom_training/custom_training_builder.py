@@ -34,6 +34,7 @@ from pytorch_lightning.callbacks import (
 )
 from pytorch_lightning.loggers.tensorboard import TensorBoardLogger
 from pytorch_lightning.loggers.wandb import WandbLogger
+from pytorch_lightning.strategies import DDPStrategy
 
 from .custom_datamodule import CustomDataModule
 
