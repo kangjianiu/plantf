@@ -247,7 +247,7 @@ class ConditionalUnet1D(nn.Module):
         output: (B,T,input_dim)                #应该是[256, 32, 2]
         """
         sample = einops.rearrange(sample, 'b h t -> b t h')#[batch_size,4,future_steps] 
-
+        #print(f"============unet1d开始===========\ntimesteps1:{timestep.shape}") # timesteps1: torch.Size([32])
         # 1. time
         timesteps = timestep
         if not torch.is_tensor(timesteps):

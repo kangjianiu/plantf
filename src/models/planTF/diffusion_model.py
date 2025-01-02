@@ -43,7 +43,7 @@ class DiffusionModel(nn.Module):
     def forward(self, ego_instance_feature, map_instance_feature, traj_anchors):
         # ego [32, 1, 128]         含义：(batch_size, 1, embed_dim)
         # map [32, 222, 128] 
-        # traj_anchors [256, 80, 4]
+        # traj_anchors [32,6,80,4]
 
         #TODO :在之前没有考虑bathsize的问题,现在需要重新考虑一下轨迹锚点和batchsize的关系（2024.12.27）
 
@@ -56,20 +56,32 @@ class DiffusionModel(nn.Module):
         for mode in range(self.num_modes):
             # 取出traj_anchors里面第 mode 组轨迹锚点
             # print(f"\n========================第{mode+1}次========================")
-
-            noise = self.pyramid_noise_like(traj_anchors[mode]) #[batch_size, future_steps, 4]
-            diffusion_output = noise #[batch_size, future_steps, 4]
+            trajs = self.normalize_xy_rotation(traj_anchors[mode], N=self.future_steps, times=1) 
+            # print(f"normalize_xy_rotation后的trajs形状:{trajs.shape},trajs值[0]:{trajs[0][0]}") # [batch_size, future_steps, 4]
+            noise = self.pyramid_noise_like(trajs)                     # [batch_size, future_steps, 4]
+            # print(f"noise形状:{noise.shape},noise值[0]:{noise[0][0]}") # [batch_size, future_steps, 4]
+            # 在self.scheduler.timesteps里随机取ego_instance_feature.shape[0]个时间步
+            t = torch.randint(0, self.scheduler.config.num_train_timesteps, (ego_instance_feature.shape[0],), device=traj_anchors.device)
+            noisy_traj_points = self.scheduler.add_noise(
+                    original_samples=traj_anchors[mode],
+                    noise=noise,
+                    timesteps=t,
+            ).float()
+            # print(f"noisy_traj_points形状:{noisy_traj_points.shape},[0]:{noisy_traj_points[0][0]}") # [batch_size, future_steps, 4]
+            traj_sample = noisy_traj_points            
+            diffusion_output = traj_sample #[batch_size, future_steps, 4]
 
             for k in self.scheduler.timesteps[:2]:
 
                 diffusion_output = self.scheduler.scale_model_input(diffusion_output)
                 noise_pred = self.trajectory_decoder(ego_instance_feature, map_instance_feature, k.unsqueeze(-1).repeat(ego_instance_feature.shape[0]).to(ego_instance_feature.device), diffusion_output)
                 # print(f"diffusion_model中第{mode+1}次,第  {k}  步的 预测噪声 形状:{noise_pred.shape}",)# [32，80, 4](batch_size, future_steps, 4)
-                diffusion_output = self.scheduler.step(
+                traj_sample = self.scheduler.step(
                     model_output=noise_pred,
                     timestep=k,
-                    sample=diffusion_output
+                    sample=traj_sample
                 ).prev_sample
+                diffusion_output = traj_sample
                 # print(f"diffusion_model中第 {mode+1}次,第 {k}  步的 推理轨迹 形状:{diffusion_output.shape}\n",)# [32，80, 4](batch_size, future_steps, 4)
                 """step解释
                 假设你正在执行逆扩散过程中的一个步骤：
@@ -102,12 +114,13 @@ class DiffusionModel(nn.Module):
 
     def normalize_xy_rotation(self, trajectory, N=30, times=10):
         batch, num_pts, dim = trajectory.shape
+        vx_vy = trajectory[..., 2:]
+        trajectory = trajectory[..., :2]
         downsample_trajectory = trajectory[:, :N, :]
         x_scale = 10
         y_scale = 75
         downsample_trajectory[:, :, 0] /= x_scale
         downsample_trajectory[:, :, 1] /= y_scale
-
         rotated_trajectories = []
         for i in range(times):
             theta = 2 * torch.pi * i / 10
@@ -118,7 +131,11 @@ class DiffusionModel(nn.Module):
             rotated_trajectories.append(rotated_trajectory)
         resulting_trajectory = torch.cat(rotated_trajectories, 1)
         trajectory = resulting_trajectory.permute(0, 2, 1)
+        # cat trajectory 和 vx_vy
+        trajectory = torch.cat([trajectory, vx_vy], dim=-1)
+
         return trajectory
+    
 
     def denormalize_xy_rotation(self, trajectory, N=30, times=10):
         batch, num_pts, dim = trajectory.shape# [32, 80, 4]
