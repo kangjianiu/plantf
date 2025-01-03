@@ -53,6 +53,7 @@ class DiffusionModel(nn.Module):
         traj_anchors = traj_anchors[torch.randint(traj_anchors.shape[0], (self.num_modes * ego_instance_feature.shape[0],))]# [num_modes * batch_size, future_steps, 4]
         traj_anchors = traj_anchors.view(self.num_modes, ego_instance_feature.shape[0], self.future_steps, 4)# [num_modes, batch_size, future_steps, 4]
         trajectories = []
+        diffusion_losses = []
         for mode in range(self.num_modes):
             # 取出traj_anchors里面第 mode 组轨迹锚点
             # print(f"\n========================第{mode+1}次========================")
@@ -68,20 +69,21 @@ class DiffusionModel(nn.Module):
                     timesteps=t,
             ).float()
             # print(f"noisy_traj_points形状:{noisy_traj_points.shape},[0]:{noisy_traj_points[0][0]}") # [batch_size, future_steps, 4]
-            traj_sample = noisy_traj_points            
-            diffusion_output = traj_sample #[batch_size, future_steps, 4]
+            traj_pred = noisy_traj_points            
+            diffusion_output = traj_pred #[batch_size, future_steps, 4]
 
             for k in self.scheduler.timesteps[:2]:
 
                 diffusion_output = self.scheduler.scale_model_input(diffusion_output)
-                noise_pred = self.trajectory_decoder(ego_instance_feature, map_instance_feature, k.unsqueeze(-1).repeat(ego_instance_feature.shape[0]).to(ego_instance_feature.device), diffusion_output)
+                noise_pred = self.trajectory_decoder(ego_instance_feature, map_instance_feature, 
+                            k.unsqueeze(-1).repeat(ego_instance_feature.shape[0]).to(ego_instance_feature.device), diffusion_output)
                 # print(f"diffusion_model中第{mode+1}次,第  {k}  步的 预测噪声 形状:{noise_pred.shape}",)# [32，80, 4](batch_size, future_steps, 4)
-                traj_sample = self.scheduler.step(
+                traj_pred = self.scheduler.step(
                     model_output=noise_pred,
                     timestep=k,
-                    sample=traj_sample
+                    sample=traj_pred
                 ).prev_sample
-                diffusion_output = traj_sample
+                diffusion_output = traj_pred
                 # print(f"diffusion_model中第 {mode+1}次,第 {k}  步的 推理轨迹 形状:{diffusion_output.shape}\n",)# [32，80, 4](batch_size, future_steps, 4)
                 """step解释
                 假设你正在执行逆扩散过程中的一个步骤：
@@ -99,10 +101,15 @@ class DiffusionModel(nn.Module):
                 pred_original_sample: 预测的原始样本 $x_0$（根据 prediction_type)。
                 """
 
+            # 用 traj_pred与noisy_traj_points计算扩散模型的损失
+            loss_fn = nn.MSELoss()
+            diffusion_loss = loss_fn(traj_pred, noisy_traj_points)
+
             # print(f"diffusion_model最终输出的轨迹形状:{diffusion_output.shape},轨迹值[0]:{diffusion_output[0][0]}")#[32，80, 4](batch_size, future_steps, 4)
             trajectory = self.denormalize_xy_rotation(diffusion_output, N=self.future_steps, times=1)#[32，80, 4][batch_size, future_steps, 4]
             # print(f"denormalize_xy转换后的轨迹形状:{trajectory.shape}，轨迹值[0]:{trajectory[0][0]}")#[batch_size, future_steps, 4]
             trajectories.append(trajectory)# [num_modes, batch_size, future_steps, 4]
+            diffusion_losses.append(diffusion_loss)
 
         trajectories = torch.stack(trajectories, dim=1)  # 形状为 (batch_size, num_modes, future_steps, 4)
         # 计算概率
@@ -110,7 +117,7 @@ class DiffusionModel(nn.Module):
         # print(f"概率形状:{probability.shape}，概率值:{probability[0]}")#[batch_size, num_modes]
         
 
-        return trajectories, probability
+        return trajectories, probability, diffusion_losses
 
     def normalize_xy_rotation(self, trajectory, N=30, times=10):
         batch, num_pts, dim = trajectory.shape

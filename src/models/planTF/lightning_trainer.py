@@ -93,10 +93,11 @@ class LightningTrainer(pl.LightningModule):
         return losses["loss"]
 
     def _compute_objectives(self, res, data) -> Dict[str, torch.Tensor]:
-        trajectory, probability, prediction = (
+        trajectory, probability, prediction, diffusion_losses = (
             res["trajectory"],
             res["probability"],
             res["prediction"],
+            res["diffusion_losses"],
         )
         targets = data["agent"]["target"]
         valid_mask = data["agent"]["valid_mask"][:, :, -trajectory.shape[-2] :]
@@ -122,14 +123,21 @@ class LightningTrainer(pl.LightningModule):
         agent_reg_loss = F.smooth_l1_loss(
             prediction[agent_mask], agent_target[agent_mask][:, :2]
         )
+        if isinstance(diffusion_losses, list):
+            diffusion_loss = torch.stack(diffusion_losses).mean()/1000
+        else:
+            diffusion_loss = diffusion_losses.mean()/1000
+        # print(f"ego_reg_loss: {ego_reg_loss}, ego_cls_loss: {ego_cls_loss}, agent_reg_loss: {agent_reg_loss}, diffusion_losses: {diffusion_loss}")
+        # ego_reg_loss: 14.728102684020996, ego_cls_loss: 1.7920138835906982, agent_reg_loss: 4.655642986297607, diffusion_losses: 14.878222465515137
 
-        loss = ego_reg_loss + ego_cls_loss + agent_reg_loss#加loss
+        loss = ego_reg_loss + ego_cls_loss + agent_reg_loss + diffusion_loss#加loss
 
         return {
             "loss": loss,
             "reg_loss": ego_reg_loss,
             "cls_loss": ego_cls_loss,
             "prediction_loss": agent_reg_loss,
+            "diffusion_loss": diffusion_loss,
         }
 
     def _compute_metrics(self, output, data, prefix) -> Dict[str, torch.Tensor]:

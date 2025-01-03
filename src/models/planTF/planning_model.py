@@ -149,7 +149,7 @@ class PlanningModel(TorchModuleWrapper):
         # print(f"共加载到 {len(traj_anchors)} 个轨迹锚点。")
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)
 
-        trajectory, probability = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
+        trajectory, probability, diffusion_losses = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
         # probability (batch_size, num_modes)表示模型预测的轨迹模式的概率，
         # 轨迹形状: torch.Size([32, 6, 80, 2])
         # 概率形状: torch.Size([32, 6])
@@ -157,6 +157,7 @@ class PlanningModel(TorchModuleWrapper):
             "trajectory": trajectory,
             "probability": probability,
             "prediction": prediction,
+            "diffusion_losses": diffusion_losses,
         }
 
         if not self.training:

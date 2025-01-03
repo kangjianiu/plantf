@@ -43,6 +43,10 @@ def main(cfg: DictConfig) -> Optional[TrainingEngine]:
 
     # Configure logger
     build_logger(cfg)
+    
+    # 测试日志设置
+    logger = logging.getLogger(__name__)
+    logger.info("Logger is configured correctly.")
 
     # Override configs based on setup, and print config
     update_config_for_training(cfg)
