@@ -2,6 +2,7 @@ import sys
 import torch
 import torch.nn as nn
 import numpy as np
+import logging
 from nuplan.planning.simulation.trajectory.trajectory_sampling import TrajectorySampling
 from nuplan.planning.training.modeling.torch_module_wrapper import TorchModuleWrapper
 from nuplan.planning.training.preprocessing.target_builders.ego_trajectory_target_builder import (
@@ -83,6 +84,8 @@ class PlanningModel(TorchModuleWrapper):
         self.agent_predictor = build_mlp(dim, [dim * 2, future_steps * 2], norm="ln")
 
         self.apply(self._init_weights)
+        # self.print_model_info()
+        # sys.exit(1)
 
     def _init_weights(self, m):
         if isinstance(m, nn.Linear):
@@ -97,7 +100,17 @@ class PlanningModel(TorchModuleWrapper):
             nn.init.zeros_(m.bias)
         elif isinstance(m, nn.Embedding):
             nn.init.normal_(m.weight, mean=0.0, std=0.02)
-
+    
+    def print_model_info(self):
+        logger = logging.getLogger(__name__)
+        logger.info("===== 模型层信息 =====")
+        # print("===== 模型层信息 =====")
+        for name, module in self.named_modules():
+            if len(list(module.children())) == 0:  # 仅打印叶子节点
+                num_params = sum(p.numel() for p in module.parameters())
+                logger.info(f"层名称: {name}, 类型: {module.__class__.__name__}, 参数数量: {num_params}")
+        logger.info("======================\n")
+    
     def forward(self, data
                 ):
         

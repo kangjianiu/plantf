@@ -281,31 +281,32 @@ import logging
 from pytorch_lightning.callbacks import Callback
 
 class PrintEpochEndResults(Callback):
+    def __init__(self):
+        super().__init__()
+        
+
     def on_train_epoch_end(self, trainer, pl_module):
-        # print("on_train_epoch_end 被调用")
         self.log_epoch_results(trainer, pl_module, prefix="train")
 
     def on_validation_epoch_end(self, trainer, pl_module):
-        # print("on_validation_epoch_end 被调用")
         self.log_epoch_results(trainer, pl_module, prefix="val")
 
     def log_epoch_results(self, trainer, pl_module, prefix: str):
         metrics = trainer.callback_metrics
         epoch = trainer.current_epoch
-
-        # 使用根日志器，确保日志消息被所有处理器接收
         logger = logging.getLogger()
 
-        # 构建日志消息,保留五位小数
-
+        # 构建日志消息，保留五位小数
         log_message = (
             f"\n[Epoch {epoch}] "
-            f"{prefix}_loss: {metrics.get(f'loss/{prefix}_loss', 'N/A'):.5f}, "
-            f"{prefix}_MR: {metrics.get(f'{prefix}/MR', 'N/A'):.5f}, "
-            f"{prefix}_minADE1: {metrics.get(f'{prefix}/minADE1', 'N/A'):.5f}, "
-            f"{prefix}_minFDE1: {metrics.get(f'{prefix}/minFDE1', 'N/A'):.5f}"
+            f"{prefix}_loss: {metrics.get(f'loss/{prefix}_loss', 0.0):.5f}, "
+            f"{prefix}_MR: {metrics.get(f'{prefix}/MR', 0.0):.5f}, "
+            f"{prefix}_minADE1: {metrics.get(f'{prefix}/minADE1', 0.0):.5f}, "
+            f"{prefix}_minADE6: {metrics.get(f'{prefix}/minADE6', 0.0):.5f}, "
+            f"{prefix}_minFDE1: {metrics.get(f'{prefix}/minFDE1', 0.0):.5f}, "
+            f"{prefix}_minFDE6: {metrics.get(f'{prefix}/minFDE6', 0.0):.5f}"
+
         )
 
-        # 记录到日志文件和终端
+        # 使用简化的日志器输出
         logger.info(log_message)
-        # print(log_message)  # 确保终端输出，同时避免日志被进度条覆盖

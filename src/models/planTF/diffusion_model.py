@@ -282,45 +282,48 @@ class CrossAttentionUnetModel(nn.Module):
         # ego_instance_feature[batch_size, 1, 128], map_instance_feature[batch_size, 222, 128], timesteps[batch_size], noisy_traj_points[batch_size, future_steps, 2]
         batch_size = ego_instance_feature.shape[0]# 32
         ego_latent = ego_instance_feature[:,:,:] # torch.Size([32, 128])
-        '''原来
-        # map_pos = self.map_feature_pos.weight[None].repeat(batch_size, 1, 1)
-        # ego_pos = self.ego_pos_latent.weight[None].repeat(batch_size, 1, 1)
-        # ego_latent = self.ego_feature.weight[None].repeat(batch_size, 1, 1)
+        
+        
+        # 原来的
+        map_pos = self.map_feature_pos.weight[None].repeat(batch_size, 1, 1) #shape: [32, 100, 128] ??
+        ego_pos = self.ego_pos_latent.weight[None].repeat(batch_size, 1, 1)#shape: [32, 1, 128]
+        ego_latent = self.ego_feature.weight[None].repeat(batch_size, 1, 1)#shape: [32, 1, 128]
 
-        # # ego_instance_decoder 把实例特征作为查询、键和值进行处理。然后，经过层归一化和全连接层处理        
-        # ego_latent = self.ego_instance_decoder(
-        #     query = ego_latent,
-        #     key = instance_feature,
-        #     value = instance_feature,
-        # )[0]
-        # ego_latent = self.ins_cond_layernorm_1(ego_latent)
-        # ego_latent = self.fc1(ego_latent)
-        # ego_latent = self.ins_cond_layernorm_2(ego_latent)
-        # ego_latent = ego_latent.unsqueeze(1)
-        # # print(instance_feature.shape)
-        # # print(ego_latent.shape)
+        # ego_instance_decoder 把实例特征作为查询、键和值进行处理。然后，经过层归一化和全连接层处理        
+        ego_latent = self.ego_instance_decoder(
+            query = ego_latent,
+            key = ego_instance_feature,
+            value = ego_instance_feature,
+        )[0]
+        ego_latent = self.ins_cond_layernorm_1(ego_latent)
+        ego_latent = self.fc1(ego_latent)
+        ego_latent = self.ins_cond_layernorm_2(ego_latent)
+        ego_latent = ego_latent.unsqueeze(1)
+        # print(instance_feature.shape)
+        # print(ego_latent.shape)
 
-        # # map_decoder 将地图特征作为查询、键和值进行处理。然后，经过层归一化和全连接层处理。
-        # map_instance_feature = self.map_decoder(
-        #     query = map_instance_feature + map_pos,
-        #     key = map_instance_feature + map_pos,
-        #     value = map_instance_feature,
-        # )[0]
-        # map_instance_feature = self.fc1(map_instance_feature)
-        # map_instance_feature = self.ins_cond_layernorm_1(map_instance_feature)
+        # map_decoder 将地图特征作为查询、键和值进行处理。然后，经过层归一化和全连接层处理。
+        map_instance_feature = self.map_decoder(
+            query = map_instance_feature + map_pos,
+            key = map_instance_feature + map_pos,
+            value = map_instance_feature,
+        )[0]
+        map_instance_feature = self.fc1(map_instance_feature)
+        map_instance_feature = self.ins_cond_layernorm_1(map_instance_feature)
 
-        # # ego_map_decoder 将实例特征和地图特征进行交互处理。然后，经过层归一化和全连接层处理。
-        # # 将处理后的实例特征作为全局特征，并移除多余的维度
-        # ego_latent = self.ego_map_decoder(
-        #     query = ego_latent + ego_pos,
-        #     key = map_instance_feature,
-        #     value = map_instance_feature,
-        # )[0]
-        # ego_latent = self.map_cond_layernorm_1(ego_latent)
-        # ego_latent = self.fc2(ego_latent)
-        # ego_latent = self.map_cond_layernorm_2(ego_latent)
-        '''
+        # ego_map_decoder 将实例特征和地图特征进行交互处理。然后，经过层归一化和全连接层处理。
+        # 将处理后的实例特征作为全局特征，并移除多余的维度
+        ego_latent = self.ego_map_decoder(
+            query = ego_latent + ego_pos,
+            key = map_instance_feature,
+            value = map_instance_feature,
+        )[0]
+        ego_latent = self.map_cond_layernorm_1(ego_latent)
+        ego_latent = self.fc2(ego_latent)
+        ego_latent = self.map_cond_layernorm_2(ego_latent)
+        
         # TODO：融合ego和map信息
+
 
         global_feature = ego_latent # 目前只用了ego的信息
         global_feature = global_feature.squeeze(1)# 本质上取决于ego_instance_feature：主代理的嵌入表示
