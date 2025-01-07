@@ -111,10 +111,10 @@ class DiffusionModel(nn.Module):
             trajectories.append(trajectory)# [num_modes, batch_size, future_steps, 4]
             diffusion_losses.append(diffusion_loss)
 
-        print(f"trajectories类型形状长度:{type(trajectories)},{trajectories[0].shape},{len(trajectories)}")# [num_modes, batch_size, future_steps, 4]
+        # print(f"trajectories类型形状长度:{type(trajectories)},{trajectories[0].shape},{len(trajectories)}")# [num_modes, batch_size, future_steps, 4]
         trajectories = torch.stack(trajectories, dim=1)  # 形状为 (batch_size, num_modes, future_steps, 4)
-        print(f"trajectories类型形状长度:{type(trajectories)},{trajectories[0].shape},{len(trajectories)}")
-        sys.exit(1)
+        # print(f"trajectories类型形状长度:{type(trajectories)},{trajectories[0].shape},{len(trajectories)}")
+        # sys.exit(1)
         # 计算概率
         probability = self.probability_decoder(ego_instance_feature.squeeze(1))
         # print(f"概率形状:{probability.shape}，概率值:{probability[0]}")#[batch_size, num_modes]

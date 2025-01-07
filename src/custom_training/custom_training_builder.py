@@ -297,9 +297,15 @@ class PrintEpochEndResults(Callback):
         logger = logging.getLogger()
 
         # 构建日志消息，保留五位小数
+        # 加上reg_loss，cls_loss，prediction_loss，diffusion_loss，输出
+
         log_message = (
             f"\n[Epoch {epoch}] "
             f"{prefix}_loss: {metrics.get(f'loss/{prefix}_loss', 0.0):.5f}, "
+            f"{prefix}_reg_loss: {metrics.get(f'objectives/{prefix}_reg_loss', 0.0):.5f}, "
+            f"{prefix}_cls_loss: {metrics.get(f'objectives/{prefix}_cls_loss', 0.0):.5f}, "
+            f"{prefix}_prediction_losss: {metrics.get(f'objectives/{prefix}_prediction_loss', 0.0):.5f}, "
+            f"{prefix}_diffusion_loss: {metrics.get(f'objectives/{prefix}_diffusion_loss', 0.0):.5f}, "
             f"{prefix}_MR: {metrics.get(f'{prefix}/MR', 0.0):.5f}, "
             f"{prefix}_minADE1: {metrics.get(f'{prefix}/minADE1', 0.0):.5f}, "
             f"{prefix}_minADE6: {metrics.get(f'{prefix}/minADE6', 0.0):.5f}, "
