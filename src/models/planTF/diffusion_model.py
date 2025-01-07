@@ -111,7 +111,10 @@ class DiffusionModel(nn.Module):
             trajectories.append(trajectory)# [num_modes, batch_size, future_steps, 4]
             diffusion_losses.append(diffusion_loss)
 
+        print(f"trajectories类型形状长度:{type(trajectories)},{trajectories[0].shape},{len(trajectories)}")# [num_modes, batch_size, future_steps, 4]
         trajectories = torch.stack(trajectories, dim=1)  # 形状为 (batch_size, num_modes, future_steps, 4)
+        print(f"trajectories类型形状长度:{type(trajectories)},{trajectories[0].shape},{len(trajectories)}")
+        sys.exit(1)
         # 计算概率
         probability = self.probability_decoder(ego_instance_feature.squeeze(1))
         # print(f"概率形状:{probability.shape}，概率值:{probability[0]}")#[batch_size, num_modes]
@@ -284,45 +287,45 @@ class CrossAttentionUnetModel(nn.Module):
         ego_latent = ego_instance_feature[:,:,:] # torch.Size([32, 128])
         
         
-        # 原来的
-        map_pos = self.map_feature_pos.weight[None].repeat(batch_size, 1, 1) #shape: [32, 100, 128] ??
-        ego_pos = self.ego_pos_latent.weight[None].repeat(batch_size, 1, 1)#shape: [32, 1, 128]
-        ego_latent = self.ego_feature.weight[None].repeat(batch_size, 1, 1)#shape: [32, 1, 128]
+        # # 原来的
+        # map_pos = self.map_feature_pos.weight[None].repeat(batch_size, 1, 1) #shape: [32, 100, 128] ??
+        # ego_pos = self.ego_pos_latent.weight[None].repeat(batch_size, 1, 1)#shape: [32, 1, 128]
+        # ego_latent = self.ego_feature.weight[None].repeat(batch_size, 1, 1)#shape: [32, 1, 128]
 
-        # ego_instance_decoder 把实例特征作为查询、键和值进行处理。然后，经过层归一化和全连接层处理        
-        ego_latent = self.ego_instance_decoder(
-            query = ego_latent,
-            key = ego_instance_feature,
-            value = ego_instance_feature,
-        )[0]
-        ego_latent = self.ins_cond_layernorm_1(ego_latent)
-        ego_latent = self.fc1(ego_latent)
-        ego_latent = self.ins_cond_layernorm_2(ego_latent)
-        ego_latent = ego_latent.unsqueeze(1)
-        # print(instance_feature.shape)
-        # print(ego_latent.shape)
+        # # ego_instance_decoder 把实例特征作为查询、键和值进行处理。然后，经过层归一化和全连接层处理        
+        # ego_latent = self.ego_instance_decoder(
+        #     query = ego_latent,
+        #     key = ego_instance_feature,
+        #     value = ego_instance_feature,
+        # )[0]
+        # ego_latent = self.ins_cond_layernorm_1(ego_latent)
+        # ego_latent = self.fc1(ego_latent)
+        # ego_latent = self.ins_cond_layernorm_2(ego_latent)
+        # ego_latent = ego_latent.unsqueeze(1)
+        # # print(instance_feature.shape)
+        # # print(ego_latent.shape)
 
-        # map_decoder 将地图特征作为查询、键和值进行处理。然后，经过层归一化和全连接层处理。
-        map_instance_feature = self.map_decoder(
-            query = map_instance_feature + map_pos,
-            key = map_instance_feature + map_pos,
-            value = map_instance_feature,
-        )[0]
-        map_instance_feature = self.fc1(map_instance_feature)
-        map_instance_feature = self.ins_cond_layernorm_1(map_instance_feature)
+        # # map_decoder 将地图特征作为查询、键和值进行处理。然后，经过层归一化和全连接层处理。
+        # map_instance_feature = self.map_decoder(
+        #     query = map_instance_feature + map_pos,
+        #     key = map_instance_feature + map_pos,
+        #     value = map_instance_feature,
+        # )[0]
+        # map_instance_feature = self.fc1(map_instance_feature)
+        # map_instance_feature = self.ins_cond_layernorm_1(map_instance_feature)
 
-        # ego_map_decoder 将实例特征和地图特征进行交互处理。然后，经过层归一化和全连接层处理。
-        # 将处理后的实例特征作为全局特征，并移除多余的维度
-        ego_latent = self.ego_map_decoder(
-            query = ego_latent + ego_pos,
-            key = map_instance_feature,
-            value = map_instance_feature,
-        )[0]
-        ego_latent = self.map_cond_layernorm_1(ego_latent)
-        ego_latent = self.fc2(ego_latent)
-        ego_latent = self.map_cond_layernorm_2(ego_latent)
+        # # ego_map_decoder 将实例特征和地图特征进行交互处理。然后，经过层归一化和全连接层处理。
+        # # 将处理后的实例特征作为全局特征，并移除多余的维度
+        # ego_latent = self.ego_map_decoder(
+        #     query = ego_latent + ego_pos,
+        #     key = map_instance_feature,
+        #     value = map_instance_feature,
+        # )[0]
+        # ego_latent = self.map_cond_layernorm_1(ego_latent)
+        # ego_latent = self.fc2(ego_latent)
+        # ego_latent = self.map_cond_layernorm_2(ego_latent)
         
-        # TODO：融合ego和map信息
+        # # TODO：融合ego和map信息
 
 
         global_feature = ego_latent # 目前只用了ego的信息

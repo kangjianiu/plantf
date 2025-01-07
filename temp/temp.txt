@@ -1,2 +1,13 @@
 git token:
 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
+
+ 7 files changed, 359 insertions(+), 52 deletions(-)
+ create mode 100644 environment.yml
+ create mode 100644 script/modify_log.py
+ create mode 100644 temp/git.sh
+ create mode 100644 temp/temp.txt
+
+
+77G     cache_plantf_1M
+2.8G    exp
+30M     sanity_check
