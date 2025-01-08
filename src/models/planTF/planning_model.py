@@ -75,12 +75,12 @@ class PlanningModel(TorchModuleWrapper):
         self.norm = nn.LayerNorm(dim)
         self.trajectory_decoder_diffu = DiffusionModel(feature_dim=dim, num_modes=num_modes, future_steps=future_steps)
 
-        # self.trajectory_decoder = TrajectoryDecoder(
-        #     embed_dim=dim,
-        #     num_modes=num_modes,
-        #     future_steps=future_steps,
-        #     out_channels=4,
-        # )
+        self.trajectory_decoder = TrajectoryDecoder(
+            embed_dim=dim,
+            num_modes=num_modes,
+            future_steps=future_steps,
+            out_channels=4,
+        )
         self.agent_predictor = build_mlp(dim, [dim * 2, future_steps * 2], norm="ln")
 
         self.apply(self._init_weights)
@@ -128,7 +128,6 @@ class PlanningModel(TorchModuleWrapper):
         polygon_mask = data["map"]["valid_mask"]
         # 打印data[current_state]的键.结果是一个纯数字tensor
 
-        
         bs, A = agent_pos.shape[0:2]
 
         position = torch.cat([agent_pos, polygon_center[..., :2]], dim=1)
@@ -153,19 +152,21 @@ class PlanningModel(TorchModuleWrapper):
         ego_instance_feature = x[:, 0].unsqueeze(1)  # [32, 1, 128]   主代理的嵌入表示,形状为 (batch_size, 1, embed_dim)
         map_instance_feature = x[:, A:]              # [32, 222, 128] 地图特征,形状为 (batch_size, num_polygons, embed_dim)
 
-        # trajectory, probability = self.trajectory_decoder(x[:, 0]) # 主代理的嵌入表示,形状为 (batch_size, embed_dim)
+
         prediction = self.agent_predictor(x[:, 1:A]).view(bs, -1, self.future_steps, 2)
         # prediction  [32, 32, 80, 2] (batch_size, num_agents, future_steps, 2) 表示模型对其他代理未来状态的预测。
 
         npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_256_80_vxy.npy'
-        traj_anchors = self.load_cluster_centers(npy_file_path)# shape (256, 80, 2)
+        traj_anchors = self.load_cluster_centers(npy_file_path)# shape (256, 80, 4)
         # print(f"共加载到 {len(traj_anchors)} 个轨迹锚点。")
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)
 
-        trajectory, probability, diffusion_losses = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
-        # probability (batch_size, num_modes)表示模型预测的轨迹模式的概率，
-        # 轨迹形状: torch.Size([32, 6, 80, 2])
-        # 概率形状: torch.Size([32, 6])
+        # 初始化diffusion_losses= [],里面只有一个元素，是tensor，值为0，形状为[1]
+        diffusion_losses = [torch.tensor(0).to(ego_instance_feature.device)]
+
+        trajectory, probability = self.trajectory_decoder(x[:, 0]) # 主代理的嵌入表示,形状为 (batch_size, embed_dim)
+        # trajectory, probability, diffusion_losses = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
+
         out = {
             "trajectory": trajectory,
             "probability": probability,

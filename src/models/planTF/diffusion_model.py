@@ -43,14 +43,15 @@ class DiffusionModel(nn.Module):
     def forward(self, ego_instance_feature, map_instance_feature, traj_anchors):
         # ego [32, 1, 128]         含义：(batch_size, 1, embed_dim)
         # map [32, 222, 128] 
-        # traj_anchors [32,6,80,4]
+        # traj_anchors [256,80,4]
 
-        #TODO :在之前没有考虑bathsize的问题,现在需要重新考虑一下轨迹锚点和batchsize的关系（2024.12.27）
+        # 截断去噪过程，从噪声轨迹开始，对其进行2步去噪  traj_anchors.shape:[clusters, future_steps, 4]
 
-        # 截断去噪过程，从噪声轨迹开始，对其进行2步去噪
-        # print("diffusion_model接受的traj_anchors的形状:", traj_anchors.shape) #[clusters, future_steps, 4]
         # 随机取num_modes * batch_size 个轨迹锚点,形状组织成为 (num_modes,batch_size, future_steps, 4)
-        traj_anchors = traj_anchors[torch.randint(traj_anchors.shape[0], (self.num_modes * ego_instance_feature.shape[0],))]# [num_modes * batch_size, future_steps, 4]
+        # 不能随机，traj_anchors是tensor，试试取前num_modes * batch_size个
+        traj_anchors = traj_anchors[:self.num_modes * ego_instance_feature.shape[0]]# [num_modes * batch_size, future_steps, 4]
+
+        # traj_anchors = traj_anchors[torch.randint(traj_anchors.shape[0], (self.num_modes * ego_instance_feature.shape[0],))]# [num_modes * batch_size, future_steps, 4]
         traj_anchors = traj_anchors.view(self.num_modes, ego_instance_feature.shape[0], self.future_steps, 4)# [num_modes, batch_size, future_steps, 4]
         trajectories = []
         diffusion_losses = []
@@ -119,7 +120,6 @@ class DiffusionModel(nn.Module):
         probability = self.probability_decoder(ego_instance_feature.squeeze(1))
         # print(f"概率形状:{probability.shape}，概率值:{probability[0]}")#[batch_size, num_modes]
         
-
         return trajectories, probability, diffusion_losses
 
     def normalize_xy_rotation(self, trajectory, N=30, times=10):

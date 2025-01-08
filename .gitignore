@@ -170,6 +170,6 @@ all_db_trajectories_relative_reshape.json
 # 忽略 output 目录及其子目录中的所有文件
 output/**
 
-# 但不忽略名为 log.txt 和 run_training.log 的文件
-!output/**/log.txt
-!output/**/run_training.log
+# # 但不忽略名为 log.txt 和 run_training.log 的文件
+# !output/**/log.txt
+# !output/**/run_training.log
