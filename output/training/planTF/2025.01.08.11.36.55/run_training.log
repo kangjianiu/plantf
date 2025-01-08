@@ -1,0 +1,51 @@
+[2025-01-08 11:36:56,770][__main__][INFO] - Logger is configured correctly.
+[2025-01-08 11:36:56,973][nuplan.planning.script.builders.folder_builder][INFO] - Building experiment folders...
+[2025-01-08 11:36:56,974][nuplan.planning.script.builders.folder_builder][INFO] - Experimental folder: /data/datasets/niukangjia/plantf/output/training/planTF/2025.01.08.11.36.55
+[2025-01-08 11:36:56,974][nuplan.planning.script.builders.worker_pool_builder][INFO] - Building WorkerPool...
+[2025-01-08 11:36:56,975][nuplan.planning.utils.multithreading.worker_pool][INFO] - Worker: SingleMachineParallelExecutor
+[2025-01-08 11:36:56,975][nuplan.planning.utils.multithreading.worker_pool][INFO] - Number of nodes: 1
+Number of CPUs per node: 32
+Number of GPUs per node: 0
+Number of threads across all nodes: 32
+[2025-01-08 11:36:56,975][nuplan.planning.script.builders.worker_pool_builder][INFO] - Building WorkerPool...DONE!
+[2025-01-08 11:36:56,975][src.custom_training.custom_training_builder][INFO] - Building training engine...
+[2025-01-08 11:37:01,728][nuplan.planning.script.builders.model_builder][INFO] - Building TorchModuleWrapper...
+[2025-01-08 11:37:02,761][nuplan.planning.script.builders.model_builder][INFO] - Building TorchModuleWrapper...DONE!
+[2025-01-08 11:37:02,762][nuplan.planning.script.builders.splitter_builder][INFO] - Building Splitter...
+[2025-01-08 11:37:03,556][nuplan.planning.script.builders.splitter_builder][INFO] - Building Splitter...DONE!
+[2025-01-08 11:37:03,557][nuplan.planning.script.builders.data_augmentation_builder][INFO] - Building augmentors...
+[2025-01-08 11:37:03,559][nuplan.planning.script.builders.data_augmentation_builder][INFO] - Building augmentors...DONE!
+[2025-01-08 11:39:25,888][nuplan.planning.script.builders.scenario_builder][INFO] - Extracted 146783 scenarios for training
+[2025-01-08 11:39:25,892][__main__][INFO] - Starting training...
+[2025-01-08 11:39:25,932][torch.distributed.distributed_c10d][INFO] - Added key: store_based_barrier_key:1 to store for rank: 0
+[2025-01-08 11:39:25,933][torch.distributed.distributed_c10d][INFO] - Rank 0: Completed store-based barrier for key:store_based_barrier_key:1 with 1 nodes.
+[2025-01-08 11:39:26,336][src.custom_training.custom_datamodule][INFO] - Number of samples in train set: 132384
+[2025-01-08 11:39:26,388][src.custom_training.custom_datamodule][INFO] - Number of samples in validation set: 3600
+[2025-01-08 11:39:39,701][root][INFO] - 
+[Epoch 0] val_loss: 34.06289, val_reg_loss: 14.80486, val_cls_loss: 0.00000, val_prediction_losss: 0.00000, val_diffusion_loss: 0.00000, val_MR: 1.00000, val_minADE1: 52.22112, val_minADE6: 46.51918, val_minFDE1: 63.42987, val_minFDE6: 23.81392
+[2025-01-08 11:53:08,752][root][INFO] - 
+[Epoch 0] val_loss: 32.91291, val_reg_loss: 14.97569, val_cls_loss: 0.00000, val_prediction_losss: 0.00000, val_diffusion_loss: 0.00000, val_MR: 0.99442, val_minADE1: 52.78316, val_minADE6: 47.20999, val_minFDE1: 60.68936, val_minFDE6: 26.80463
+[2025-01-08 12:06:26,771][root][INFO] - 
+[Epoch 0] val_loss: 32.51548, val_reg_loss: 14.98071, val_cls_loss: 0.00000, val_prediction_losss: 0.00000, val_diffusion_loss: 0.00000, val_MR: 0.99470, val_minADE1: 52.75227, val_minADE6: 47.21181, val_minFDE1: 61.71991, val_minFDE6: 27.03114
+[2025-01-08 12:06:28,286][root][INFO] - 
+[Epoch 0] train_loss: 33.53233, train_reg_loss: 14.45051, train_cls_loss: 0.00000, train_prediction_losss: 0.00000, train_diffusion_loss: 0.00000, train_MR: 0.99424, train_minADE1: 52.23596, train_minADE6: 46.60293, train_minFDE1: 61.56009, train_minFDE6: 27.36380
+[2025-01-08 12:19:39,723][root][INFO] - 
+[Epoch 1] val_loss: 31.91579, val_reg_loss: 15.01236, val_cls_loss: 0.00000, val_prediction_losss: 0.00000, val_diffusion_loss: 0.00000, val_MR: 0.99386, val_minADE1: 52.82608, val_minADE6: 47.33204, val_minFDE1: 60.20031, val_minFDE6: 27.48846
+[2025-01-08 12:32:40,251][root][INFO] - 
+[Epoch 1] val_loss: 32.05227, val_reg_loss: 15.00191, val_cls_loss: 0.00000, val_prediction_losss: 0.00000, val_diffusion_loss: 0.00000, val_MR: 0.99554, val_minADE1: 52.86063, val_minADE6: 47.26878, val_minFDE1: 61.10651, val_minFDE6: 26.95889
+[2025-01-08 12:32:41,776][root][INFO] - 
+[Epoch 1] train_loss: 32.24712, train_reg_loss: 14.43997, train_cls_loss: 0.00000, train_prediction_losss: 0.00000, train_diffusion_loss: 0.00000, train_MR: 0.99449, train_minADE1: 52.20825, train_minADE6: 46.56505, train_minFDE1: 61.30225, train_minFDE6: 27.26433
+[2025-01-08 12:45:46,115][root][INFO] - 
+[Epoch 2] val_loss: 31.88791, val_reg_loss: 15.01797, val_cls_loss: 0.00000, val_prediction_losss: 0.00000, val_diffusion_loss: 0.00000, val_MR: 0.99386, val_minADE1: 52.90310, val_minADE6: 47.33196, val_minFDE1: 60.68701, val_minFDE6: 27.11263
+[2025-01-08 12:58:33,390][root][INFO] - 
+[Epoch 2] val_loss: 31.83263, val_reg_loss: 14.99444, val_cls_loss: 0.00000, val_prediction_losss: 0.00000, val_diffusion_loss: 0.00000, val_MR: 0.99665, val_minADE1: 52.71511, val_minADE6: 47.27211, val_minFDE1: 60.15528, val_minFDE6: 26.83580
+[2025-01-08 12:58:35,266][root][INFO] - 
+[Epoch 2] train_loss: 31.53342, train_reg_loss: 14.44564, train_cls_loss: 0.00000, train_prediction_losss: 0.00000, train_diffusion_loss: 0.00000, train_MR: 0.99434, train_minADE1: 52.19181, train_minADE6: 46.58907, train_minFDE1: 61.11990, train_minFDE6: 27.21226
+[2025-01-08 13:11:34,941][root][INFO] - 
+[Epoch 3] val_loss: 31.96889, val_reg_loss: 15.00663, val_cls_loss: 0.00000, val_prediction_losss: 0.00000, val_diffusion_loss: 0.00000, val_MR: 0.99637, val_minADE1: 52.97207, val_minADE6: 47.29357, val_minFDE1: 61.03772, val_minFDE6: 27.13807
+[2025-01-08 13:24:29,534][root][INFO] - 
+[Epoch 3] val_loss: 31.94588, val_reg_loss: 15.01156, val_cls_loss: 0.00000, val_prediction_losss: 0.00000, val_diffusion_loss: 0.00000, val_MR: 0.99693, val_minADE1: 52.87814, val_minADE6: 47.30828, val_minFDE1: 61.05557, val_minFDE6: 27.30008
+[2025-01-08 13:24:31,292][root][INFO] - 
+[Epoch 3] train_loss: 31.36594, train_reg_loss: 14.44624, train_cls_loss: 0.00000, train_prediction_losss: 0.00000, train_diffusion_loss: 0.00000, train_MR: 0.99458, train_minADE1: 52.18534, train_minADE6: 46.58810, train_minFDE1: 61.17621, train_minFDE6: 27.24047
+[2025-01-08 13:37:49,521][root][INFO] - 
+[Epoch 4] val_loss: 31.84014, val_reg_loss: 14.97672, val_cls_loss: 0.00000, val_prediction_losss: 0.00000, val_diffusion_loss: 0.00000, val_MR: 0.99386, val_minADE1: 52.72776, val_minADE6: 47.19024, val_minFDE1: 60.80908, val_minFDE6: 26.90334
