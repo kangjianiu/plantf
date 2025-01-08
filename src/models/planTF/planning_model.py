@@ -75,12 +75,12 @@ class PlanningModel(TorchModuleWrapper):
         self.norm = nn.LayerNorm(dim)
         self.trajectory_decoder_diffu = DiffusionModel(feature_dim=dim, num_modes=num_modes, future_steps=future_steps)
 
-        self.trajectory_decoder = TrajectoryDecoder(
-            embed_dim=dim,
-            num_modes=num_modes,
-            future_steps=future_steps,
-            out_channels=4,
-        )
+        # self.trajectory_decoder = TrajectoryDecoder(
+        #     embed_dim=dim,
+        #     num_modes=num_modes,
+        #     future_steps=future_steps,
+        #     out_channels=4,
+        # )
         self.agent_predictor = build_mlp(dim, [dim * 2, future_steps * 2], norm="ln")
 
         self.apply(self._init_weights)
@@ -164,8 +164,8 @@ class PlanningModel(TorchModuleWrapper):
         # 初始化diffusion_losses= [],里面只有一个元素，是tensor，值为0，形状为[1]
         diffusion_losses = [torch.tensor(0).to(ego_instance_feature.device)]
 
-        trajectory, probability = self.trajectory_decoder(x[:, 0]) # 主代理的嵌入表示,形状为 (batch_size, embed_dim)
-        # trajectory, probability, diffusion_losses = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
+        # trajectory, probability = self.trajectory_decoder(x[:, 0]) # 主代理的嵌入表示,形状为 (batch_size, embed_dim)
+        trajectory, probability, diffusion_losses = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
 
         out = {
             "trajectory": trajectory,

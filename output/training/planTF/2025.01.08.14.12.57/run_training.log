@@ -31,3 +31,7 @@ Number of threads across all nodes: 32
 [Epoch 0] train_loss: 6.97679, train_reg_loss: 3.32517, train_cls_loss: 0.68908, train_prediction_losss: 2.96254, train_diffusion_loss: 0.00000, train_MR: 0.57686, train_minADE1: 12.81939, train_minADE6: 12.28716, train_minFDE1: 27.64614, train_minFDE6: 26.65806
 [2025-01-08 14:49:09,587][root][INFO] - 
 [Epoch 1] val_loss: 3.76348, val_reg_loss: 1.86772, val_cls_loss: 0.93476, val_prediction_losss: 0.96100, val_diffusion_loss: 0.00000, val_MR: 0.98103, val_minADE1: 7.43712, val_minADE6: 7.00349, val_minFDE1: 22.61076, val_minFDE6: 21.73391
+[2025-01-08 14:56:54,521][root][INFO] - 
+[Epoch 1] val_loss: 2.93302, val_reg_loss: 1.10592, val_cls_loss: 1.10348, val_prediction_losss: 0.72362, val_diffusion_loss: 0.00000, val_MR: 0.86356, val_minADE1: 5.52934, val_minADE6: 4.20511, val_minFDE1: 15.19785, val_minFDE6: 11.12203
+[2025-01-08 14:56:55,575][root][INFO] - 
+[Epoch 1] train_loss: 4.19548, train_reg_loss: 1.55172, train_cls_loss: 0.95688, train_prediction_losss: 1.68687, train_diffusion_loss: 0.00000, train_MR: 0.56347, train_minADE1: 7.09617, train_minADE6: 5.79143, train_minFDE1: 17.74237, train_minFDE6: 15.00776
