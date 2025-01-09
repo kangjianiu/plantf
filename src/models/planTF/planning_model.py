@@ -160,6 +160,14 @@ class PlanningModel(TorchModuleWrapper):
         traj_anchors = self.load_cluster_centers(npy_file_path)# shape (256, 80, 4)
         # print(f"共加载到 {len(traj_anchors)} 个轨迹锚点。")
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)
+        traj_anchors = traj_anchors[torch.randperm(traj_anchors.shape[0])]
+        
+        if bs > 32:
+            traj_anchors =  torch.cat([traj_anchors,traj_anchors], dim=0)
+        traj_anchors = traj_anchors[:self.num_modes * bs]  # [num_modes * batch_size, future_steps, 4]
+        # traj_anchors打乱顺序，然后形状变为[num_modes, batch_size, future_steps, 4]
+        traj_anchors = traj_anchors[torch.randperm(traj_anchors.shape[0])]
+        traj_anchors = traj_anchors.view(self.num_modes, bs, traj_anchors.shape[1], traj_anchors.shape[2])  # [num_modes, batch_size, future_steps, 4]
 
         # 初始化diffusion_losses= [],里面只有一个元素，是tensor，值为0，形状为[1]
         diffusion_losses = [torch.tensor(0).to(ego_instance_feature.device)]

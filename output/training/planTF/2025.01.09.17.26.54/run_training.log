@@ -1,0 +1,25 @@
+[2025-01-09 17:26:56,287][__main__][INFO] - Logger is configured correctly.
+[2025-01-09 17:26:56,517][nuplan.planning.script.builders.folder_builder][INFO] - Building experiment folders...
+[2025-01-09 17:26:56,517][nuplan.planning.script.builders.folder_builder][INFO] - Experimental folder: /data/datasets/niukangjia/plantf/output/training/planTF/2025.01.09.17.26.54
+[2025-01-09 17:26:56,517][nuplan.planning.script.builders.worker_pool_builder][INFO] - Building WorkerPool...
+[2025-01-09 17:26:56,518][nuplan.planning.utils.multithreading.worker_pool][INFO] - Worker: SingleMachineParallelExecutor
+[2025-01-09 17:26:56,518][nuplan.planning.utils.multithreading.worker_pool][INFO] - Number of nodes: 1
+Number of CPUs per node: 32
+Number of GPUs per node: 0
+Number of threads across all nodes: 32
+[2025-01-09 17:26:56,518][nuplan.planning.script.builders.worker_pool_builder][INFO] - Building WorkerPool...DONE!
+[2025-01-09 17:26:56,519][src.custom_training.custom_training_builder][INFO] - Building training engine...
+[2025-01-09 17:27:01,383][nuplan.planning.script.builders.model_builder][INFO] - Building TorchModuleWrapper...
+[2025-01-09 17:27:02,438][nuplan.planning.script.builders.model_builder][INFO] - Building TorchModuleWrapper...DONE!
+[2025-01-09 17:27:02,439][nuplan.planning.script.builders.splitter_builder][INFO] - Building Splitter...
+[2025-01-09 17:27:03,253][nuplan.planning.script.builders.splitter_builder][INFO] - Building Splitter...DONE!
+[2025-01-09 17:27:03,253][nuplan.planning.script.builders.data_augmentation_builder][INFO] - Building augmentors...
+[2025-01-09 17:27:03,256][nuplan.planning.script.builders.data_augmentation_builder][INFO] - Building augmentors...DONE!
+[2025-01-09 17:27:16,851][nuplan.planning.script.builders.scenario_builder][INFO] - Extracted 204791 scenarios for training
+[2025-01-09 17:27:16,855][__main__][INFO] - Starting training...
+[2025-01-09 17:27:16,893][torch.distributed.distributed_c10d][INFO] - Added key: store_based_barrier_key:1 to store for rank: 0
+[2025-01-09 17:27:16,894][torch.distributed.distributed_c10d][INFO] - Rank 0: Completed store-based barrier for key:store_based_barrier_key:1 with 1 nodes.
+[2025-01-09 17:27:17,354][src.custom_training.custom_datamodule][INFO] - Number of samples in train set: 132384
+[2025-01-09 17:27:17,421][src.custom_training.custom_datamodule][INFO] - Number of samples in validation set: 32407
+[2025-01-09 17:27:22,760][root][INFO] - 
+[Epoch 0] val_loss: 29.83986, val_reg_loss: 21.98631, val_cls_loss: 1.79209, val_prediction_losss: 3.66991, val_diffusion_loss: 2.39156, val_MR: 1.00000, val_minADE1: 227.30862, val_minADE6: 64.54617, val_minFDE1: 625.28143, val_minFDE6: 104.80784
