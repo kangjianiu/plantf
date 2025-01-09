@@ -44,81 +44,68 @@ class DiffusionModel(nn.Module):
         # ego [32, 1, 128]         含义：(batch_size, 1, embed_dim)
         # map [32, 222, 128] 
         # traj_anchors [256,80,4]
+        bs = ego_instance_feature.shape[0]  # 32
+        traj_anchors = traj_anchors[:self.num_modes * bs]  # [num_modes * batch_size, future_steps, 4]
+        traj_anchors = traj_anchors.view(self.num_modes, bs, self.future_steps, 4)  # [num_modes, batch_size, future_steps, 4]
 
-        # 截断去噪过程，从噪声轨迹开始，对其进行2步去噪  traj_anchors.shape:[clusters, future_steps, 4]
-
-        # 随机取num_modes * batch_size 个轨迹锚点,形状组织成为 (num_modes,batch_size, future_steps, 4)
-        # 不能随机，traj_anchors是tensor，试试取前num_modes * batch_size个
-        traj_anchors = traj_anchors[:self.num_modes * ego_instance_feature.shape[0]]# [num_modes * batch_size, future_steps, 4]
-
-        # traj_anchors = traj_anchors[torch.randint(traj_anchors.shape[0], (self.num_modes * ego_instance_feature.shape[0],))]# [num_modes * batch_size, future_steps, 4]
-        traj_anchors = traj_anchors.view(self.num_modes, ego_instance_feature.shape[0], self.future_steps, 4)# [num_modes, batch_size, future_steps, 4]
         trajectories = []
         diffusion_losses = []
+        infer_times = 2 #去噪推理次数
         for mode in range(self.num_modes):
-            # 取出traj_anchors里面第 mode 组轨迹锚点
-            # print(f"\n========================第{mode+1}次========================")
-            trajs = self.normalize_xy_rotation(traj_anchors[mode], N=self.future_steps, times=1) 
-            # print(f"normalize_xy_rotation后的trajs形状:{trajs.shape},trajs值[0]:{trajs[0][0]}") # [batch_size, future_steps, 4]
-            noise = self.pyramid_noise_like(trajs)                     # [batch_size, future_steps, 4]
-            # print(f"noise形状:{noise.shape},noise值[0]:{noise[0][0]}") # [batch_size, future_steps, 4]
-            # 在self.scheduler.timesteps里随机取ego_instance_feature.shape[0]个时间步
-            t = torch.randint(0, self.scheduler.config.num_train_timesteps, (ego_instance_feature.shape[0],), device=traj_anchors.device)
-            noisy_traj_points = self.scheduler.add_noise(
-                    original_samples=traj_anchors[mode],
+            trajs = self.normalize_xy_rotation(traj_anchors[mode], N=self.future_steps, times=1)  # [batch_size, future_steps, 4]
+            noise = self.pyramid_noise_like(trajs)  # [batch_size, future_steps, 4]
+
+            timesteps = torch.randint(
+                0,
+                self.scheduler.config.num_train_timesteps,
+                (bs, infer_times),
+                device=traj_anchors.device
+            )  # [batch_size, infer_times]
+
+            # 初始化 traj_pred 
+            traj_pred = traj_anchors[mode].clone()
+
+            diffusion_loss = 0
+            for k in range(infer_times):
+                # 添加噪声
+                traj_pred = self.scheduler.add_noise(
+                    original_samples=traj_pred,
                     noise=noise,
-                    timesteps=t,
-            ).float()
-            # print(f"noisy_traj_points形状:{noisy_traj_points.shape},[0]:{noisy_traj_points[0][0]}") # [batch_size, future_steps, 4]
-            traj_pred = noisy_traj_points            
-            diffusion_output = traj_pred #[batch_size, future_steps, 4]
+                    timesteps=timesteps[:, k]
+                ).float()
+                # 预测噪声
+                noise_pred = self.trajectory_decoder(ego_instance_feature, map_instance_feature, timesteps[:, k], traj_pred)
+                
+                # 由噪声计算轨迹
+                # 调用 scheduler.step 时逐样本处理，由于 DDPMScheduler.step 不支持批量时间步，这里通过循环逐样本处理每个时间步：
+                traj_pred_step = []
+                for b in range(bs):
+                    traj_pred_single = traj_pred[b].unsqueeze(0)  # [1, future_steps, 4]
+                    noise_pred_single = noise_pred[b].unsqueeze(0)  # [1, future_steps, 4]
+                    timestep_single = timesteps[b, k].item()  # 标量
 
-            for k in self.scheduler.timesteps[:2]:
+                    step_output = self.scheduler.step(
+                        model_output=noise_pred_single,
+                        timestep=timestep_single,
+                        sample=traj_pred_single
+                    )
+                    traj_pred_step.append(step_output.prev_sample.squeeze(0))  # [future_steps, 4]
+                traj_pred = torch.stack(traj_pred_step, dim=0)  # [batch_size, future_steps, 4]
+                
+                # 计算损失
+                loss_fn = nn.MSELoss()
+                diffusion_loss = diffusion_loss + loss_fn(noise_pred, noise)
 
-                diffusion_output = self.scheduler.scale_model_input(diffusion_output)
-                noise_pred = self.trajectory_decoder(ego_instance_feature, map_instance_feature, 
-                            k.unsqueeze(-1).repeat(ego_instance_feature.shape[0]).to(ego_instance_feature.device), diffusion_output)
-                # print(f"diffusion_model中第{mode+1}次,第  {k}  步的 预测噪声 形状:{noise_pred.shape}",)# [32，80, 4](batch_size, future_steps, 4)
-                traj_pred = self.scheduler.step(
-                    model_output=noise_pred,
-                    timestep=k,
-                    sample=traj_pred
-                ).prev_sample
-                diffusion_output = traj_pred
-                # print(f"diffusion_model中第 {mode+1}次,第 {k}  步的 推理轨迹 形状:{diffusion_output.shape}\n",)# [32，80, 4](batch_size, future_steps, 4)
-                """step解释
-                假设你正在执行逆扩散过程中的一个步骤：
-                输入:
-                sample: 当前时间步 $t$ 的样本 $x_t$，形状 [batch_size, channels, height]，例如 [256, 20, 32]。
-                model_output: 模型对 $x_t$ 的预测输出，通常是噪声 $\epsilon_\theta(x_t, t)$，形状与 sample 相同。
-                timestep: 当前时间步 $t$ 的索引，例如 10。
-                过程:
-                计算相关的扩散系数 $\alpha_t$ 和 $\beta_t$。
-                根据 prediction_type,从 model_output 预测出原始样本 $x_0$ 或调整后的样本。
-                使用公式计算预测的前一个时间步的样本 $x_{t-1}$。
-                添加噪声（如果 $t > 0$）。
-                输出:
-                prev_sample: 预测的前一个时间步的样本 $x_{t-1}$，用于下一个步骤的输入。
-                pred_original_sample: 预测的原始样本 $x_0$（根据 prediction_type)。
-                """
-
-            # 用 traj_pred与noisy_traj_points计算扩散模型的损失
-            loss_fn = nn.MSELoss()
-            diffusion_loss = loss_fn(traj_pred, noisy_traj_points)
-
-            # print(f"diffusion_model最终输出的轨迹形状:{diffusion_output.shape},轨迹值[0]:{diffusion_output[0][0]}")#[32，80, 4](batch_size, future_steps, 4)
-            trajectory = self.denormalize_xy_rotation(diffusion_output, N=self.future_steps, times=1)#[32，80, 4][batch_size, future_steps, 4]
-            # print(f"denormalize_xy转换后的轨迹形状:{trajectory.shape}，轨迹值[0]:{trajectory[0][0]}")#[batch_size, future_steps, 4]
-            trajectories.append(trajectory)# [num_modes, batch_size, future_steps, 4]
+            # 反归一化轨迹
+            trajectory = self.denormalize_xy_rotation(traj_pred, N=self.future_steps, times=1)  # [batch_size, future_steps, 4]
+            trajectories.append(trajectory)  # [num_modes, batch_size, future_steps, 4]
             diffusion_losses.append(diffusion_loss)
 
-        trajectories = torch.stack(trajectories, dim=1)  # 形状为 (batch_size, num_modes, future_steps, 4)
+        trajectories = torch.stack(trajectories, dim=1)  # (batch_size, num_modes, future_steps, 4)
+        probability = self.probability_decoder(ego_instance_feature.squeeze(1))  # [batch_size, num_modes]
 
-        # 计算概率
-        probability = self.probability_decoder(ego_instance_feature.squeeze(1))
-        # print(f"概率形状:{probability.shape}，概率值:{probability[0]}")#[batch_size, num_modes]
-        
         return trajectories, probability, diffusion_losses
+
 
     def normalize_xy_rotation(self, trajectory, N=30, times=10):
         batch, num_pts, dim = trajectory.shape
@@ -281,53 +268,11 @@ class CrossAttentionUnetModel(nn.Module):
 
     def forward(self, ego_instance_feature, map_instance_feature,timesteps,noisy_traj_points):
         # ego_instance_feature[batch_size, 1, 128], map_instance_feature[batch_size, 222, 128], timesteps[batch_size], noisy_traj_points[batch_size, future_steps, 2]
-        batch_size = ego_instance_feature.shape[0]# 32
+        # batch_size = ego_instance_feature.shape[0]# 32
         ego_latent = ego_instance_feature[:,:,:] # torch.Size([32, 128])
-        
-        
-        # # 原来的
-        # map_pos = self.map_feature_pos.weight[None].repeat(batch_size, 1, 1) #shape: [32, 100, 128] ??
-        # ego_pos = self.ego_pos_latent.weight[None].repeat(batch_size, 1, 1)#shape: [32, 1, 128]
-        # ego_latent = self.ego_feature.weight[None].repeat(batch_size, 1, 1)#shape: [32, 1, 128]
 
-        # # ego_instance_decoder 把实例特征作为查询、键和值进行处理。然后，经过层归一化和全连接层处理        
-        # ego_latent = self.ego_instance_decoder(
-        #     query = ego_latent,
-        #     key = ego_instance_feature,
-        #     value = ego_instance_feature,
-        # )[0]
-        # ego_latent = self.ins_cond_layernorm_1(ego_latent)
-        # ego_latent = self.fc1(ego_latent)
-        # ego_latent = self.ins_cond_layernorm_2(ego_latent)
-        # ego_latent = ego_latent.unsqueeze(1)
-        # # print(instance_feature.shape)
-        # # print(ego_latent.shape)
-
-        # # map_decoder 将地图特征作为查询、键和值进行处理。然后，经过层归一化和全连接层处理。
-        # map_instance_feature = self.map_decoder(
-        #     query = map_instance_feature + map_pos,
-        #     key = map_instance_feature + map_pos,
-        #     value = map_instance_feature,
-        # )[0]
-        # map_instance_feature = self.fc1(map_instance_feature)
-        # map_instance_feature = self.ins_cond_layernorm_1(map_instance_feature)
-
-        # # ego_map_decoder 将实例特征和地图特征进行交互处理。然后，经过层归一化和全连接层处理。
-        # # 将处理后的实例特征作为全局特征，并移除多余的维度
-        # ego_latent = self.ego_map_decoder(
-        #     query = ego_latent + ego_pos,
-        #     key = map_instance_feature,
-        #     value = map_instance_feature,
-        # )[0]
-        # ego_latent = self.map_cond_layernorm_1(ego_latent)
-        # ego_latent = self.fc2(ego_latent)
-        # ego_latent = self.map_cond_layernorm_2(ego_latent)
-        
-        # # TODO：融合ego和map信息
-
-
-        global_feature = ego_latent # 目前只用了ego的信息
-        global_feature = global_feature.squeeze(1)# 本质上取决于ego_instance_feature：主代理的嵌入表示
+        global_feature = ego_latent.squeeze(1) # 目前只用了ego的信息
+        # global_feature = global_feature.squeeze(1)# 本质上取决于ego_instance_feature：主代理的嵌入表示
 
         noisy_traj_points = noisy_traj_points.to('cuda')  # 将输入张量移动到 GPU
         global_feature = global_feature.to('cuda')  # 将全局条件张量移动到 GPU
@@ -341,6 +286,12 @@ class CrossAttentionUnetModel(nn.Module):
                     global_cond=global_feature,#本质上取决于ego,[batch_size, embed_dim]
         )
         return noise_pred
+    
+
+
+
+
+
     # if __name__ == "__main__":
     # map_feature = torch.randn(2, 100, 256)
     # instance_feature = torch.randn(2,901,256)

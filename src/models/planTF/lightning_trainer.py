@@ -124,9 +124,9 @@ class LightningTrainer(pl.LightningModule):
             prediction[agent_mask], agent_target[agent_mask][:, :2]
         )
         if isinstance(diffusion_losses, list):
-            diffusion_loss = torch.stack(diffusion_losses).float().mean() / 1000
+            diffusion_loss = torch.stack(diffusion_losses).float().mean()
         else:
-            diffusion_loss = diffusion_losses.mean()/1000
+            diffusion_loss = diffusion_losses.mean()
         # print(f"ego_reg_loss: {ego_reg_loss}, ego_cls_loss: {ego_cls_loss}, agent_reg_loss: {agent_reg_loss}, diffusion_losses: {diffusion_loss}")
         # ego_reg_loss: 14.728102684020996, ego_cls_loss: 1.7920138835906982, agent_reg_loss: 4.655642986297607, diffusion_losses: 14.878222465515137
 
