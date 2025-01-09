@@ -44,7 +44,11 @@ class DiffusionModel(nn.Module):
         # ego [32, 1, 128]         含义：(batch_size, 1, embed_dim)
         # map [32, 222, 128] 
         # traj_anchors [256,80,4]
+        # 从traj_anchors里面随机采样出来形状为[self.num_modes, bs, self.future_steps, 4]的traj_anchors，由于不够，可以重复使用
+        
         bs = ego_instance_feature.shape[0]  # 32
+        if bs > 32:
+            traj_anchors =  torch.cat([traj_anchors,traj_anchors], dim=0)
         traj_anchors = traj_anchors[:self.num_modes * bs]  # [num_modes * batch_size, future_steps, 4]
         traj_anchors = traj_anchors.view(self.num_modes, bs, self.future_steps, 4)  # [num_modes, batch_size, future_steps, 4]
 
