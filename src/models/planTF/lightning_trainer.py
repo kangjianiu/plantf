@@ -97,7 +97,7 @@ class LightningTrainer(pl.LightningModule):
             res["trajectory"],
             res["probability"],
             res["prediction"],
-            res["diffusion_losses"],
+            res["diffusion_losses"],#[bs,num_modes]
         )
         targets = data["agent"]["target"]
         valid_mask = data["agent"]["valid_mask"][:, :, -trajectory.shape[-2] :]
@@ -128,6 +128,7 @@ class LightningTrainer(pl.LightningModule):
         else:
             diffusion_loss = diffusion_losses.mean()
         # print(f"ego_reg_loss: {ego_reg_loss}, ego_cls_loss: {ego_cls_loss}, agent_reg_loss: {agent_reg_loss}, diffusion_losses: {diffusion_loss}")
+        # sys.exit(1)
         # ego_reg_loss: 14.728102684020996, ego_cls_loss: 1.7920138835906982, agent_reg_loss: 4.655642986297607, diffusion_losses: 14.878222465515137
 
         loss = ego_reg_loss + ego_cls_loss + agent_reg_loss + diffusion_loss#加loss
