@@ -112,14 +112,14 @@ class LightningTrainer(pl.LightningModule):
             ],
             dim=-1,
         )
-        agent_target, agent_mask = targets[:, 1:], valid_mask[:, 1:]
+        agent_target, agent_mask = targets[:, 1:], valid_mask[:, 1:] # [32, 32, 80, 3],    [32, 32, 80]
 
         ade = torch.norm(trajectory[..., :2] - ego_target[:, None, :, :2], dim=-1)
         best_mode = torch.argmin(ade.sum(-1), dim=-1)
         best_traj = trajectory[torch.arange(trajectory.shape[0]), best_mode]
         ego_reg_loss = F.smooth_l1_loss(best_traj, ego_target)
         ego_cls_loss = F.cross_entropy(probability, best_mode.detach())
-
+  
         agent_reg_loss = F.smooth_l1_loss(
             prediction[agent_mask], agent_target[agent_mask][:, :2]
         )
@@ -131,7 +131,7 @@ class LightningTrainer(pl.LightningModule):
         # sys.exit(1)
         # ego_reg_loss: 14.728102684020996, ego_cls_loss: 1.7920138835906982, agent_reg_loss: 4.655642986297607, diffusion_losses: 14.878222465515137
 
-        loss = ego_reg_loss + ego_cls_loss + agent_reg_loss + diffusion_loss#加loss
+        loss = ego_reg_loss + 2*ego_cls_loss + agent_reg_loss + diffusion_loss#加loss
 
         return {
             "loss": loss,

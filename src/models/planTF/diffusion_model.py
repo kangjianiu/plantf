@@ -2,6 +2,7 @@ import sys
 import torch
 import torch.nn as nn
 import numpy as np
+import torch.nn.functional as F
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
 from .modules.conditional_unet1d import ConditionalUnet1D
 from sklearn.cluster import KMeans
@@ -42,8 +43,8 @@ class DiffusionModel(nn.Module):
 
     def forward(self, ego_instance_feature, map_instance_feature, traj_anchors):
         # ego [32, 1, 128]         含义：(bs, 1, embed_dim)
-        # map [32, 222, 128] 
-        # traj_anchors [bs, num_modes, future_steps, 4]
+        # map [32, 222, 128]  
+        # traj_anchors [num_modes, bs, future_steps, 4]   -> num_modes=锚点数：20
         if self.training:
             return self.forward_train(ego_instance_feature, map_instance_feature, traj_anchors)
         else:
@@ -51,12 +52,11 @@ class DiffusionModel(nn.Module):
 
 
     def forward_train(self, ego_instance_feature, map_instance_feature, traj_anchors):
-        # traj_anchors [bs, num_modes, future_steps, 4]
+        # traj_anchors [num_modes, bs, future_steps, 4]
         bs = ego_instance_feature.shape[0]  # 32
         device = ego_instance_feature.device
         trajectories = []
         diffu_noise_losses = []
-        infer_times = 2 #去噪推理次数
         for mode in range(self.num_modes):
             traj_anchors_mode = traj_anchors[mode]  # [bs, future_steps, 4]
             # 生成噪音和时间步
@@ -96,7 +96,7 @@ class DiffusionModel(nn.Module):
 
             # 计算噪声预测损失
             loss_fn = nn.MSELoss()
-            diffu_noise_loss = loss_fn(noise_pred, noise) 
+            diffu_noise_loss = F.smooth_l1_loss(noise_pred, noise) 
 
             # # 反归一化轨迹
             # trajectory = self.denormalize_xy_rotation(traj_pred, N=self.future_steps, times=1)  # [bs, future_steps, 4]
@@ -110,12 +110,11 @@ class DiffusionModel(nn.Module):
         return trajectories, probability, diffu_noise_losses
 
     def forward_test(self, ego_instance_feature, map_instance_feature, traj_anchors):
-        # traj_anchors [bs, num_modes, future_steps, 4]
+        # traj_anchors [num_modes, bs, future_steps, 4]
         bs = ego_instance_feature.shape[0]  # 32
         device = ego_instance_feature.device
         trajectories = []
         diffu_noise_losses = []
-        infer_times = 2 #去噪推理次数
         for mode in range(self.num_modes):
             traj_anchors_mode = traj_anchors[mode]  # [bs, future_steps, 4]
             # 生成噪音和时间步
@@ -151,7 +150,7 @@ class DiffusionModel(nn.Module):
 
             # 计算噪声预测损失
             loss_fn = nn.MSELoss()
-            diffu_noise_loss = loss_fn(noise_pred, noise) 
+            diffu_noise_loss = F.smooth_l1_loss(noise_pred, noise) 
 
             # # 反归一化轨迹
             # trajectory = self.denormalize_xy_rotation(traj_pred, N=self.future_steps, times=1)  # [bs, future_steps, 4]

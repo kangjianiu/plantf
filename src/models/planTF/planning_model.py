@@ -33,7 +33,7 @@ class PlanningModel(TorchModuleWrapper):
         encoder_depth=4,
         drop_path=0.2,
         num_heads=8,
-        num_modes=6,
+        num_modes=20,
         use_ego_history=False,
         state_attn_encoder=True,
         state_dropout=0.75,
@@ -156,18 +156,16 @@ class PlanningModel(TorchModuleWrapper):
         prediction = self.agent_predictor(x[:, 1:A]).view(bs, -1, self.future_steps, 2)
         # prediction  [32, 32, 80, 2] (batch_size, num_agents, future_steps, 2) 表示模型对其他代理未来状态的预测。
 
-        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_256_80_vxy.npy'
-        traj_anchors = self.load_cluster_centers(npy_file_path)# shape (256, 80, 4)
-        # print(f"共加载到 {len(traj_anchors)} 个轨迹锚点。")
+        # 策略1：读取256个锚点，[num_modes, bs, future_steps, 4]
+        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_20_80_vxy.npy'
+        traj_anchors = self.load_cluster_centers(npy_file_path)# shape (20, 80, 4)
+        traj_anchors = np.array(traj_anchors)  # 将列表转换为 numpy.ndarray
+
+
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)
-        traj_anchors = traj_anchors[torch.randperm(traj_anchors.shape[0])]
+        # traj_anchors_np通过复制增加一维变为[20,bs,80,4]
+        traj_anchors = traj_anchors.unsqueeze(1).expand(-1, bs, -1, -1)
         
-        if bs > 32:
-            traj_anchors =  torch.cat([traj_anchors,traj_anchors], dim=0)
-        traj_anchors = traj_anchors[:self.num_modes * bs]  # [num_modes * batch_size, future_steps, 4]
-        # traj_anchors打乱顺序，然后形状变为 [bs, num_modes, future_steps, 4]
-        traj_anchors = traj_anchors[torch.randperm(traj_anchors.shape[0])]
-        traj_anchors = traj_anchors.view(self.num_modes, bs, traj_anchors.shape[1], traj_anchors.shape[2])  # [num_modes, bs, future_steps, 4]
 
         # 初始化diffusion_losses= [],里面只有一个元素，是tensor，值为0，形状为[1]
         diffusion_losses = [torch.tensor(0).to(ego_instance_feature.device)]

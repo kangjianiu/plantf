@@ -77,10 +77,12 @@ def main():
 
     # 执行 K-Means 聚类
     print(f"执行 K-Means 聚类，聚类数量: {n_clusters}...")
-    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+    kmeans = KMeans(n_clusters=n_clusters,  init='k-means++', random_state=42)
     kmeans.fit(valid_trajs)
     cluster_centers = kmeans.cluster_centers_  # shape (n_clusters, num_points*4)
     cluster_centers = cluster_centers.reshape(n_clusters, num_points, 4)  # 恢复成 (n_clusters, num_points, 4)
+    # 在第一个维度随机打乱顺序
+    cluster_centers = cluster_centers[np.random.permutation(n_clusters)]
 
     print("K-Means 聚类完成。开始可视化并保存...")
 

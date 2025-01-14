@@ -236,11 +236,11 @@ class ConditionalUnet1D(nn.Module):
         self.final_conv = final_conv
 
     def forward(self, 
-            sample: torch.Tensor, #[batch_size, future_steps, 4][32,80,4]
-            timestep: Union[torch.Tensor, float, int], 
-            local_cond=None, global_cond=None, **kwargs):#global_cond :[batch_size, embed_dim]
+            sample: torch.Tensor, #[bs, num_modes, future_steps, 4]
+            timestep: Union[torch.Tensor, float, int], #[bs]
+            local_cond=None, global_cond=None, **kwargs):#global_cond :[bs, embed_dim]
         """
-        x: (B,T,input_dim)                     #[256, 32, 2]
+        x: (B,T,input_dim)                     
         timestep: (B,) or int, diffusion step  #[32]
         local_cond: (B,T,local_cond_dim)
         global_cond: (B,global_cond_dim)       #ego信息[32, 128]
@@ -257,8 +257,7 @@ class ConditionalUnet1D(nn.Module):
             timesteps = timesteps[None].to(sample.device)
  
         # broadcast to batch dimension in a way that's compatible with ONNX/Core ML
-        timesteps = timesteps.expand(global_cond.shape[0]) 
-        # print("============unet1d开始===========\ntimesteps3:",timesteps.shape) # timesteps1: torch.Size([32])
+        timesteps = timesteps.expand(global_cond.shape[0]) # [32]
 
         global_feature = self.diffusion_step_encoder(timesteps)
 
