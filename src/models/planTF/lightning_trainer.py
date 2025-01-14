@@ -131,7 +131,7 @@ class LightningTrainer(pl.LightningModule):
         # sys.exit(1)
         # ego_reg_loss: 14.728102684020996, ego_cls_loss: 1.7920138835906982, agent_reg_loss: 4.655642986297607, diffusion_losses: 14.878222465515137
 
-        loss = ego_reg_loss + 2*ego_cls_loss + agent_reg_loss + diffusion_loss#加loss
+        loss = ego_reg_loss + 0.2*ego_cls_loss + agent_reg_loss + diffusion_loss#加loss
 
         return {
             "loss": loss,
