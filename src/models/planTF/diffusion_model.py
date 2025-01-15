@@ -41,18 +41,21 @@ class DiffusionModel(nn.Module):
             # nn.Softmax(dim=1)
         )
 
-    def forward(self, ego_instance_feature, map_instance_feature, traj_anchors):
+    def forward(self, ego_instance_feature, map_instance_feature, traj_anchors,prediction):
         # ego [32, 1, 128]         含义：(bs, 1, embed_dim)
-        # map [32, 222, 128]  
+        # map [32, 222, 128]  [bs, num_polygons, embed_dim]
         # traj_anchors [num_modes, bs, future_steps, 4]   -> num_modes=锚点数：20
+        # prediction:  [bs, num_agents, future_steps, 2] 表示模型对其他代理未来状态的预测。
         if self.training:
-            return self.forward_train(ego_instance_feature, map_instance_feature, traj_anchors)
+            return self.forward_train(ego_instance_feature, map_instance_feature, traj_anchors, prediction)
         else:
-            return self.forward_test(ego_instance_feature, map_instance_feature, traj_anchors)        
+            return self.forward_test(ego_instance_feature, map_instance_feature, traj_anchors, prediction)        
 
 
-    def forward_train(self, ego_instance_feature, map_instance_feature, traj_anchors):
+    def forward_train(self, ego_instance_feature, map_instance_feature, traj_anchors, prediction):
         # traj_anchors [num_modes, bs, future_steps, 4]
+        # prediction:  [bs, num_agents, future_steps, 2] 表示模型对其他代理未来状态的预测。
+        # map          [bs, num_polygons, embed_dim]
         bs = ego_instance_feature.shape[0]  # 32
         device = ego_instance_feature.device
         trajectories = []
@@ -76,7 +79,7 @@ class DiffusionModel(nn.Module):
             ).float()
             
             # 预测噪声     
-            noise_pred = self.model(ego_instance_feature, map_instance_feature, timesteps, noisy_traj) # [bs, future_steps, 4]
+            noise_pred = self.model(ego_instance_feature, map_instance_feature, timesteps, noisy_traj, prediction) # [bs, future_steps, 4]
 
             # 计算预测轨迹,    调用 scheduler.step 时逐样本处理，由于 DDPMScheduler.step 不支持批量时间步，这里通过循环逐样本处理：
             traj_pred_step = []
@@ -109,7 +112,7 @@ class DiffusionModel(nn.Module):
 
         return trajectories, probability, diffu_noise_losses
 
-    def forward_test(self, ego_instance_feature, map_instance_feature, traj_anchors):
+    def forward_test(self, ego_instance_feature, map_instance_feature, traj_anchors, prediction):
         # traj_anchors [num_modes, bs, future_steps, 4]
         bs = ego_instance_feature.shape[0]  # 32
         device = ego_instance_feature.device
@@ -131,7 +134,7 @@ class DiffusionModel(nn.Module):
             for k in [1,10]:  
                 timesteps = k * torch.ones((bs,), device=device, dtype=torch.long) # [bs]
                 # 预测噪声     
-                noise_pred = self.model(ego_instance_feature, map_instance_feature, timesteps, traj_pred) # [bs, future_steps, 4]
+                noise_pred = self.model(ego_instance_feature, map_instance_feature, timesteps, traj_pred, prediction) # [bs, future_steps, 4]
                 # 计算预测轨迹,    调用 scheduler.step 时逐样本处理，由于 DDPMScheduler.step 不支持批量时间步，这里通过循环逐样本处理：
                 traj_pred_step = []
                 for b in range(bs):
@@ -149,7 +152,6 @@ class DiffusionModel(nn.Module):
                 traj_pred = torch.stack(traj_pred_step, dim=0)  # [bs, future_steps, 4]
 
             # 计算噪声预测损失
-            loss_fn = nn.MSELoss()
             diffu_noise_loss = F.smooth_l1_loss(noise_pred, noise) 
 
             # # 反归一化轨迹
@@ -382,13 +384,14 @@ class CrossAttentionUnetModel(nn.Module):
             return noise_pred
     """       
 
-    def forward(self, ego_instance_feature, map_instance_feature,timesteps,noisy_traj_points):
+    def forward(self, ego_instance_feature, map_instance_feature,timesteps,noisy_traj_points, prediction):
         # ego_instance_feature[bs, 1, 128], map_instance_feature[bs, 222, 128], timesteps[bs], noisy_traj_points[bs, future_steps, 2]
         # bs = ego_instance_feature.shape[0]# 32
+        # prediction:  [bs, num_agents, future_steps, 2] 表示模型对其他代理未来状态的预测。
         ego_latent = ego_instance_feature[:,:,:] # torch.Size([32, 128])
-
         global_feature = ego_latent.squeeze(1) # 目前只用了ego的信息
-        # global_feature = global_feature.squeeze(1)# 本质上取决于ego_instance_feature：主代理的嵌入表示
+        # 利用交叉注意力机制，将ego和map_instance_feature，prediction的特征进行融合，生成global_feature
+        
 
         noisy_traj_points = noisy_traj_points.to('cuda')  # 将输入张量移动到 GPU
         global_feature = global_feature.to('cuda')  # 将全局条件张量移动到 GPU

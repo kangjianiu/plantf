@@ -1,0 +1,145 @@
+[2025-01-14 16:55:51,552][__main__][INFO] - Logger is configured correctly.
+[2025-01-14 16:55:51,746][nuplan.planning.script.builders.folder_builder][INFO] - Building experiment folders...
+[2025-01-14 16:55:51,746][nuplan.planning.script.builders.folder_builder][INFO] - Experimental folder: /data/datasets/niukangjia/plantf/output/training/planTF/2025.01.14.16.55.42
+[2025-01-14 16:55:51,747][nuplan.planning.script.builders.worker_pool_builder][INFO] - Building WorkerPool...
+[2025-01-14 16:55:51,747][nuplan.planning.utils.multithreading.worker_pool][INFO] - Worker: SingleMachineParallelExecutor
+[2025-01-14 16:55:51,748][nuplan.planning.utils.multithreading.worker_pool][INFO] - Number of nodes: 1
+Number of CPUs per node: 32
+Number of GPUs per node: 0
+Number of threads across all nodes: 32
+[2025-01-14 16:55:51,748][nuplan.planning.script.builders.worker_pool_builder][INFO] - Building WorkerPool...DONE!
+[2025-01-14 16:55:51,748][src.custom_training.custom_training_builder][INFO] - Building training engine...
+[2025-01-14 16:56:15,445][nuplan.planning.script.builders.model_builder][INFO] - Building TorchModuleWrapper...
+[2025-01-14 16:56:16,466][nuplan.planning.script.builders.model_builder][INFO] - Building TorchModuleWrapper...DONE!
+[2025-01-14 16:56:16,466][nuplan.planning.script.builders.splitter_builder][INFO] - Building Splitter...
+[2025-01-14 16:56:17,265][nuplan.planning.script.builders.splitter_builder][INFO] - Building Splitter...DONE!
+[2025-01-14 16:56:17,266][nuplan.planning.script.builders.data_augmentation_builder][INFO] - Building augmentors...
+[2025-01-14 16:56:17,268][nuplan.planning.script.builders.data_augmentation_builder][INFO] - Building augmentors...DONE!
+[2025-01-14 16:56:30,207][nuplan.planning.script.builders.scenario_builder][INFO] - Extracted 204791 scenarios for training
+[2025-01-14 16:56:30,445][__main__][INFO] - Starting training...
+[2025-01-14 16:56:30,480][torch.distributed.distributed_c10d][INFO] - Added key: store_based_barrier_key:1 to store for rank: 0
+[2025-01-14 16:56:30,481][torch.distributed.distributed_c10d][INFO] - Rank 0: Completed store-based barrier for key:store_based_barrier_key:1 with 1 nodes.
+[2025-01-14 16:56:30,889][src.custom_training.custom_datamodule][INFO] - Number of samples in train set: 132384
+[2025-01-14 16:56:30,977][src.custom_training.custom_datamodule][INFO] - Number of samples in validation set: 32407
+[2025-01-14 16:56:58,987][root][INFO] - 
+[Epoch 0] val_loss: 9.32628, val_reg_loss: 5.04655, val_cls_loss: 2.06733, val_prediction_losss: 4.21330, val_diffusion_loss: 0.45759, val_MR: 0.78125, val_minADE1: 19.13578, val_minADE6: 19.09196, val_minFDE1: 37.69841, val_minFDE6: 37.47061
+[2025-01-14 17:41:09,365][root][INFO] - 
+[Epoch 0] val_loss: 7.12251, val_reg_loss: 3.88558, val_cls_loss: 1.18596, val_prediction_losss: 3.07757, val_diffusion_loss: 1.47498, val_MR: 0.60413, val_minADE1: 15.50081, val_minADE6: 15.36275, val_minFDE1: 31.31077, val_minFDE6: 31.10661
+[2025-01-14 18:21:55,205][root][INFO] - 
+[Epoch 0] val_loss: 6.85774, val_reg_loss: 3.84796, val_cls_loss: 1.22761, val_prediction_losss: 2.83531, val_diffusion_loss: 1.62198, val_MR: 0.94562, val_minADE1: 15.43133, val_minADE6: 15.28922, val_minFDE1: 31.21075, val_minFDE6: 31.03814
+[2025-01-14 18:21:57,160][root][INFO] - 
+[Epoch 0] train_loss: 7.27203, train_reg_loss: 3.68768, train_cls_loss: 1.35070, train_prediction_losss: 3.49674, train_diffusion_loss: 0.74113, train_MR: 0.59835, train_minADE1: 15.16673, train_minADE6: 13.70496, train_minFDE1: 30.65636, train_minFDE6: 29.66206
+[2025-01-14 18:52:49,750][root][INFO] - 
+[Epoch 1] val_loss: 6.62655, val_reg_loss: 3.80396, val_cls_loss: 1.05251, val_prediction_losss: 2.62182, val_diffusion_loss: 1.90235, val_MR: 0.96727, val_minADE1: 15.26410, val_minADE6: 15.15941, val_minFDE1: 31.10688, val_minFDE6: 31.02670
+[2025-01-14 19:23:23,513][root][INFO] - 
+[Epoch 1] val_loss: 6.40717, val_reg_loss: 3.72027, val_cls_loss: 1.05156, val_prediction_losss: 2.45922, val_diffusion_loss: 2.17159, val_MR: 0.97672, val_minADE1: 15.03391, val_minADE6: 14.83826, val_minFDE1: 31.83418, val_minFDE6: 30.97196
+[2025-01-14 19:23:25,465][root][INFO] - 
+[Epoch 1] train_loss: 6.62665, train_reg_loss: 3.42044, train_cls_loss: 1.31038, train_prediction_losss: 3.09937, train_diffusion_loss: 0.93729, train_MR: 0.57736, train_minADE1: 14.50293, train_minADE6: 12.89252, train_minFDE1: 29.97733, train_minFDE6: 27.56339
+[2025-01-14 19:53:28,484][root][INFO] - 
+[Epoch 2] val_loss: 5.92640, val_reg_loss: 3.41372, val_cls_loss: 1.12024, val_prediction_losss: 2.27376, val_diffusion_loss: 2.27723, val_MR: 0.97514, val_minADE1: 13.74074, val_minADE6: 13.61020, val_minFDE1: 32.81296, val_minFDE6: 31.97299
+[2025-01-14 20:24:43,199][root][INFO] - 
+[Epoch 2] val_loss: 5.69090, val_reg_loss: 3.31181, val_cls_loss: 1.29171, val_prediction_losss: 2.10686, val_diffusion_loss: 2.59310, val_MR: 0.97616, val_minADE1: 13.38524, val_minADE6: 13.23320, val_minFDE1: 32.04647, val_minFDE6: 31.29443
+[2025-01-14 20:24:45,415][root][INFO] - 
+[Epoch 2] train_loss: 5.91276, train_reg_loss: 3.08923, train_cls_loss: 1.38730, train_prediction_losss: 2.69431, train_diffusion_loss: 1.15350, train_MR: 0.57579, train_minADE1: 13.14526, train_minADE6: 11.72068, train_minFDE1: 28.58826, train_minFDE6: 25.75640
+[2025-01-14 20:55:09,236][root][INFO] - 
+[Epoch 3] val_loss: 5.13721, val_reg_loss: 2.92081, val_cls_loss: 1.30048, val_prediction_losss: 1.94556, val_diffusion_loss: 2.57844, val_MR: 0.94469, val_minADE1: 11.93406, val_minADE6: 11.66846, val_minFDE1: 29.31592, val_minFDE6: 28.37545
+[2025-01-14 21:25:58,409][root][INFO] - 
+[Epoch 3] val_loss: 4.97766, val_reg_loss: 2.86228, val_cls_loss: 1.35246, val_prediction_losss: 1.80008, val_diffusion_loss: 3.01763, val_MR: 0.96378, val_minADE1: 11.70456, val_minADE6: 11.47195, val_minFDE1: 28.39461, val_minFDE6: 27.11924
+[2025-01-14 21:26:00,554][root][INFO] - 
+[Epoch 3] train_loss: 5.20655, train_reg_loss: 2.71231, train_cls_loss: 1.49986, train_prediction_losss: 2.34066, train_diffusion_loss: 1.38586, train_MR: 0.57067, train_minADE1: 12.01110, train_minADE6: 10.36878, train_minFDE1: 26.87859, train_minFDE6: 23.63232
+[2025-01-14 21:56:33,484][root][INFO] - 
+[Epoch 4] val_loss: 4.66019, val_reg_loss: 2.65354, val_cls_loss: 1.48143, val_prediction_losss: 1.65825, val_diffusion_loss: 3.33579, val_MR: 0.96755, val_minADE1: 11.40436, val_minADE6: 10.67639, val_minFDE1: 28.80152, val_minFDE6: 26.76827
+[2025-01-14 22:27:09,995][root][INFO] - 
+[Epoch 4] val_loss: 4.25625, val_reg_loss: 2.37067, val_cls_loss: 1.43719, val_prediction_losss: 1.52691, val_diffusion_loss: 3.44298, val_MR: 0.95254, val_minADE1: 10.10773, val_minADE6: 9.52473, val_minFDE1: 27.04210, val_minFDE6: 25.09753
+[2025-01-14 22:27:12,126][root][INFO] - 
+[Epoch 4] train_loss: 4.53541, train_reg_loss: 2.33627, train_cls_loss: 1.49046, train_prediction_losss: 2.02798, train_diffusion_loss: 1.56250, train_MR: 0.56321, train_minADE1: 10.84533, train_minADE6: 9.01296, train_minFDE1: 25.05589, train_minFDE6: 21.23848
+[2025-01-14 22:57:47,788][root][INFO] - 
+[Epoch 5] val_loss: 3.92640, val_reg_loss: 2.14690, val_cls_loss: 1.38279, val_prediction_losss: 1.41031, val_diffusion_loss: 3.55367, val_MR: 0.94757, val_minADE1: 8.91469, val_minADE6: 8.64999, val_minFDE1: 25.25002, val_minFDE6: 22.89248
+[2025-01-14 23:27:42,839][root][INFO] - 
+[Epoch 5] val_loss: 3.57455, val_reg_loss: 1.88763, val_cls_loss: 1.50217, val_prediction_losss: 1.30109, val_diffusion_loss: 3.70803, val_MR: 0.78153, val_minADE1: 7.89772, val_minADE6: 7.60418, val_minFDE1: 22.17961, val_minFDE6: 20.45673
+[2025-01-14 23:27:44,958][root][INFO] - 
+[Epoch 5] train_loss: 3.93112, train_reg_loss: 1.98384, train_cls_loss: 1.41825, train_prediction_losss: 1.76460, train_diffusion_loss: 1.68492, train_MR: 0.55510, train_minADE1: 9.76630, train_minADE6: 7.71562, train_minFDE1: 23.09049, train_minFDE6: 18.82888
+[2025-01-14 23:58:44,607][root][INFO] - 
+[Epoch 6] val_loss: 3.49320, val_reg_loss: 1.85928, val_cls_loss: 1.59684, val_prediction_losss: 1.20369, val_diffusion_loss: 4.14265, val_MR: 0.91934, val_minADE1: 7.83984, val_minADE6: 7.50238, val_minFDE1: 22.13686, val_minFDE6: 20.07195
+[2025-01-15 00:29:08,930][root][INFO] - 
+[Epoch 6] val_loss: 3.09249, val_reg_loss: 1.55357, val_cls_loss: 1.26553, val_prediction_losss: 1.11008, val_diffusion_loss: 4.16191, val_MR: 0.87608, val_minADE1: 6.57292, val_minADE6: 6.32349, val_minFDE1: 19.50277, val_minFDE6: 17.42471
+[2025-01-15 00:29:10,882][root][INFO] - 
+[Epoch 6] train_loss: 3.38747, train_reg_loss: 1.65499, train_cls_loss: 1.38545, train_prediction_losss: 1.53700, train_diffusion_loss: 1.81614, train_MR: 0.54697, train_minADE1: 8.66417, train_minADE6: 6.49460, train_minFDE1: 20.99488, train_minFDE6: 16.71878
+[2025-01-15 01:00:01,175][root][INFO] - 
+[Epoch 7] val_loss: 3.17574, val_reg_loss: 1.65703, val_cls_loss: 1.49313, val_prediction_losss: 1.03464, val_diffusion_loss: 4.69134, val_MR: 0.93583, val_minADE1: 7.18879, val_minADE6: 6.74494, val_minFDE1: 20.54850, val_minFDE6: 18.65828
+[2025-01-15 01:30:40,227][root][INFO] - 
+[Epoch 7] val_loss: 2.70966, val_reg_loss: 1.27713, val_cls_loss: 1.24262, val_prediction_losss: 0.96245, val_diffusion_loss: 4.57649, val_MR: 0.87034, val_minADE1: 5.48965, val_minADE6: 5.22499, val_minFDE1: 16.29113, val_minFDE6: 14.64561
+[2025-01-15 01:30:42,252][root][INFO] - 
+[Epoch 7] train_loss: 2.93336, train_reg_loss: 1.37137, train_cls_loss: 1.40018, train_prediction_losss: 1.34846, train_diffusion_loss: 1.99529, train_MR: 0.54005, train_minADE1: 7.75808, train_minADE6: 5.42877, train_minFDE1: 19.06029, train_minFDE6: 14.45070
+[2025-01-15 02:00:33,747][root][INFO] - 
+[Epoch 8] val_loss: 2.82136, val_reg_loss: 1.40588, val_cls_loss: 1.27254, val_prediction_losss: 0.89619, val_diffusion_loss: 5.06567, val_MR: 0.94222, val_minADE1: 5.99645, val_minADE6: 5.72179, val_minFDE1: 17.43066, val_minFDE6: 15.56078
+[2025-01-15 02:31:41,980][root][INFO] - 
+[Epoch 8] val_loss: 2.86886, val_reg_loss: 1.46759, val_cls_loss: 1.40577, val_prediction_losss: 0.83802, val_diffusion_loss: 5.49182, val_MR: 0.95652, val_minADE1: 6.32230, val_minADE6: 6.03490, val_minFDE1: 17.83871, val_minFDE6: 15.70513
+[2025-01-15 02:31:44,110][root][INFO] - 
+[Epoch 8] train_loss: 2.55644, train_reg_loss: 1.13333, train_cls_loss: 1.40630, train_prediction_losss: 1.19575, train_diffusion_loss: 2.13292, train_MR: 0.53215, train_minADE1: 6.95738, train_minADE6: 4.53095, train_minFDE1: 17.17015, train_minFDE6: 12.23662
+[2025-01-15 03:01:59,856][root][INFO] - 
+[Epoch 9] val_loss: 2.57448, val_reg_loss: 1.22512, val_cls_loss: 1.33196, val_prediction_losss: 0.79250, val_diffusion_loss: 5.43539, val_MR: 0.92765, val_minADE1: 5.70310, val_minADE6: 5.09892, val_minFDE1: 14.78705, val_minFDE6: 13.55886
+[2025-01-15 03:32:46,084][root][INFO] - 
+[Epoch 9] val_loss: 2.76299, val_reg_loss: 1.41005, val_cls_loss: 1.42161, val_prediction_losss: 0.74750, val_diffusion_loss: 5.91226, val_MR: 0.94201, val_minADE1: 6.06426, val_minADE6: 5.80914, val_minFDE1: 16.13656, val_minFDE6: 14.34999
+[2025-01-15 03:32:48,120][root][INFO] - 
+[Epoch 9] train_loss: 2.24488, train_reg_loss: 0.93677, train_cls_loss: 1.40945, train_prediction_losss: 1.07026, train_diffusion_loss: 2.23751, train_MR: 0.52608, train_minADE1: 6.33419, train_minADE6: 3.79179, train_minFDE1: 15.45046, train_minFDE6: 10.17877
+[2025-01-15 04:03:15,062][root][INFO] - 
+[Epoch 10] val_loss: 2.55447, val_reg_loss: 1.24371, val_cls_loss: 1.47115, val_prediction_losss: 0.71213, val_diffusion_loss: 5.83921, val_MR: 0.91255, val_minADE1: 5.43551, val_minADE6: 5.17359, val_minFDE1: 13.94331, val_minFDE6: 11.59781
+[2025-01-15 04:33:47,437][root][INFO] - 
+[Epoch 10] val_loss: 2.36436, val_reg_loss: 1.09943, val_cls_loss: 1.37540, val_prediction_losss: 0.67369, val_diffusion_loss: 5.77485, val_MR: 0.90582, val_minADE1: 4.82056, val_minADE6: 4.59772, val_minFDE1: 12.62541, val_minFDE6: 10.79497
+[2025-01-15 04:33:49,401][root][INFO] - 
+[Epoch 10] train_loss: 2.00645, train_reg_loss: 0.78797, train_cls_loss: 1.41498, train_prediction_losss: 0.97279, train_diffusion_loss: 2.31538, train_MR: 0.51812, train_minADE1: 5.82810, train_minADE6: 3.22449, train_minFDE1: 13.92143, train_minFDE6: 8.41826
+[2025-01-15 05:04:23,694][root][INFO] - 
+[Epoch 11] val_loss: 2.48655, val_reg_loss: 1.22008, val_cls_loss: 1.69478, val_prediction_losss: 0.64383, val_diffusion_loss: 6.05688, val_MR: 0.89998, val_minADE1: 5.46379, val_minADE6: 5.06697, val_minFDE1: 13.45676, val_minFDE6: 11.65047
+[2025-01-15 05:34:14,734][root][INFO] - 
+[Epoch 11] val_loss: 2.28328, val_reg_loss: 1.05174, val_cls_loss: 1.49945, val_prediction_losss: 0.61621, val_diffusion_loss: 6.00337, val_MR: 0.90560, val_minADE1: 4.68614, val_minADE6: 4.40617, val_minFDE1: 12.67595, val_minFDE6: 10.80940
+[2025-01-15 05:34:16,702][root][INFO] - 
+[Epoch 11] train_loss: 1.82285, train_reg_loss: 0.67712, train_cls_loss: 1.40666, train_prediction_losss: 0.89666, train_diffusion_loss: 2.35007, train_MR: 0.50958, train_minADE1: 5.45232, train_minADE6: 2.80908, train_minFDE1: 12.71151, train_minFDE6: 7.04243
+[2025-01-15 06:05:18,183][root][INFO] - 
+[Epoch 12] val_loss: 2.21324, val_reg_loss: 0.99325, val_cls_loss: 1.65276, val_prediction_losss: 0.59753, val_diffusion_loss: 6.05935, val_MR: 0.90977, val_minADE1: 4.53461, val_minADE6: 4.18414, val_minFDE1: 11.95588, val_minFDE6: 9.72561
+[2025-01-15 06:35:40,406][root][INFO] - 
+[Epoch 12] val_loss: 2.21778, val_reg_loss: 1.01155, val_cls_loss: 1.58851, val_prediction_losss: 0.57943, val_diffusion_loss: 6.10915, val_MR: 0.88247, val_minADE1: 4.56050, val_minADE6: 4.26868, val_minFDE1: 11.05922, val_minFDE6: 9.40594
+[2025-01-15 06:35:42,464][root][INFO] - 
+[Epoch 12] train_loss: 1.69027, train_reg_loss: 0.59806, train_cls_loss: 1.40597, train_prediction_losss: 0.83783, train_diffusion_loss: 2.40309, train_MR: 0.50030, train_minADE1: 5.20375, train_minADE6: 2.51057, train_minFDE1: 11.75662, train_minFDE6: 5.94587
+[2025-01-15 07:06:28,766][root][INFO] - 
+[Epoch 13] val_loss: 2.05779, val_reg_loss: 0.87888, val_cls_loss: 1.62824, val_prediction_losss: 0.57300, val_diffusion_loss: 5.89621, val_MR: 0.85925, val_minADE1: 4.30860, val_minADE6: 3.73567, val_minFDE1: 9.60201, val_minFDE6: 8.01600
+[2025-01-15 07:36:56,566][root][INFO] - 
+[Epoch 13] val_loss: 2.17829, val_reg_loss: 0.99779, val_cls_loss: 1.78294, val_prediction_losss: 0.55021, val_diffusion_loss: 6.12453, val_MR: 0.86781, val_minADE1: 4.62569, val_minADE6: 4.24082, val_minFDE1: 10.82955, val_minFDE6: 8.70463
+[2025-01-15 07:36:58,558][root][INFO] - 
+[Epoch 13] train_loss: 1.59386, train_reg_loss: 0.54694, train_cls_loss: 1.40659, train_prediction_losss: 0.79377, train_diffusion_loss: 2.39085, train_MR: 0.49813, train_minADE1: 4.98333, train_minADE6: 2.32220, train_minFDE1: 11.02213, train_minFDE6: 5.23294
+[2025-01-15 08:07:07,021][root][INFO] - 
+[Epoch 14] val_loss: 2.05913, val_reg_loss: 0.88783, val_cls_loss: 1.98750, val_prediction_losss: 0.54522, val_diffusion_loss: 6.06213, val_MR: 0.86252, val_minADE1: 4.20287, val_minADE6: 3.73985, val_minFDE1: 9.79245, val_minFDE6: 7.64827
+[2025-01-15 08:37:56,889][root][INFO] - 
+[Epoch 14] val_loss: 2.01350, val_reg_loss: 0.85109, val_cls_loss: 1.87665, val_prediction_losss: 0.53489, val_diffusion_loss: 6.08756, val_MR: 0.84681, val_minADE1: 4.03002, val_minADE6: 3.63259, val_minFDE1: 9.47373, val_minFDE6: 7.53728
+[2025-01-15 08:37:58,906][root][INFO] - 
+[Epoch 14] train_loss: 1.52445, train_reg_loss: 0.51006, train_cls_loss: 1.39384, train_prediction_losss: 0.76012, train_diffusion_loss: 2.40322, train_MR: 0.48825, train_minADE1: 4.82097, train_minADE6: 2.18563, train_minFDE1: 10.48562, train_minFDE6: 4.71072
+[2025-01-15 09:07:56,491][root][INFO] - 
+[Epoch 15] val_loss: 2.01131, val_reg_loss: 0.86688, val_cls_loss: 1.73290, val_prediction_losss: 0.53063, val_diffusion_loss: 5.96468, val_MR: 0.83572, val_minADE1: 4.11740, val_minADE6: 3.67672, val_minFDE1: 8.28807, val_minFDE6: 6.70659
+[2025-01-15 09:38:52,835][root][INFO] - 
+[Epoch 15] val_loss: 2.11631, val_reg_loss: 0.96661, val_cls_loss: 2.52843, val_prediction_losss: 0.51897, val_diffusion_loss: 6.05447, val_MR: 0.86447, val_minADE1: 4.54419, val_minADE6: 4.05347, val_minFDE1: 8.77007, val_minFDE6: 7.20023
+[2025-01-15 09:38:54,858][root][INFO] - 
+[Epoch 15] train_loss: 1.47556, train_reg_loss: 0.48558, train_cls_loss: 1.39745, train_prediction_losss: 0.73475, train_diffusion_loss: 2.41261, train_MR: 0.48553, train_minADE1: 4.72952, train_minADE6: 2.09375, train_minFDE1: 10.15551, train_minFDE6: 4.39650
+[2025-01-15 10:09:20,505][root][INFO] - 
+[Epoch 16] val_loss: 2.05671, val_reg_loss: 0.90621, val_cls_loss: 4.11728, val_prediction_losss: 0.51701, val_diffusion_loss: 5.92315, val_MR: 0.82498, val_minADE1: 5.03051, val_minADE6: 3.84964, val_minFDE1: 7.98935, val_minFDE6: 6.52136
+[2025-01-15 10:40:03,789][root][INFO] - 
+[Epoch 16] val_loss: 2.09153, val_reg_loss: 0.93399, val_cls_loss: 3.68097, val_prediction_losss: 0.51347, val_diffusion_loss: 6.07267, val_MR: 0.83106, val_minADE1: 4.77992, val_minADE6: 3.94365, val_minFDE1: 8.53439, val_minFDE6: 6.98292
+[2025-01-15 10:40:05,432][root][INFO] - 
+[Epoch 16] train_loss: 1.43827, train_reg_loss: 0.47359, train_cls_loss: 1.37784, train_prediction_losss: 0.71514, train_diffusion_loss: 2.35759, train_MR: 0.48316, train_minADE1: 4.65612, train_minADE6: 2.05278, train_minFDE1: 9.95312, train_minFDE6: 4.23404
+[2025-01-15 11:10:34,709][root][INFO] - 
+[Epoch 17] val_loss: 2.04303, val_reg_loss: 0.90720, val_cls_loss: 3.16917, val_prediction_losss: 0.50335, val_diffusion_loss: 6.00788, val_MR: 0.81475, val_minADE1: 4.41706, val_minADE6: 3.81727, val_minFDE1: 8.21185, val_minFDE6: 6.64255
+[2025-01-15 11:40:25,061][root][INFO] - 
+[Epoch 17] val_loss: 2.11406, val_reg_loss: 0.96028, val_cls_loss: 2.92304, val_prediction_losss: 0.50154, val_diffusion_loss: 6.23006, val_MR: 0.84548, val_minADE1: 4.51331, val_minADE6: 4.06854, val_minFDE1: 9.86024, val_minFDE6: 7.81495
+[2025-01-15 11:40:26,497][root][INFO] - 
+[Epoch 17] train_loss: 1.40934, train_reg_loss: 0.45684, train_cls_loss: 1.37704, train_prediction_losss: 0.70063, train_diffusion_loss: 2.38103, train_MR: 0.47807, train_minADE1: 4.56936, train_minADE6: 1.99087, train_minFDE1: 9.72086, train_minFDE6: 4.06059
+[2025-01-15 12:11:25,323][root][INFO] - 
+[Epoch 18] val_loss: 2.01424, val_reg_loss: 0.87630, val_cls_loss: 3.22783, val_prediction_losss: 0.49830, val_diffusion_loss: 6.07362, val_MR: 0.83291, val_minADE1: 4.23952, val_minADE6: 3.71625, val_minFDE1: 9.05591, val_minFDE6: 7.18727
+[2025-01-15 12:41:42,135][root][INFO] - 
+[Epoch 18] val_loss: 1.97268, val_reg_loss: 0.84706, val_cls_loss: 3.32079, val_prediction_losss: 0.49616, val_diffusion_loss: 5.96253, val_MR: 0.79342, val_minADE1: 4.27525, val_minADE6: 3.60277, val_minFDE1: 7.60998, val_minFDE6: 6.17850
+[2025-01-15 12:41:44,264][root][INFO] - 
+[Epoch 18] train_loss: 1.38581, train_reg_loss: 0.44664, train_cls_loss: 1.37119, train_prediction_losss: 0.68969, train_diffusion_loss: 2.35768, train_MR: 0.47541, train_minADE1: 4.50965, train_minADE6: 1.95505, train_minFDE1: 9.53911, train_minFDE6: 3.93392
+[2025-01-15 13:12:15,586][root][INFO] - 
+[Epoch 19] val_loss: 1.95018, val_reg_loss: 0.82234, val_cls_loss: 2.67351, val_prediction_losss: 0.49402, val_diffusion_loss: 6.07092, val_MR: 0.80401, val_minADE1: 3.87828, val_minADE6: 3.50313, val_minFDE1: 8.97977, val_minFDE6: 6.66034
+[2025-01-15 13:42:45,016][root][INFO] - 
+[Epoch 19] val_loss: 1.94515, val_reg_loss: 0.82788, val_cls_loss: 2.44621, val_prediction_losss: 0.49117, val_diffusion_loss: 6.01633, val_MR: 0.80497, val_minADE1: 4.04252, val_minADE6: 3.55460, val_minFDE1: 8.72372, val_minFDE6: 6.90617
+[2025-01-15 13:42:47,104][root][INFO] - 
+[Epoch 19] train_loss: 1.37252, train_reg_loss: 0.44160, train_cls_loss: 1.36953, train_prediction_losss: 0.68161, train_diffusion_loss: 2.35611, train_MR: 0.47596, train_minADE1: 4.47121, train_minADE6: 1.93550, train_minFDE1: 9.44243, train_minFDE6: 3.87242

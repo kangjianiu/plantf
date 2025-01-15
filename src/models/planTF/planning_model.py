@@ -160,18 +160,15 @@ class PlanningModel(TorchModuleWrapper):
         npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_20_80_vxy.npy'
         traj_anchors = self.load_cluster_centers(npy_file_path)# shape (20, 80, 4)
         traj_anchors = np.array(traj_anchors)  # 将列表转换为 numpy.ndarray
-
-
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)
         # traj_anchors_np通过复制增加一维变为[20,bs,80,4]
         traj_anchors = traj_anchors.unsqueeze(1).expand(-1, bs, -1, -1)
         
-
         # 初始化diffusion_losses= [],里面只有一个元素，是tensor，值为0，形状为[1]
         diffusion_losses = [torch.tensor(0).to(ego_instance_feature.device)]
 
         # trajectory, probability = self.trajectory_decoder(x[:, 0]) # 主代理的嵌入表示,形状为 (batch_size, embed_dim)
-        trajectory, probability, diffusion_losses = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors)
+        trajectory, probability, diffusion_losses = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, traj_anchors, prediction)
 
         out = {
             "trajectory": trajectory,

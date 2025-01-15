@@ -94,15 +94,15 @@ class LightningTrainer(pl.LightningModule):
 
     def _compute_objectives(self, res, data) -> Dict[str, torch.Tensor]:
         trajectory, probability, prediction, diffusion_losses = (
-            res["trajectory"],
-            res["probability"],
+            res["trajectory"], # [bs, num_modes, future_steps, 4]
+            res["probability"],# [bs, num_modes]
             res["prediction"],
             res["diffusion_losses"],#[bs,num_modes]
         )
-        targets = data["agent"]["target"]
+        targets = data["agent"]["target"] # [bs, agent_num, future_steps, 3]
         valid_mask = data["agent"]["valid_mask"][:, :, -trajectory.shape[-2] :]
 
-        ego_target_pos, ego_target_heading = targets[:, 0, :, :2], targets[:, 0, :, 2]
+        ego_target_pos, ego_target_heading = targets[:, 0, :, :2], targets[:, 0, :, 2] # ego_target_pos:[bs, ego_num, future_steps, 2]
         ego_target = torch.cat(
             [
                 ego_target_pos,
@@ -111,14 +111,14 @@ class LightningTrainer(pl.LightningModule):
                 ),
             ],
             dim=-1,
-        )
-        agent_target, agent_mask = targets[:, 1:], valid_mask[:, 1:] # [32, 32, 80, 3],    [32, 32, 80]
+        ) # [bs, ego_num, future_steps, 4]
+        agent_target, agent_mask = targets[:, 1:], valid_mask[:, 1:] # [bs, agent_num-1, future_steps, 2],    [bs, agent_num-1, future_steps]
 
-        ade = torch.norm(trajectory[..., :2] - ego_target[:, None, :, :2], dim=-1)
-        best_mode = torch.argmin(ade.sum(-1), dim=-1)
-        best_traj = trajectory[torch.arange(trajectory.shape[0]), best_mode]
+        ade = torch.norm(trajectory[..., :2] - ego_target[:, None, :, :2], dim=-1) # [bs, num_modes, future_steps]
+        best_mode = torch.argmin(ade.sum(-1), dim=-1) # [bs]
+        best_traj = trajectory[torch.arange(trajectory.shape[0]), best_mode] # [bs, future_steps, 4]
         ego_reg_loss = F.smooth_l1_loss(best_traj, ego_target)
-        ego_cls_loss = F.cross_entropy(probability, best_mode.detach())
+        ego_cls_loss = F.cross_entropy(probability, best_mode.detach()) #[bs, num_modes] [bs]
   
         agent_reg_loss = F.smooth_l1_loss(
             prediction[agent_mask], agent_target[agent_mask][:, :2]
@@ -131,7 +131,8 @@ class LightningTrainer(pl.LightningModule):
         # sys.exit(1)
         # ego_reg_loss: 14.728102684020996, ego_cls_loss: 1.7920138835906982, agent_reg_loss: 4.655642986297607, diffusion_losses: 14.878222465515137
 
-        loss = ego_reg_loss + 0.2*ego_cls_loss + agent_reg_loss + diffusion_loss#加loss
+        # diffusion_loss = 0.0001 # 为了区分同时的两次训练
+        loss = ego_reg_loss + 0.01 * ego_cls_loss + agent_reg_loss + 0.1 * diffusion_loss # 加loss
 
         return {
             "loss": loss,

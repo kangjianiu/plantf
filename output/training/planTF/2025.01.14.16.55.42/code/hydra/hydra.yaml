@@ -1,0 +1,200 @@
+hydra:
+  run:
+    dir: ${output_dir}
+  sweep:
+    dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.num}
+  launcher:
+    _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
+  sweeper:
+    _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
+    max_batch_size: null
+  help:
+    app_name: ${hydra.job.name}
+    header: '${hydra.help.app_name} is powered by Hydra.
+
+      '
+    footer: 'Powered by Hydra (https://hydra.cc)
+
+      Use --hydra-help to view Hydra specific help
+
+      '
+    template: '${hydra.help.header}
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (group=option)
+
+
+      $APP_CONFIG_GROUPS
+
+
+      == Config ==
+
+      Override anything in the config (foo.bar=value)
+
+
+      $CONFIG
+
+
+      ${hydra.help.footer}
+
+      '
+  hydra_help:
+    template: 'Hydra (${hydra.runtime.version})
+
+      See https://hydra.cc for more info.
+
+
+      == Flags ==
+
+      $FLAGS_HELP
+
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (For example, append hydra/job_logging=disabled
+      to command line)
+
+
+      $HYDRA_CONFIG_GROUPS
+
+
+      Use ''--cfg hydra'' to Show the Hydra config.
+
+      '
+    hydra_help: ???
+  hydra_logging:
+    version: 1
+    formatters:
+      simple:
+        format: '[%(asctime)s][HYDRA] %(message)s'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: simple
+        stream: ext://sys.stdout
+    root:
+      level: INFO
+      handlers:
+      - console
+    loggers:
+      logging_example:
+        level: DEBUG
+    disable_existing_loggers: false
+  job_logging:
+    version: 1
+    formatters:
+      simple:
+        format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: simple
+        stream: ext://sys.stdout
+      file:
+        class: logging.FileHandler
+        formatter: simple
+        filename: ${hydra.job.name}.log
+    root:
+      level: INFO
+      handlers:
+      - console
+      - file
+    disable_existing_loggers: false
+  env: {}
+  searchpath:
+  - pkg://nuplan.planning.script.config.common
+  - pkg://nuplan.planning.script.config.training
+  - pkg://nuplan.planning.script.experiments
+  - config/training
+  callbacks: {}
+  output_subdir: ${output_dir}/code/hydra
+  overrides:
+    hydra: []
+    task:
+    - py_func=train
+    - +training=train_planTF
+    - worker=single_machine_thread_pool
+    - worker.max_workers=32
+    - scenario_builder=nuplan_mini
+    - cache.cache_path=/data/datasets/nuplan/datasets/nuplan/exp/cache_plantf_1M
+    - cache.use_cache_without_dataset=true
+    - data_loader.params.batch_size=32
+    - data_loader.params.num_workers=32
+    - lr=1e-5
+    - epochs=25
+    - warmup_epochs=3
+    - weight_decay=0.0001
+    - lightning.trainer.params.val_check_interval=0.5
+    - wandb.mode=offline
+    - wandb.project=nuplan
+    - wandb.name=plantf
+  job:
+    name: run_training
+    override_dirname: +training=train_planTF,cache.cache_path=/data/datasets/nuplan/datasets/nuplan/exp/cache_plantf_1M,cache.use_cache_without_dataset=true,data_loader.params.batch_size=32,data_loader.params.num_workers=32,epochs=25,lightning.trainer.params.val_check_interval=0.5,lr=1e-5,py_func=train,scenario_builder=nuplan_mini,wandb.mode=offline,wandb.name=plantf,wandb.project=nuplan,warmup_epochs=3,weight_decay=0.0001,worker.max_workers=32,worker=single_machine_thread_pool
+    id: ???
+    num: ???
+    config_name: default_training
+    env_set: {}
+    env_copy: []
+    config:
+      override_dirname:
+        kv_sep: '='
+        item_sep: ','
+        exclude_keys: []
+  runtime:
+    version: 1.1.0.rc1
+    cwd: /data/datasets/niukangjia/plantf
+    config_sources:
+    - path: hydra.conf
+      schema: pkg
+      provider: hydra
+    - path: /data/datasets/niukangjia/plantf/config
+      schema: file
+      provider: main
+    - path: nuplan.planning.script.config.common
+      schema: pkg
+      provider: hydra.searchpath in main
+    - path: nuplan.planning.script.config.training
+      schema: pkg
+      provider: hydra.searchpath in main
+    - path: nuplan.planning.script.experiments
+      schema: pkg
+      provider: hydra.searchpath in main
+    - path: config/training
+      schema: file
+      provider: hydra.searchpath in main
+    - path: ''
+      schema: structured
+      provider: schema
+    choices:
+      training: train_planTF
+      custom_trainer: planTF
+      scenario_type_weights: default_scenario_type_weights
+      data_augmentation_scheduler: null
+      training_metric: null
+      objective: null
+      splitter: nuplan
+      data_loader: default_data_loader
+      warm_up_lr_scheduler: null
+      lr_scheduler: null
+      optimizer: adam
+      callbacks: default_callbacks
+      lightning: custom_lightning
+      worker: single_machine_thread_pool
+      model: planTF
+      scenario_filter: training_scenarios_1M
+      scenario_builder: nuplan_mini
+      scenario_builder/scenario_mapping: nuplan_scenario_mapping
+      scenario_builder/vehicle_parameters: nuplan_vehicle_parameters
+      hydra/env: default
+      hydra/callbacks: null
+      hydra/job_logging: default
+      hydra/hydra_logging: default
+      hydra/hydra_help: default
+      hydra/help: default
+      hydra/sweeper: basic
+      hydra/launcher: basic
+      hydra/output: default
+  verbose: false
