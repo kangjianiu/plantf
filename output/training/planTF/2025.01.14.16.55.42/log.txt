@@ -143,3 +143,33 @@ Number of threads across all nodes: 32
 [Epoch 19] val_loss: 1.94515, val_reg_loss: 0.82788, val_cls_loss: 2.44621, val_prediction_losss: 0.49117, val_diffusion_loss: 6.01633, val_MR: 0.80497, val_minADE1: 4.04252, val_minADE6: 3.55460, val_minFDE1: 8.72372, val_minFDE6: 6.90617
 2025-01-15 13:42:47,104 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
 [Epoch 19] train_loss: 1.37252, train_reg_loss: 0.44160, train_cls_loss: 1.36953, train_prediction_losss: 0.68161, train_diffusion_loss: 2.35611, train_MR: 0.47596, train_minADE1: 4.47121, train_minADE6: 1.93550, train_minFDE1: 9.44243, train_minFDE6: 3.87242
+2025-01-15 14:13:17,285 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 20] val_loss: 1.93695, val_reg_loss: 0.81763, val_cls_loss: 2.50455, val_prediction_losss: 0.49304, val_diffusion_loss: 6.01230, val_MR: 0.82498, val_minADE1: 3.98563, val_minADE6: 3.49038, val_minFDE1: 9.14283, val_minFDE6: 7.18365
+2025-01-15 14:31:29,417 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 20] val_loss: 2.01963, val_reg_loss: 0.88599, val_cls_loss: 2.98563, val_prediction_losss: 0.48899, val_diffusion_loss: 6.14807, val_MR: 0.82226, val_minADE1: 4.31807, val_minADE6: 3.76285, val_minFDE1: 9.07515, val_minFDE6: 7.32069
+2025-01-15 14:31:30,811 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 20] train_loss: 1.35737, train_reg_loss: 0.43015, train_cls_loss: 1.37118, train_prediction_losss: 0.67493, train_diffusion_loss: 2.38576, train_MR: 0.47074, train_minADE1: 4.46558, train_minADE6: 1.89519, train_minFDE1: 9.41322, train_minFDE6: 3.77090
+2025-01-15 14:50:39,110 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 21] val_loss: 2.00824, val_reg_loss: 0.87848, val_cls_loss: 2.92104, val_prediction_losss: 0.48670, val_diffusion_loss: 6.13846, val_MR: 0.82059, val_minADE1: 4.23589, val_minADE6: 3.75971, val_minFDE1: 9.46452, val_minFDE6: 7.41355
+2025-01-15 15:10:23,831 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 21] val_loss: 2.00677, val_reg_loss: 0.88124, val_cls_loss: 2.48834, val_prediction_losss: 0.48644, val_diffusion_loss: 6.14205, val_MR: 0.81818, val_minADE1: 4.24385, val_minADE6: 3.76907, val_minFDE1: 9.38798, val_minFDE6: 7.47234
+2025-01-15 15:10:26,193 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 21] train_loss: 1.34661, train_reg_loss: 0.42695, train_cls_loss: 1.37059, train_prediction_losss: 0.66931, train_diffusion_loss: 2.36645, train_MR: 0.47144, train_minADE1: 4.40400, train_minADE6: 1.88261, train_minFDE1: 9.28081, train_minFDE6: 3.71818
+2025-01-15 15:30:05,555 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 22] val_loss: 1.92317, val_reg_loss: 0.80566, val_cls_loss: 2.58408, val_prediction_losss: 0.48821, val_diffusion_loss: 6.03454, val_MR: 0.80280, val_minADE1: 3.87498, val_minADE6: 3.46175, val_minFDE1: 8.75163, val_minFDE6: 6.75068
+2025-01-15 15:50:08,322 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 22] val_loss: 1.92426, val_reg_loss: 0.81236, val_cls_loss: 2.68451, val_prediction_losss: 0.48172, val_diffusion_loss: 6.03328, val_MR: 0.80703, val_minADE1: 3.94344, val_minADE6: 3.49309, val_minFDE1: 8.82227, val_minFDE6: 6.85108
+2025-01-15 15:50:10,078 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 22] train_loss: 1.33807, train_reg_loss: 0.42355, train_cls_loss: 1.36145, train_prediction_losss: 0.66573, train_diffusion_loss: 2.35181, train_MR: 0.46789, train_minADE1: 4.39514, train_minADE6: 1.87063, train_minFDE1: 9.23745, train_minFDE6: 3.67834
+2025-01-15 16:10:08,473 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 23] val_loss: 1.92925, val_reg_loss: 0.81922, val_cls_loss: 3.06472, val_prediction_losss: 0.48298, val_diffusion_loss: 5.96392, val_MR: 0.79706, val_minADE1: 4.06462, val_minADE6: 3.51435, val_minFDE1: 8.32883, val_minFDE6: 6.53243
+2025-01-15 16:30:00,840 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 23] val_loss: 1.89385, val_reg_loss: 0.78663, val_cls_loss: 2.84541, val_prediction_losss: 0.48234, val_diffusion_loss: 5.96425, val_MR: 0.79533, val_minADE1: 3.85494, val_minADE6: 3.36884, val_minFDE1: 8.41134, val_minFDE6: 6.60706
+2025-01-15 16:30:02,774 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 23] train_loss: 1.33172, train_reg_loss: 0.41937, train_cls_loss: 1.36867, train_prediction_losss: 0.66272, train_diffusion_loss: 2.35941, train_MR: 0.46586, train_minADE1: 4.35777, train_minADE6: 1.85587, train_minFDE1: 9.16071, train_minFDE6: 3.64124
+2025-01-15 16:49:56,259 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 24] val_loss: 1.99193, val_reg_loss: 0.86683, val_cls_loss: 3.29559, val_prediction_losss: 0.47960, val_diffusion_loss: 6.12552, val_MR: 0.81383, val_minADE1: 4.19973, val_minADE6: 3.69252, val_minFDE1: 8.82973, val_minFDE6: 7.14081
+2025-01-15 17:09:59,487 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 24] val_loss: 1.88951, val_reg_loss: 0.78668, val_cls_loss: 3.06706, val_prediction_losss: 0.47944, val_diffusion_loss: 5.92718, val_MR: 0.79845, val_minADE1: 3.93505, val_minADE6: 3.37027, val_minFDE1: 8.07705, val_minFDE6: 6.29964
+2025-01-15 17:10:01,396 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 24] train_loss: 1.32480, train_reg_loss: 0.41500, train_cls_loss: 1.36496, train_prediction_losss: 0.65991, train_diffusion_loss: 2.36243, train_MR: 0.46753, train_minADE1: 4.36833, train_minADE6: 1.84007, train_minFDE1: 9.16642, train_minFDE6: 3.60889

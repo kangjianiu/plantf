@@ -4,7 +4,7 @@ import pprint
 from pathlib import Path
 from shutil import rmtree
 from typing import List, Optional, Union
-
+import sys
 import hydra
 import pandas as pd
 import pytorch_lightning as pl
@@ -30,7 +30,10 @@ set_default_path()
 
 # If set, use the env. variable to overwrite the Hydra config
 CONFIG_PATH = os.getenv("NUPLAN_HYDRA_CONFIG_PATH", "config/simulation")
-
+cwd = os.path.dirname(os.path.abspath(__file__))
+src_path = os.path.join(cwd, 'src')
+if src_path not in sys.path:
+    sys.path.insert(0, src_path)
 
 def print_simulation_results(file=None):
     if file is not None:

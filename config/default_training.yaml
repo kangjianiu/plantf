@@ -9,7 +9,7 @@ hydra:
     - config/training
 
 defaults:
-  - default_experiment # 决定了output_dir：nuplan-devkit/nuplan/planning/script/config/common/default_experiment.yaml，
+  - default_experiment # 决定了output_dir：group: ${oc.env:NUPLAN_EXP_ROOT}/exp   output_dir: ${group}/${experiment}  nuplan-devkit/nuplan/planning/script/config/common/default_experiment.yaml，
   - default_common
 
   # Trainer and callbacks

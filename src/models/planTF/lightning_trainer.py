@@ -120,7 +120,7 @@ class LightningTrainer(pl.LightningModule):
         ego_reg_loss = F.smooth_l1_loss(best_traj, ego_target)
         ego_cls_loss = F.cross_entropy(probability, best_mode.detach()) #[bs, num_modes] [bs]
   
-        agent_reg_loss = F.smooth_l1_loss(
+        agent_reg_loss = F.smooth_l1_loss( 
             prediction[agent_mask], agent_target[agent_mask][:, :2]
         )
         if isinstance(diffusion_losses, list):

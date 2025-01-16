@@ -144,6 +144,35 @@ Number of threads across all nodes: 32
 [2025-01-14 07:28:35,560][root][INFO] - 
 [Epoch 19] train_loss: 2.21163, train_reg_loss: 0.59182, train_cls_loss: 0.34983, train_prediction_losss: 0.41877, train_diffusion_loss: 0.85121, train_MR: 0.50564, train_minADE1: 2.64815, train_minADE6: 2.43674, train_minFDE1: 5.60024, train_minFDE6: 4.99392
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 wandb: Run history:                                                                                                                                                               
 wandb:                      epoch ▁▁▁▁▂▂▂▂▂▂▃▃▃▃▄▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▇▇▇▇▇▇████                                                                                                        
 wandb:      loss/train_loss_epoch █▅▃▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                                                                                                            

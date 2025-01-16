@@ -1,0 +1,8 @@
+- +simulation=closed_loop_reactive_agents
+- planner=planTF
+- scenario_builder=nuplan_challenge
+- scenario_filter=test14-random
+- worker.threads_per_node=2
+- experiment_uid=test14-random/planTF
+- verbose=true
+- planner.imitation_planner.planner_ckpt=/data/datasets/niukangjia/plantf/checkpoints/planTF.ckpt

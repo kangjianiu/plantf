@@ -33,7 +33,7 @@ class PlanningModel(TorchModuleWrapper):
         encoder_depth=4,
         drop_path=0.2,
         num_heads=8,
-        num_modes=20,
+        num_modes=20,#6/20
         use_ego_history=False,
         state_attn_encoder=True,
         state_dropout=0.75,
