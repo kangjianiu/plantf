@@ -33,7 +33,7 @@ class PlanningModel(TorchModuleWrapper):
         encoder_depth=4,
         drop_path=0.2,
         num_heads=8,
-        num_modes=20,#6/20
+        num_modes=6,#6/20
         use_ego_history=False,
         state_attn_encoder=True,
         state_dropout=0.75,
@@ -49,6 +49,7 @@ class PlanningModel(TorchModuleWrapper):
         self.history_steps = history_steps
         self.future_steps = future_steps
         self.num_modes = num_modes
+        print("num_modes:",num_modes)
 
         # 包含的模块
         self.pos_emb = build_mlp(4, [dim] * 2)
@@ -157,7 +158,7 @@ class PlanningModel(TorchModuleWrapper):
         # prediction  [32, 32, 80, 2] (batch_size, num_agents, future_steps, 2) 表示模型对其他代理未来状态的预测。
 
         # 策略1：读取256个锚点，[num_modes, bs, future_steps, 4]
-        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_20_80_vxy.npy'
+        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_40_80_vxy.npy'
         traj_anchors = self.load_cluster_centers(npy_file_path)# shape (20, 80, 4)
         traj_anchors = np.array(traj_anchors)  # 将列表转换为 numpy.ndarray
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)

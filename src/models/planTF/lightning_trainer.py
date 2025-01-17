@@ -132,7 +132,7 @@ class LightningTrainer(pl.LightningModule):
         # ego_reg_loss: 14.728102684020996, ego_cls_loss: 1.7920138835906982, agent_reg_loss: 4.655642986297607, diffusion_losses: 14.878222465515137
 
         # diffusion_loss = 0.0001 # 为了区分同时的两次训练
-        loss = ego_reg_loss + 0.01 * ego_cls_loss + agent_reg_loss + 0.1 * diffusion_loss # 加loss
+        loss = ego_reg_loss + 0.01 * ego_cls_loss + agent_reg_loss + 0 * diffusion_loss # 加loss
 
         return {
             "loss": loss,

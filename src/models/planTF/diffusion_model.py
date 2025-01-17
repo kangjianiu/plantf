@@ -118,51 +118,74 @@ class DiffusionModel(nn.Module):
         device = ego_instance_feature.device
         trajectories = []
         diffu_noise_losses = []
-        for mode in range(self.num_modes):
-            traj_anchors_mode = traj_anchors[mode]  # [bs, future_steps, 4]
-            # 生成噪音和时间步
-            noise = torch.randn(traj_anchors_mode.shape, device=device)
-            timesteps = torch.ones((bs,), device=device, dtype=torch.long) * 8 # [bs]
-            # 添加噪声
-            noisy_traj = self.scheduler.add_noise(
-                original_samples=traj_anchors_mode,
-                noise=noise,
-                timesteps=timesteps
-            ).float()
-            traj_pred = noisy_traj.clone() #去噪两次，所以先初始化为noisy_traj
+        self.model.eval()  # 设置模型为评估模式
+        self.probability_decoder.eval()  # 设置模型为评估模式
 
-            for k in [1,10]:  
-                timesteps = k * torch.ones((bs,), device=device, dtype=torch.long) # [bs]
-                # 预测噪声     
-                noise_pred = self.model(ego_instance_feature, map_instance_feature, timesteps, traj_pred, prediction) # [bs, future_steps, 4]
-                # 计算预测轨迹,    调用 scheduler.step 时逐样本处理，由于 DDPMScheduler.step 不支持批量时间步，这里通过循环逐样本处理：
-                traj_pred_step = []
-                for b in range(bs):
-                    noisy_traj_single = noisy_traj[b].unsqueeze(0)  # [1, future_steps, 4]
-                    noise_pred_single = noise_pred[b].unsqueeze(0)  # [1, future_steps, 4]
-                    timestep_single = timesteps[b].item()  # 标量
+        with torch.no_grad():  # 禁用梯度计算
+            for mode in range(self.num_modes):
+                traj_anchors_mode = traj_anchors[mode]  # [bs, future_steps, 4]
+                # 生成噪音和时间步
+                noise = torch.randn(traj_anchors_mode.shape, device=device)
 
-                    traj_pred_single = self.scheduler.step(
-                                model_output=noisy_traj_single,
-                                timestep=timestep_single,
-                                sample=noise_pred_single
-                        ).prev_sample
+                timesteps = torch.ones((bs,), device=device, dtype=torch.long) * 8 # [bs]
+                timesteps = torch.randint(
+                    0,
+                    self.scheduler.config.num_train_timesteps,
+                    (bs,),
+                    device=device
+                )  # [bs]
 
-                    traj_pred_step.append(traj_pred_single.squeeze(0))  # [future_steps, 4]
-                traj_pred = torch.stack(traj_pred_step, dim=0)  # [bs, future_steps, 4]
+                # 添加噪声
+                noisy_traj = self.scheduler.add_noise(
+                    original_samples=traj_anchors_mode,
+                    noise=noise,
+                    timesteps=timesteps
+                ).float()
+                # traj_pred = noisy_traj.clone() #去噪两次，所以先初始化为noisy_traj
+                
+                # 定义时间步序列
+                num_pred_steps = 3
+                timesteps_sequence = torch.linspace(
+                    self.scheduler.config.num_train_timesteps - 1, 
+                    0, 
+                    steps=num_pred_steps, 
+                    dtype=torch.long, 
+                    device=device
+                )
 
-            # 计算噪声预测损失
-            diffu_noise_loss = F.smooth_l1_loss(noise_pred, noise) 
+                for k in timesteps_sequence:  
+                    timesteps = k * torch.ones((bs,), device=device, dtype=torch.long) # [bs]
+                    # 预测噪声     
+                    noise_pred = self.model(ego_instance_feature, map_instance_feature, timesteps, noisy_traj, prediction) # [bs, future_steps, 4]
+                    # 计算预测轨迹,    调用 scheduler.step 时逐样本处理，由于 DDPMScheduler.step 不支持批量时间步，这里通过循环逐样本处理：
+                    traj_pred_step = []
+                    for b in range(bs):
+                        noisy_traj_single = noisy_traj[b].unsqueeze(0)  # [1, future_steps, 4]
+                        noise_pred_single = noise_pred[b].unsqueeze(0)  # [1, future_steps, 4]
+                        timestep_single = timesteps[b].item()  # 标量
 
-            # # 反归一化轨迹
-            # trajectory = self.denormalize_xy_rotation(traj_pred, N=self.future_steps, times=1)  # [bs, future_steps, 4]
-            trajectories.append(traj_pred)  # [num_modes, bs, future_steps, 4]
-            diffu_noise_losses.append(diffu_noise_loss)# [num_modes, bs]
+                        traj_pred_single = self.scheduler.step(
+                                    model_output=noisy_traj_single,
+                                    timestep=timestep_single,
+                                    sample=noise_pred_single
+                            ).prev_sample
 
-        trajectories = torch.stack(trajectories, dim=1)  # (bs, num_modes, future_steps, 4)
-        # print(f"diffu_noise_losses:{diffu_noise_losses}")
-        diffu_noise_losses = torch.stack(diffu_noise_losses, dim=0)  # (bs, num_modes)
-        probability = self.probability_decoder(ego_instance_feature.squeeze(1))  # [bs, num_modes]
+                        traj_pred_step.append(traj_pred_single.squeeze(0))  # [future_steps, 4]
+                    traj_pred = torch.stack(traj_pred_step, dim=0)  # [bs, future_steps, 4]
+                    noisy_traj = traj_pred  # 更新 noisy_traj 以用于下一步去噪
+
+                # 计算噪声预测损失
+                diffu_noise_loss = F.smooth_l1_loss(noise_pred, noise) 
+
+                # # 反归一化轨迹
+                # trajectory = self.denormalize_xy_rotation(traj_pred, N=self.future_steps, times=1)  # [bs, future_steps, 4]
+                trajectories.append(traj_pred)  # [num_modes, bs, future_steps, 4]
+                diffu_noise_losses.append(diffu_noise_loss)# [num_modes, bs]
+
+            trajectories = torch.stack(trajectories, dim=1)  # (bs, num_modes, future_steps, 4)
+            # print(f"diffu_noise_losses:{diffu_noise_losses}")
+            diffu_noise_losses = torch.stack(diffu_noise_losses, dim=0)  # (bs, num_modes)
+            probability = self.probability_decoder(ego_instance_feature.squeeze(1))  # [bs, num_modes]
 
         return trajectories, probability, diffu_noise_losses
 
