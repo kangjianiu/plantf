@@ -361,8 +361,10 @@ class CrossAttentionUnetModel(nn.Module):
         # 位置编码可学习 MAP / instance 
         # Cross-Attention 
         self.ego_instance_decoder = nn.MultiheadAttention(embed_dim=feature_dim, num_heads=num_heads, batch_first=True)
-        self.ego_map_decoder = nn.MultiheadAttention(embed_dim=feature_dim, num_heads=num_heads, batch_first=True)
+        # self.cross_agent_attention = nn.MultiheadAttention(embed_dim=feature_dim, num_heads=num_heads, batch_first=True)
         self.map_decoder = nn.MultiheadAttention(embed_dim=feature_dim, num_heads=num_heads, batch_first=True)
+        # 添加多头注意力机制模块，用来学习其他代理预测信息
+        self.prediction_decoder = nn.MultiheadAttention(embed_dim=feature_dim, num_heads=num_heads, batch_first=True)
         #todo:
         self.fc1 = nn.Sequential(
             nn.Linear(feature_dim, 2 * feature_dim),
@@ -391,6 +393,8 @@ class CrossAttentionUnetModel(nn.Module):
         self.map_feature_pos = nn.Embedding(100, self.feature_dim)
         self.ego_pos_latent = nn.Embedding(1, self.feature_dim)
 
+        # 添加降维模块，将 prediction 的最后维度从 prediction_dim 映射到 feature_dim
+        self.prediction_fc = nn.Linear(160, feature_dim)
     """
     本来是这样
         def forward(self, instance_feature,timesteps,noisy_traj_points):
@@ -408,18 +412,56 @@ class CrossAttentionUnetModel(nn.Module):
     """       
 
     def forward(self, ego_instance_feature, map_instance_feature,timesteps,noisy_traj_points, prediction):
-        # ego_instance_feature[bs, 1, 128], map_instance_feature[bs, 222, 128], timesteps[bs], noisy_traj_points[bs, future_steps, 2]
-        # bs = ego_instance_feature.shape[0]# 32
+        # ego_instance_feature[bs, 1, 128], map_instance_feature[bs, 222, 128], timesteps[bs], noisy_traj_points[bs, future_steps, 4]
         # prediction:  [bs, num_agents, future_steps, 2] 表示模型对其他代理未来状态的预测。
-        ego_latent = ego_instance_feature[:,:,:] # torch.Size([32, 128])
-        global_feature = ego_latent.squeeze(1) # 目前只用了ego的信息
+
+        # ego_latent = ego_instance_feature[:,:,:] # torch.Size([32, 128])
+        # global_feature = ego_latent.squeeze(1) # 目前只用了ego的信息
+
         # 利用交叉注意力机制，将ego和map_instance_feature，prediction的特征进行融合，生成global_feature
+
+        # 打印所有输入的形状
+        # print(f"ego_instance_feature形状:{ego_instance_feature.shape},map_instance_feature形状:{map_instance_feature.shape},timesteps形状:{timesteps.shape},noisy_traj_points形状:{noisy_traj_points.shape},prediction形状:{prediction.shape}")
+        # ego_instance_feature形状:[32, 1, 128],map_instance_feature形状:[32, 222, 128],
+        # timesteps形状:[32],noisy_traj_points形状:[32, 80, 4],prediction形状:[32, 32, 80, 2]
+
+        # 融合 map_instance_feature
+        map_encoded, _ = self.map_decoder(
+            query=ego_instance_feature,# [32, 1, 128]
+            key=map_instance_feature,# [32, 222, 128]
+            value=map_instance_feature#[32, 222, 128]
+        )
+        map_encoded = self.ins_cond_layernorm_1(map_encoded)
+        map_encoded = self.fc1(map_encoded)
+        map_encoded = self.ins_cond_layernorm_2(map_encoded)# [32, 1, 128]
+
+        # 将 4-D tensor 的 prediction 降为 3-D tensor，并进行降维
+        bs, num_agents, future_steps, dim = prediction.shape    # [32, 32, 80, 2]
+        prediction = prediction.view(bs, num_agents, future_steps * dim)  #[32, 32, 160]
         
+        # 通过全连接层降维 prediction，从 160 降到 128
+        prediction = self.prediction_fc(prediction)            # [32, 32, 128]
+
+        # 融合 prediction 信息
+        prediction_encoded, _ = self.prediction_decoder(
+            query=ego_instance_feature,#[32, 1, 128]
+            key=prediction,#[32, 32, 128]
+            value=prediction#[32, 32, 128]
+        )
+        prediction_encoded = self.map_cond_layernorm_1(prediction_encoded)
+        prediction_encoded = self.fc2(prediction_encoded)
+        prediction_encoded = self.map_cond_layernorm_2(prediction_encoded)# [32, 1, 128]
+
+        # 生成 global_feature
+        global_feature = ego_instance_feature + map_encoded + prediction_encoded# [32, 1, 128]
+        global_feature = global_feature.squeeze(1)# [32, 128]
 
         noisy_traj_points = noisy_traj_points.to('cuda')  # 将输入张量移动到 GPU
         global_feature = global_feature.to('cuda')  # 将全局条件张量移动到 GPU
         timesteps = timesteps.to('cuda')  # 将时间步张量移动到 GPU
 
+        # print(f"送入unet1d的global_feature形状:{global_feature.shape}")
+        # sys.exit(1)
         # print(f"送入unet1d的global_feature形状:{global_feature.shape},噪声轨迹现状：{noisy_traj_points.shape},")#
         # sys.exit(1)
         noise_pred = self.noise_pred_net(
