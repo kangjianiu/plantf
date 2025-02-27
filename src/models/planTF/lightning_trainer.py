@@ -264,47 +264,47 @@ class LightningTrainer(pl.LightningModule):
                 )
                 if "bias" in param_name:
                     no_decay.add(full_param_name)
-                    if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
-                        print(f"===0=== {full_param_name} is in bias, ===no_decay")                    
+                    # if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                    #     print(f"===0=== {full_param_name} is in bias, ===no_decay")                    
                 elif "weight" in param_name:
                     if isinstance(module, whitelist_weight_modules) and full_param_name not in no_decay:
                         decay.add(full_param_name)
-                        if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
-                            print(f"===1.1=== {full_param_name} is in white, ===decay")
+                        # if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                        #     print(f"===1.1=== {full_param_name} is in white, ===decay")
 
                     elif isinstance(module, blacklist_weight_modules) and full_param_name not in decay:
                         no_decay.add(full_param_name)
-                        if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
-                            print(f"===2=== {full_param_name} is in black, ===no_decay")                        
+                        # if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                        #     print(f"===2=== {full_param_name} is in black, ===no_decay")                        
                        
                     elif "norm" in full_param_name or "emb" in full_param_name and full_param_name not in decay:
                         no_decay.add(full_param_name)
-                        if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
-                            print(f"===3=== {full_param_name} is in norm or emb, ===no_decay")
+                        # if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                        #     print(f"===3=== {full_param_name} is in norm or emb, ===no_decay")
                     
                     else:
                         if full_param_name not in no_decay:
                             decay.add(full_param_name)
-                            if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
-                                print(f"===4=== {full_param_name} is in none of any class, ===decay")
+                            # if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                            #     print(f"===4=== {full_param_name} is in none of any class, ===decay")
 
                 elif not ("weight" in param_name or "bias" in param_name):
                     no_decay.add(full_param_name)
-                    if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
-                        print(f"===5=== {full_param_name} is no weight or bias, ===no_decay")                    
+                    # if full_param_name == "model.trajectory_decoder_diffu.probability_decoder.1.weight":
+                    #     print(f"===5=== {full_param_name} is no weight or bias, ===no_decay")                    
         param_dict = {
             param_name: param for param_name, param in self.named_parameters()
         }
         inter_params = decay & no_decay
         union_params = decay | no_decay
-        # 打印decay 和 no_decay，inter_params，union_params的长度
-        print(f"=============\ndecay: {len(decay)}, no_decay: {len(no_decay)}, inter_params: {len(inter_params)}, union_params: {len(union_params)}")
-        # 打印下面一行的两个参数数量是否等于所有参数数量
-        print(f"param_dict.keys(): {len(param_dict.keys())}\n=====")
-        #打印inter_params
-        print(f"重复参数inter_params: {inter_params}")
-        # 打印在param_dict里面但是不在union_params里面的参数名
-        print(f"=============\n未分类参数param_dict.keys() - union_params: {param_dict.keys() - union_params}")
+        # # 打印decay 和 no_decay，inter_params，union_params的长度
+        # print(f"=============\ndecay: {len(decay)}, no_decay: {len(no_decay)}, inter_params: {len(inter_params)}, union_params: {len(union_params)}")
+        # # 打印下面一行的两个参数数量是否等于所有参数数量
+        # print(f"param_dict.keys(): {len(param_dict.keys())}\n=====")
+        # #打印inter_params
+        # print(f"重复参数inter_params: {inter_params}")
+        # # 打印在param_dict里面但是不在union_params里面的参数名
+        # print(f"=============\n未分类参数param_dict.keys() - union_params: {param_dict.keys() - union_params}")
         assert len(inter_params) == 0
 
         assert len(param_dict.keys() - union_params) == 0
