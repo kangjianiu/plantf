@@ -1,0 +1,25 @@
+2025-02-26 15:19:11,271 INFO {/data/datasets/niukangjia/plantf/run_training.py:49}  Logger is configured correctly.
+2025-02-26 15:19:11,377 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:20}  Building experiment folders...
+2025-02-26 15:19:11,378 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:22}  Experimental folder: /data/datasets/niukangjia/plantf/output/training/planTF/2025.02.26.15.19.09
+2025-02-26 15:19:11,378 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/worker_pool_builder.py:19}  Building WorkerPool...
+2025-02-26 15:19:11,379 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:101}  Worker: SingleMachineParallelExecutor
+2025-02-26 15:19:11,379 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:102}  Number of nodes: 1
+Number of CPUs per node: 32
+Number of GPUs per node: 0
+Number of threads across all nodes: 32
+2025-02-26 15:19:11,379 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/worker_pool_builder.py:27}  Building WorkerPool...DONE!
+2025-02-26 15:19:11,379 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:258}  Building training engine...
+2025-02-26 15:19:15,405 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/model_builder.py:18}  Building TorchModuleWrapper...
+2025-02-26 15:19:16,218 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/model_builder.py:21}  Building TorchModuleWrapper...DONE!
+2025-02-26 15:19:16,219 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/splitter_builder.py:18}  Building Splitter...
+2025-02-26 15:19:17,151 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/splitter_builder.py:21}  Building Splitter...DONE!
+2025-02-26 15:19:17,152 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/data_augmentation_builder.py:19}  Building augmentors...
+2025-02-26 15:19:17,155 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/data_augmentation_builder.py:28}  Building augmentors...DONE!
+2025-02-26 15:19:30,987 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_builder.py:171}  Extracted 204791 scenarios for training
+2025-02-26 15:19:30,991 INFO {/data/datasets/niukangjia/plantf/run_training.py:68}  Starting training...
+2025-02-26 15:19:30,994 INFO {/home/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/torch/distributed/distributed_c10d.py:228}  Added key: store_based_barrier_key:1 to store for rank: 0
+2025-02-26 15:19:30,994 INFO {/home/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/torch/distributed/distributed_c10d.py:262}  Rank 0: Completed store-based barrier for key:store_based_barrier_key:1 with 1 nodes.
+2025-02-26 15:19:32,403 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_datamodule.py:56}  Number of samples in train set: 132384
+2025-02-26 15:19:32,459 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_datamodule.py:56}  Number of samples in validation set: 32407
+2025-02-26 15:19:56,879 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:318}  
+[Epoch 0] val_loss: 8.18282, val_reg_loss: 4.58139, val_cls_loss: 3.83425, val_prediction_losss: 3.56309, val_diffusion_loss: 0.45804, val_MR: 0.62500, val_minADE1: 17.84060, val_minADE6: 17.80889, val_minFDE1: 35.25921, val_minFDE6: 35.14038

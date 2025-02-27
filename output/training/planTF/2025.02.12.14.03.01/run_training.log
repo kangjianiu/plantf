@@ -1,0 +1,188 @@
+[2025-02-12 14:03:03,032][__main__][INFO] - Logger is configured correctly.
+[2025-02-12 14:03:03,274][nuplan.planning.script.builders.folder_builder][INFO] - Building experiment folders...
+[2025-02-12 14:03:03,274][nuplan.planning.script.builders.folder_builder][INFO] - Experimental folder: /data/datasets/niukangjia/plantf/output/training/planTF/2025.02.12.14.03.01
+[2025-02-12 14:03:03,274][nuplan.planning.script.builders.worker_pool_builder][INFO] - Building WorkerPool...
+[2025-02-12 14:03:03,275][nuplan.planning.utils.multithreading.worker_pool][INFO] - Worker: SingleMachineParallelExecutor
+[2025-02-12 14:03:03,275][nuplan.planning.utils.multithreading.worker_pool][INFO] - Number of nodes: 1
+Number of CPUs per node: 32
+Number of GPUs per node: 0
+Number of threads across all nodes: 32
+[2025-02-12 14:03:03,275][nuplan.planning.script.builders.worker_pool_builder][INFO] - Building WorkerPool...DONE!
+[2025-02-12 14:03:03,276][src.custom_training.custom_training_builder][INFO] - Building training engine...
+[2025-02-12 14:03:08,476][nuplan.planning.script.builders.model_builder][INFO] - Building TorchModuleWrapper...
+[2025-02-12 14:03:09,631][nuplan.planning.script.builders.model_builder][INFO] - Building TorchModuleWrapper...DONE!
+[2025-02-12 14:03:09,631][nuplan.planning.script.builders.splitter_builder][INFO] - Building Splitter...
+[2025-02-12 14:03:10,670][nuplan.planning.script.builders.splitter_builder][INFO] - Building Splitter...DONE!
+[2025-02-12 14:03:10,672][nuplan.planning.script.builders.data_augmentation_builder][INFO] - Building augmentors...
+[2025-02-12 14:03:10,675][nuplan.planning.script.builders.data_augmentation_builder][INFO] - Building augmentors...DONE!
+[2025-02-12 14:14:14,167][nuplan.planning.script.builders.scenario_builder][INFO] - Extracted 204791 scenarios for training
+[2025-02-12 14:14:14,192][__main__][INFO] - Starting training...
+[2025-02-12 14:14:14,271][torch.distributed.distributed_c10d][INFO] - Added key: store_based_barrier_key:1 to store for rank: 0
+[2025-02-12 14:14:14,272][torch.distributed.distributed_c10d][INFO] - Rank 0: Completed store-based barrier for key:store_based_barrier_key:1 with 1 nodes.
+[2025-02-12 14:14:14,812][src.custom_training.custom_datamodule][INFO] - Number of samples in train set: 132384
+[2025-02-12 14:14:14,923][src.custom_training.custom_datamodule][INFO] - Number of samples in validation set: 32407
+[2025-02-12 14:14:42,825][root][INFO] - 
+[Epoch 0] val_loss: 7.87256, val_reg_loss: 4.42268, val_cls_loss: 3.86340, val_prediction_losss: 3.41124, val_diffusion_loss: 0.45524, val_MR: 0.59375, val_minADE1: 17.51188, val_minADE6: 17.50522, val_minFDE1: 34.64797, val_minFDE6: 34.61042
+[2025-02-12 16:42:29,065][root][INFO] - 
+[Epoch 0] val_loss: 6.36374, val_reg_loss: 4.03785, val_cls_loss: 3.86374, val_prediction_losss: 2.28724, val_diffusion_loss: 0.81117, val_MR: 0.61759, val_minADE1: 15.88510, val_minADE6: 15.88107, val_minFDE1: 31.50506, val_minFDE6: 31.49001
+[2025-02-12 16:42:29,080][root][INFO] - 
+[Epoch 0] train_loss: 6.47211, train_reg_loss: 3.30509, train_cls_loss: 3.44503, train_prediction_losss: 3.13256, train_diffusion_loss: 1.57649, train_MR: 0.55304, train_minADE1: 15.19357, train_minADE6: 13.01622, train_minFDE1: 30.48050, train_minFDE6: 27.84625
+[2025-02-12 19:47:40,968][root][INFO] - 
+[Epoch 1] val_loss: 5.69653, val_reg_loss: 4.32027, val_cls_loss: 3.73298, val_prediction_losss: 1.33894, val_diffusion_loss: 0.87518, val_MR: 0.64167, val_minADE1: 17.13877, val_minADE6: 17.13222, val_minFDE1: 32.65639, val_minFDE6: 32.64926
+[2025-02-12 19:47:40,991][root][INFO] - 
+[Epoch 1] train_loss: 4.47552, train_reg_loss: 2.25108, train_cls_loss: 3.63327, train_prediction_losss: 2.18811, train_diffusion_loss: 2.96875, train_MR: 0.47595, train_minADE1: 15.07838, train_minADE6: 9.78230, train_minFDE1: 30.09669, train_minFDE6: 21.15261
+[2025-02-12 22:59:13,797][root][INFO] - 
+[Epoch 2] val_loss: 4.84970, val_reg_loss: 4.11646, val_cls_loss: 3.76324, val_prediction_losss: 0.69561, val_diffusion_loss: 0.88635, val_MR: 0.62667, val_minADE1: 16.21724, val_minADE6: 16.21164, val_minFDE1: 31.84995, val_minFDE6: 31.83978
+[2025-02-12 22:59:13,811][root][INFO] - 
+[Epoch 2] train_loss: 2.32540, train_reg_loss: 0.99878, train_cls_loss: 3.65922, train_prediction_losss: 1.29003, train_diffusion_loss: 4.51282, train_MR: 0.38613, train_minADE1: 12.33486, train_minADE6: 5.39187, train_minFDE1: 24.57642, train_minFDE6: 12.06231
+[2025-02-13 02:13:39,399][root][INFO] - 
+[Epoch 3] val_loss: 4.75651, val_reg_loss: 4.23044, val_cls_loss: 4.01362, val_prediction_losss: 0.48593, val_diffusion_loss: 0.90026, val_MR: 0.63729, val_minADE1: 16.76937, val_minADE6: 16.76170, val_minFDE1: 32.30542, val_minFDE6: 32.28843
+[2025-02-13 02:13:39,412][root][INFO] - 
+[Epoch 3] train_loss: 1.17801, train_reg_loss: 0.35047, train_cls_loss: 3.59480, train_prediction_losss: 0.79160, train_diffusion_loss: 5.58973, train_MR: 0.28748, train_minADE1: 9.71922, train_minADE6: 3.14110, train_minFDE1: 19.25105, train_minFDE6: 5.99054
+[2025-02-13 05:22:25,047][root][INFO] - 
+[Epoch 4] val_loss: 4.66829, val_reg_loss: 4.18978, val_cls_loss: 3.98818, val_prediction_losss: 0.43862, val_diffusion_loss: 0.89601, val_MR: 0.63031, val_minADE1: 16.57159, val_minADE6: 16.56273, val_minFDE1: 31.75838, val_minFDE6: 31.74037
+[2025-02-13 05:22:25,058][root][INFO] - 
+[Epoch 4] train_loss: 0.90792, train_reg_loss: 0.23590, train_cls_loss: 3.58091, train_prediction_losss: 0.63620, train_diffusion_loss: 5.75262, train_MR: 0.23836, train_minADE1: 8.81192, train_minADE6: 2.67323, train_minFDE1: 17.38844, train_minFDE6: 4.82663
+[2025-02-13 08:27:39,897][root][INFO] - 
+[Epoch 5] val_loss: 4.68664, val_reg_loss: 4.23098, val_cls_loss: 4.21386, val_prediction_losss: 0.41352, val_diffusion_loss: 0.87590, val_MR: 0.63575, val_minADE1: 16.79692, val_minADE6: 16.78155, val_minFDE1: 31.79515, val_minFDE6: 31.78063
+[2025-02-13 08:27:39,908][root][INFO] - 
+[Epoch 5] train_loss: 0.83096, train_reg_loss: 0.21306, train_cls_loss: 3.57590, train_prediction_losss: 0.58213, train_diffusion_loss: 5.71145, train_MR: 0.22006, train_minADE1: 8.41612, train_minADE6: 2.51592, train_minFDE1: 16.61061, train_minFDE6: 4.53001
+[2025-02-13 11:11:03,690][root][INFO] - 
+[Epoch 6] val_loss: 4.47170, val_reg_loss: 4.03898, val_cls_loss: 4.08913, val_prediction_losss: 0.39184, val_diffusion_loss: 0.82085, val_MR: 0.62333, val_minADE1: 15.88234, val_minADE6: 15.87297, val_minFDE1: 31.45709, val_minFDE6: 31.45097
+[2025-02-13 11:11:03,701][root][INFO] - 
+[Epoch 6] train_loss: 0.77979, train_reg_loss: 0.19795, train_cls_loss: 3.52565, train_prediction_losss: 0.54659, train_diffusion_loss: 5.97272, train_MR: 0.19947, train_minADE1: 8.16489, train_minADE6: 2.36003, train_minFDE1: 16.17364, train_minFDE6: 4.18739
+[2025-02-13 14:33:44,651][root][INFO] - 
+[Epoch 7] val_loss: 4.52491, val_reg_loss: 4.10121, val_cls_loss: 3.98755, val_prediction_losss: 0.38381, val_diffusion_loss: 0.93711, val_MR: 0.63831, val_minADE1: 16.22581, val_minADE6: 16.21886, val_minFDE1: 31.74140, val_minFDE6: 31.73640
+[2025-02-13 14:33:44,662][root][INFO] - 
+[Epoch 7] train_loss: 0.74557, train_reg_loss: 0.18965, train_cls_loss: 3.54191, train_prediction_losss: 0.52050, train_diffusion_loss: 5.77080, train_MR: 0.19029, train_minADE1: 8.03608, train_minADE6: 2.34526, train_minFDE1: 16.03724, train_minFDE6: 4.13382
+[2025-02-13 17:15:49,326][root][INFO] - 
+[Epoch 8] val_loss: 4.47361, val_reg_loss: 4.05969, val_cls_loss: 4.20139, val_prediction_losss: 0.37191, val_diffusion_loss: 1.04224, val_MR: 0.64019, val_minADE1: 16.05292, val_minADE6: 16.04843, val_minFDE1: 31.74102, val_minFDE6: 31.73799
+[2025-02-13 17:15:49,341][root][INFO] - 
+[Epoch 8] train_loss: 0.71544, train_reg_loss: 0.17859, train_cls_loss: 3.48915, train_prediction_losss: 0.50195, train_diffusion_loss: 5.93498, train_MR: 0.17199, train_minADE1: 7.45130, train_minADE6: 2.24094, train_minFDE1: 14.93422, train_minFDE6: 3.95542
+[2025-02-13 20:49:08,277][root][INFO] - 
+[Epoch 9] val_loss: 4.46732, val_reg_loss: 4.05157, val_cls_loss: 4.04831, val_prediction_losss: 0.37527, val_diffusion_loss: 1.26547, val_MR: 0.63652, val_minADE1: 16.01666, val_minADE6: 16.01274, val_minFDE1: 31.68197, val_minFDE6: 31.67816
+[2025-02-13 20:49:08,287][root][INFO] - 
+[Epoch 9] train_loss: 0.69460, train_reg_loss: 0.17191, train_cls_loss: 3.52599, train_prediction_losss: 0.48743, train_diffusion_loss: 5.68842, train_MR: 0.16706, train_minADE1: 7.12888, train_minADE6: 2.23791, train_minFDE1: 14.46226, train_minFDE6: 3.94901
+[2025-02-13 23:57:00,114][root][INFO] - 
+[Epoch 10] val_loss: 4.44891, val_reg_loss: 4.05425, val_cls_loss: 3.88708, val_prediction_losss: 0.35579, val_diffusion_loss: 1.35590, val_MR: 0.63680, val_minADE1: 16.01263, val_minADE6: 16.01083, val_minFDE1: 31.68288, val_minFDE6: 31.67899
+[2025-02-13 23:57:00,125][root][INFO] - 
+[Epoch 10] train_loss: 0.67568, train_reg_loss: 0.16413, train_cls_loss: 3.48495, train_prediction_losss: 0.47670, train_diffusion_loss: 5.80125, train_MR: 0.15504, train_minADE1: 7.24995, train_minADE6: 2.25927, train_minFDE1: 14.67504, train_minFDE6: 3.98655
+[2025-02-14 03:05:22,040][root][INFO] - 
+[Epoch 11] val_loss: 4.43881, val_reg_loss: 4.04448, val_cls_loss: 4.06702, val_prediction_losss: 0.35366, val_diffusion_loss: 3.35171, val_MR: 0.63991, val_minADE1: 15.97840, val_minADE6: 15.97587, val_minFDE1: 31.67058, val_minFDE6: 31.66803
+[2025-02-14 03:05:22,051][root][INFO] - 
+[Epoch 11] train_loss: 0.66130, train_reg_loss: 0.15842, train_cls_loss: 3.51530, train_prediction_losss: 0.46772, train_diffusion_loss: 5.79115, train_MR: 0.14551, train_minADE1: 6.71480, train_minADE6: 2.21697, train_minFDE1: 13.64105, train_minFDE6: 3.90072
+[2025-02-14 06:13:31,199][root][INFO] - 
+[Epoch 12] val_loss: 4.46426, val_reg_loss: 4.06805, val_cls_loss: 3.97694, val_prediction_losss: 0.35644, val_diffusion_loss: 2.12406, val_MR: 0.64050, val_minADE1: 16.11369, val_minADE6: 16.11116, val_minFDE1: 31.73652, val_minFDE6: 31.73369
+[2025-02-14 06:13:31,213][root][INFO] - 
+[Epoch 12] train_loss: 0.64812, train_reg_loss: 0.15253, train_cls_loss: 3.53822, train_prediction_losss: 0.46020, train_diffusion_loss: 5.82649, train_MR: 0.13907, train_minADE1: 6.69776, train_minADE6: 2.16286, train_minFDE1: 13.60790, train_minFDE6: 3.80142
+[2025-02-14 09:12:42,994][root][INFO] - 
+[Epoch 13] val_loss: 4.48101, val_reg_loss: 4.10089, val_cls_loss: 4.15273, val_prediction_losss: 0.33859, val_diffusion_loss: 1.90303, val_MR: 0.64195, val_minADE1: 16.22638, val_minADE6: 16.22328, val_minFDE1: 31.80254, val_minFDE6: 31.79915
+[2025-02-14 09:12:43,005][root][INFO] - 
+[Epoch 13] train_loss: 0.63756, train_reg_loss: 0.14806, train_cls_loss: 3.53967, train_prediction_losss: 0.45410, train_diffusion_loss: 5.75026, train_MR: 0.12782, train_minADE1: 6.46682, train_minADE6: 2.12442, train_minFDE1: 13.22031, train_minFDE6: 3.69502
+[2025-02-14 11:57:14,790][root][INFO] - 
+[Epoch 14] val_loss: 4.45595, val_reg_loss: 4.08032, val_cls_loss: 3.89246, val_prediction_losss: 0.33672, val_diffusion_loss: 3.36996, val_MR: 0.64130, val_minADE1: 16.06916, val_minADE6: 16.06700, val_minFDE1: 31.71430, val_minFDE6: 31.71200
+[2025-02-14 11:57:14,810][root][INFO] - 
+[Epoch 14] train_loss: 0.62643, train_reg_loss: 0.14305, train_cls_loss: 3.54328, train_prediction_losss: 0.44795, train_diffusion_loss: 5.79054, train_MR: 0.12184, train_minADE1: 6.40107, train_minADE6: 2.04779, train_minFDE1: 13.20286, train_minFDE6: 3.56660
+[2025-02-14 15:26:21,218][root][INFO] - 
+[Epoch 15] val_loss: 4.42579, val_reg_loss: 4.05523, val_cls_loss: 3.88052, val_prediction_losss: 0.33175, val_diffusion_loss: 3.31979, val_MR: 0.63939, val_minADE1: 16.00970, val_minADE6: 16.00790, val_minFDE1: 31.67589, val_minFDE6: 31.67327
+[2025-02-14 15:26:21,271][root][INFO] - 
+[Epoch 15] train_loss: 0.61642, train_reg_loss: 0.13810, train_cls_loss: 3.53760, train_prediction_losss: 0.44295, train_diffusion_loss: 5.61141, train_MR: 0.11705, train_minADE1: 6.30907, train_minADE6: 2.10769, train_minFDE1: 12.93948, train_minFDE6: 3.66103
+[2025-02-14 18:49:59,556][root][INFO] - 
+[Epoch 16] val_loss: 4.44325, val_reg_loss: 4.07641, val_cls_loss: 3.86934, val_prediction_losss: 0.32813, val_diffusion_loss: 2.99976, val_MR: 0.63951, val_minADE1: 16.07175, val_minADE6: 16.07010, val_minFDE1: 31.66324, val_minFDE6: 31.66096
+[2025-02-14 18:49:59,594][root][INFO] - 
+[Epoch 16] train_loss: 0.60699, train_reg_loss: 0.13268, train_cls_loss: 3.54301, train_prediction_losss: 0.43889, train_diffusion_loss: 5.62023, train_MR: 0.10864, train_minADE1: 6.20425, train_minADE6: 1.98213, train_minFDE1: 12.79494, train_minFDE6: 3.43844
+[2025-02-14 22:00:11,750][root][INFO] - 
+[Epoch 17] val_loss: 4.45903, val_reg_loss: 4.09087, val_cls_loss: 3.95491, val_prediction_losss: 0.32861, val_diffusion_loss: 3.43834, val_MR: 0.64189, val_minADE1: 16.18288, val_minADE6: 16.17862, val_minFDE1: 31.71242, val_minFDE6: 31.71008
+[2025-02-14 22:00:11,765][root][INFO] - 
+[Epoch 17] train_loss: 0.60015, train_reg_loss: 0.12975, train_cls_loss: 3.54535, train_prediction_losss: 0.43494, train_diffusion_loss: 5.58244, train_MR: 0.10232, train_minADE1: 6.13107, train_minADE6: 2.05661, train_minFDE1: 12.61443, train_minFDE6: 3.55848
+[2025-02-15 02:59:06,014][root][INFO] - 
+[Epoch 18] val_loss: 4.45064, val_reg_loss: 4.08033, val_cls_loss: 3.97885, val_prediction_losss: 0.33052, val_diffusion_loss: 3.19749, val_MR: 0.64152, val_minADE1: 16.14039, val_minADE6: 16.13766, val_minFDE1: 31.69407, val_minFDE6: 31.69190
+[2025-02-15 02:59:06,038][root][INFO] - 
+[Epoch 18] train_loss: 0.59226, train_reg_loss: 0.12489, train_cls_loss: 3.56627, train_prediction_losss: 0.43170, train_diffusion_loss: 5.46550, train_MR: 0.09586, train_minADE1: 5.90963, train_minADE6: 2.06073, train_minFDE1: 12.23408, train_minFDE6: 3.57961
+[2025-02-15 08:02:07,568][root][INFO] - 
+[Epoch 19] val_loss: 4.43349, val_reg_loss: 4.07269, val_cls_loss: 3.87720, val_prediction_losss: 0.32204, val_diffusion_loss: 3.77809, val_MR: 0.64140, val_minADE1: 16.07165, val_minADE6: 16.06937, val_minFDE1: 31.69446, val_minFDE6: 31.69146
+[2025-02-15 08:02:07,580][root][INFO] - 
+[Epoch 19] train_loss: 0.58658, train_reg_loss: 0.12260, train_cls_loss: 3.53561, train_prediction_losss: 0.42862, train_diffusion_loss: 5.56628, train_MR: 0.09197, train_minADE1: 5.78413, train_minADE6: 2.00100, train_minFDE1: 11.90696, train_minFDE6: 3.50225
+[2025-02-15 11:11:26,055][root][INFO] - 
+[Epoch 20] val_loss: 4.43548, val_reg_loss: 4.07473, val_cls_loss: 3.84433, val_prediction_losss: 0.32231, val_diffusion_loss: 3.76475, val_MR: 0.64066, val_minADE1: 16.04039, val_minADE6: 16.03868, val_minFDE1: 31.71635, val_minFDE6: 31.71311
+[2025-02-15 11:11:26,070][root][INFO] - 
+[Epoch 20] train_loss: 0.58108, train_reg_loss: 0.11943, train_cls_loss: 3.53161, train_prediction_losss: 0.42634, train_diffusion_loss: 5.58154, train_MR: 0.08723, train_minADE1: 5.61150, train_minADE6: 1.91630, train_minFDE1: 11.54187, train_minFDE6: 3.36275
+[2025-02-15 14:21:47,594][root][INFO] - 
+[Epoch 21] val_loss: 4.43387, val_reg_loss: 4.06991, val_cls_loss: 3.87316, val_prediction_losss: 0.32522, val_diffusion_loss: 4.08158, val_MR: 0.64038, val_minADE1: 16.04716, val_minADE6: 16.04510, val_minFDE1: 31.71684, val_minFDE6: 31.71433
+[2025-02-15 14:21:47,605][root][INFO] - 
+[Epoch 21] train_loss: 0.57667, train_reg_loss: 0.11681, train_cls_loss: 3.54130, train_prediction_losss: 0.42445, train_diffusion_loss: 5.48359, train_MR: 0.08406, train_minADE1: 5.61857, train_minADE6: 1.94520, train_minFDE1: 11.62522, train_minFDE6: 3.44008
+[2025-02-15 17:02:45,272][root][INFO] - 
+[Epoch 22] val_loss: 4.43257, val_reg_loss: 4.07352, val_cls_loss: 3.83897, val_prediction_losss: 0.32067, val_diffusion_loss: 4.23819, val_MR: 0.63920, val_minADE1: 16.03138, val_minADE6: 16.02935, val_minFDE1: 31.71622, val_minFDE6: 31.71395
+[2025-02-15 17:02:45,285][root][INFO] - 
+[Epoch 22] train_loss: 0.57343, train_reg_loss: 0.11502, train_cls_loss: 3.54110, train_prediction_losss: 0.42300, train_diffusion_loss: 5.49148, train_MR: 0.07941, train_minADE1: 5.58199, train_minADE6: 1.97133, train_minFDE1: 11.52521, train_minFDE6: 3.46052
+[2025-02-15 19:51:46,467][root][INFO] - 
+[Epoch 23] val_loss: 4.42889, val_reg_loss: 4.07018, val_cls_loss: 3.86698, val_prediction_losss: 0.32004, val_diffusion_loss: 4.00878, val_MR: 0.64013, val_minADE1: 16.03710, val_minADE6: 16.03521, val_minFDE1: 31.71107, val_minFDE6: 31.70786
+[2025-02-15 19:51:46,478][root][INFO] - 
+[Epoch 23] train_loss: 0.57103, train_reg_loss: 0.11346, train_cls_loss: 3.52901, train_prediction_losss: 0.42228, train_diffusion_loss: 5.49333, train_MR: 0.07902, train_minADE1: 5.57206, train_minADE6: 1.98642, train_minFDE1: 11.46551, train_minFDE6: 3.49925
+[2025-02-15 22:21:58,818][root][INFO] - 
+[Epoch 24] val_loss: 4.43615, val_reg_loss: 4.07870, val_cls_loss: 3.88884, val_prediction_losss: 0.31856, val_diffusion_loss: 3.92140, val_MR: 0.64044, val_minADE1: 16.05612, val_minADE6: 16.05416, val_minFDE1: 31.71518, val_minFDE6: 31.71196
+[2025-02-15 22:21:58,830][root][INFO] - 
+[Epoch 24] train_loss: 0.56905, train_reg_loss: 0.11263, train_cls_loss: 3.52011, train_prediction_losss: 0.42122, train_diffusion_loss: 5.50492, train_MR: 0.07627, train_minADE1: 5.49819, train_minADE6: 1.95042, train_minFDE1: 11.30839, train_minFDE6: 3.42706
+
+wandb: Run history:                                                                                                                                                                                    
+wandb:                      epoch ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▅▆▆▆▆▇▇▇▇▇▇████                                                                                                                             
+wandb:      loss/train_loss_epoch █▆▃▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb:       loss/train_loss_step ███▇▃▂▂▁▂▂▂▂▂▁▂▂▂▁▁▂▂▁▂▁▁▁▂▁▂▁▁▁▁▁▁▁▁▁▁▁                                                                                                                             
+wandb:        loss/val_loss_epoch █▆▃▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb:         loss/val_loss_step ▇▆▅▅▅▃▃▅▅▂▆▄▃▆▅▂▃█▄▃▄▄▃▄▃▂▅▄▂▃▄▅▃▃▃▃▁▃▅▅                                                                                                                             
+wandb:               lr-AdamW/pg1 ▃▆█████▇▇▇▆▆▅▅▄▄▃▃▃▂▂▂▁▁▁                                                                                                                                            
+wandb:               lr-AdamW/pg2 ▃▆█████▇▇▇▆▆▅▅▄▄▃▃▃▂▂▂▁▁▁                                                                                                                                            
+wandb:  objectives/train_cls_loss ▁▇█▆▅▅▄▄▂▄▂▃▄▄▄▄▄▄▅▄▄▄▄▄▃                                                                                                                                            
+wandb: objectives/train_diff_loss ▁▃▆▇███████████▇▇▇▇▇▇▇▇▇▇                                                                                                                                            
+wandb:      objectives/train_loss █▆▃▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb: objectives/train_pred_loss █▆▃▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb:  objectives/train_reg_loss █▆▃▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb:    objectives/val_cls_loss ▃▁▁▅▅█▆▅█▆▃▆▅▇▃▃▃▄▅▃▃▃▃▃▃                                                                                                                                            
+wandb:   objectives/val_diff_loss ▁▁▁▁▁▁▁▁▁▂▂▆▄▃▆▆▅▆▆▇▇███▇                                                                                                                                            
+wandb:        objectives/val_loss █▆▃▂▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb:   objectives/val_pred_loss █▅▂▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb:    objectives/val_reg_loss ▁█▃▆▅▆▁▃▂▁▁▁▂▃▂▁▂▂▂▂▂▂▂▂▂                                                                                                                                            
+wandb:                   train/MR █▇▆▄▃▃▃▃▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁▁                                        
+wandb:              train/minADE1 ██▆▄▃▃▃▃▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb:              train/minADE6 █▆▃▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb:              train/minFDE1 ██▆▄▃▃▃▃▂▂▂▂▂▂▂▂▂▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb:              train/minFDE6 █▆▃▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁                                                                                                                                            
+wandb:        trainer/global_step ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███                                                                                                                             
+wandb:                     val/MR ▁█▄▇▅▆▃▇▇▆▇▇███▇▇█████▇▇█                                        
+wandb:                val/minADE1 ▁█▃▆▅▆▁▃▂▂▂▂▂▃▂▂▂▃▂▂▂▂▂▂▂                                        
+wandb:                val/minADE6 ▁█▃▆▅▆▁▃▂▂▂▂▂▃▂▂▂▃▂▂▂▂▂▂▂                                        
+wandb:                val/minFDE1 ▁█▃▆▃▃▁▃▃▂▂▂▃▃▃▂▂▂▂▂▃▃▃▂▃                                        
+wandb:                val/minFDE6 ▁█▃▆▃▃▁▃▃▂▂▂▃▃▃▂▂▃▂▂▃▃▃▃▃                                        
+wandb:                       
+wandb: Run summary:                                                                                
+wandb:                      epoch 24                                                               
+wandb:      loss/train_loss_epoch 0.56905                                                          
+wandb:       loss/train_loss_step 0.52389                                                          
+wandb:        loss/val_loss_epoch 4.43615                                                          
+wandb:         loss/val_loss_step 3.86823                                                          
+wandb:               lr-AdamW/pg1 0.0                                                              
+wandb:               lr-AdamW/pg2 0.0                                                              
+wandb:  objectives/train_cls_loss 3.52011                                                          
+wandb: objectives/train_diff_loss 5.50492                                                          
+wandb:      objectives/train_loss 0.56905                                                          
+wandb: objectives/train_pred_loss 0.42122                                                          
+wandb:  objectives/train_reg_loss 0.11263                                                          
+wandb:    objectives/val_cls_loss 3.88884                                                          
+wandb:   objectives/val_diff_loss 3.9214                                                           
+wandb:        objectives/val_loss 4.43615                                                          
+wandb:   objectives/val_pred_loss 0.31856                                                          
+wandb:    objectives/val_reg_loss 4.0787                                                           
+wandb:                   train/MR 0.07627                                                          
+wandb:              train/minADE1 5.49819                                                          
+wandb:              train/minADE6 1.95042                                                          
+wandb:              train/minFDE1 11.30839                                                         
+wandb:              train/minFDE6 3.42706                                                          
+wandb:        trainer/global_step 103424                                                           
+wandb:                     val/MR 0.64044                                                          
+wandb:                val/minADE1 16.05612                                                         
+wandb:                val/minADE6 16.05416                                                         
+wandb:                val/minFDE1 31.71518                                                         
+wandb:                val/minFDE6 31.71196                                                         
+wandb:                                           
+wandb: You can sync this run to the cloud by running:                                              
+wandb: wandb sync /data/datasets/niukangjia/plantf/output/wandb/offline-run-20250212_140304-jxkt3chy 
