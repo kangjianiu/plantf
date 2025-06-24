@@ -1,0 +1,166 @@
+hydra:
+  run:
+    dir: ${output_dir}
+  sweep:
+    dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.num}
+  launcher:
+    _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
+  sweeper:
+    _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
+    max_batch_size: null
+    params: null
+  help:
+    app_name: ${hydra.job.name}
+    header: '${hydra.help.app_name} is powered by Hydra.
+
+      '
+    footer: 'Powered by Hydra (https://hydra.cc)
+
+      Use --hydra-help to view Hydra specific help
+
+      '
+    template: '${hydra.help.header}
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (group=option)
+
+
+      $APP_CONFIG_GROUPS
+
+
+      == Config ==
+
+      Override anything in the config (foo.bar=value)
+
+
+      $CONFIG
+
+
+      ${hydra.help.footer}
+
+      '
+  hydra_help:
+    template: 'Hydra (${hydra.runtime.version})
+
+      See https://hydra.cc for more info.
+
+
+      == Flags ==
+
+      $FLAGS_HELP
+
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (For example, append hydra/job_logging=disabled
+      to command line)
+
+
+      $HYDRA_CONFIG_GROUPS
+
+
+      Use ''--cfg hydra'' to Show the Hydra config.
+
+      '
+    hydra_help: ???
+  hydra_logging:
+    version: 1
+    root: null
+    disable_existing_loggers: false
+  job_logging:
+    version: 1
+    root: null
+    disable_existing_loggers: false
+  env: {}
+  mode: RUN
+  searchpath:
+  - pkg://nuplan.planning.script.config.common
+  - pkg://nuplan.planning.script.config.simulation
+  - pkg://nuplan.planning.script.experiments
+  - config/simulation
+  - config/scenario_filter
+  callbacks: {}
+  output_subdir: ${output_dir}/code/hydra
+  overrides:
+    hydra:
+    - hydra.mode=RUN
+    task:
+    - +simulation=closed_loop_nonreactive_agents
+    - planner=planTF
+    - scenario_builder=nuplan_challenge
+    - scenario_filter=single_right_turn
+    - worker=sequential
+    - verbose=true
+    - planner.imitation_planner.planner_ckpt=/data/datasets/niukangjia/plantf/output/training/planTF/2025.03.14.19.26.54/checkpoints/last.ckpt
+  job:
+    name: run_simulation
+    chdir: null
+    override_dirname: +simulation=closed_loop_nonreactive_agents,planner.imitation_planner.planner_ckpt=/data/datasets/niukangjia/plantf/output/training/planTF/2025.03.14.19.26.54/checkpoints/last.ckpt,planner=planTF,scenario_builder=nuplan_challenge,scenario_filter=single_right_turn,verbose=true,worker=sequential
+    id: ???
+    num: ???
+    config_name: default_simulation
+    env_set: {}
+    env_copy: []
+    config:
+      override_dirname:
+        kv_sep: '='
+        item_sep: ','
+        exclude_keys: []
+  runtime:
+    version: 1.3.2
+    version_base: '1.1'
+    cwd: /data/datasets/niukangjia/plantf
+    config_sources:
+    - path: hydra.conf
+      schema: pkg
+      provider: hydra
+    - path: /data/datasets/niukangjia/plantf/config
+      schema: file
+      provider: main
+    - path: nuplan.planning.script.config.common
+      schema: pkg
+      provider: hydra.searchpath in main
+    - path: nuplan.planning.script.config.simulation
+      schema: pkg
+      provider: hydra.searchpath in main
+    - path: nuplan.planning.script.experiments
+      schema: pkg
+      provider: hydra.searchpath in main
+    - path: config/simulation
+      schema: file
+      provider: hydra.searchpath in main
+    - path: config/scenario_filter
+      schema: file
+      provider: hydra.searchpath in main
+    - path: ''
+      schema: structured
+      provider: schema
+    output_dir: /data/datasets/niukangjia/plantf/output/simulation/closed_loop_nonreactive_agents/2025.03.28.13.19.32
+    choices:
+      simulation: closed_loop_nonreactive_agents
+      simulation_time_controller: step_simulation_time_controller
+      planner: planTF
+      ego_controller: two_stage_controller
+      ego_controller/motion_model: kinematic_bicycle_model
+      ego_controller/tracker: lqr_tracker
+      observation: box_observation
+      splitter: nuplan
+      simulation_metric: simulation_closed_loop_nonreactive_agents
+      worker: sequential
+      model: null
+      scenario_filter: single_right_turn
+      scenario_builder: nuplan_challenge
+      scenario_builder/scenario_mapping: nuplan_challenge_scenario_mapping
+      scenario_builder/vehicle_parameters: nuplan_vehicle_parameters
+      hydra/env: default
+      hydra/callbacks: null
+      hydra/job_logging: none
+      hydra/hydra_logging: none
+      hydra/hydra_help: default
+      hydra/help: default
+      hydra/sweeper: basic
+      hydra/launcher: basic
+      hydra/output: default
+  verbose: false

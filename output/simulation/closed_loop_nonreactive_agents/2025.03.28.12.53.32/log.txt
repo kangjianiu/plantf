@@ -1,0 +1,408 @@
+2025-03-28 12:53:34,333 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/worker_pool_builder.py:19}  Building WorkerPool...
+2025-03-28 12:53:34,335 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:101}  Worker: Sequential
+2025-03-28 12:53:34,335 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:102}  Number of nodes: 1
+Number of CPUs per node: 1
+Number of GPUs per node: 0
+Number of threads across all nodes: 1
+2025-03-28 12:53:34,335 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/worker_pool_builder.py:27}  Building WorkerPool...DONE!
+2025-03-28 12:53:34,335 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:32}  Building experiment folders...
+2025-03-28 12:53:34,335 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:35}  
+
+	Folder where all results are stored: /data/datasets/niukangjia/plantf/output/simulation/closed_loop_nonreactive_agents/2025.03.28.12.53.32
+
+2025-03-28 12:53:34,337 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:70}  Building experiment folders...DONE!
+2025-03-28 12:53:34,337 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_callback_builder.py:52}  Building AbstractCallback...
+2025-03-28 12:53:34,338 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_callback_builder.py:68}  Building AbstractCallback: 0...DONE!
+2025-03-28 12:53:34,338 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:47}  Building simulations...
+2025-03-28 12:53:34,338 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:53}  Extracting scenarios...
+2025-03-28 12:53:34,338 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/common/utils/distributed_scenario_filter.py:83}  Building Scenarios in mode DistributedMode.SINGLE_NODE
+2025-03-28 12:53:34,338 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_building_builder.py:18}  Building AbstractScenarioBuilder...
+2025-03-28 12:53:34,361 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_building_builder.py:21}  Building AbstractScenarioBuilder...DONE!
+2025-03-28 12:53:34,361 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_filter_builder.py:35}  Building ScenarioFilter...
+2025-03-28 12:53:34,362 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_filter_builder.py:44}  Building ScenarioFilter...DONE!
+2025-03-28 12:54:34,162 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:74}  Building metric engines...
+2025-03-28 12:54:34,610 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:76}  Building metric engines...DONE
+2025-03-28 12:54:34,610 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:80}  Building simulations from 100 scenarios...
+2025-03-28 12:54:44,628 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:133}  Building simulations...DONE!
+2025-03-28 12:54:44,628 INFO {/data/datasets/niukangjia/plantf/run_simulation.py:97}  Running simulation...
+2025-03-28 12:54:44,628 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/utils.py:138}  Executing runners...
+2025-03-28 12:54:44,628 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:82}  Starting 100 simulations using Sequential!
+2025-03-28 12:54:44,628 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:116}  Submitting 100 tasks!
+2025-03-28 12:54:46,948 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:46,981 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:46,982 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:46,982 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.10.06.03.07.17_veh-53_00703_00974, 071919c66dd855d3]
+
+2025-03-28 12:54:46,983 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:47,514 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:47,514 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:47,515 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:47,515 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.09.16.17.40.35_veh-08_00032_01780, c9216edf2722592d]
+
+2025-03-28 12:54:47,515 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:48,153 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:48,154 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:48,154 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:48,154 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.18.44.16_veh-35_02695_04087, 8b095e7146325af7]
+
+2025-03-28 12:54:48,154 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:49,193 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:49,193 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:49,194 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:49,194 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.21.23.50_veh-47_01886_04690, a80c826bdfc95f5f]
+
+2025-03-28 12:54:49,194 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:49,748 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:49,749 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:49,749 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:49,749 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.05.25.18.38.25_veh-25_03355_04047, 83655d8edb905bab]
+
+2025-03-28 12:54:49,749 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:50,716 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:50,717 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:50,717 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:50,717 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.21.23.50_veh-47_01886_04690, 6728fb3fdc4e5020]
+
+2025-03-28 12:54:50,717 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:51,199 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:51,200 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:51,200 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:51,200 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.09.16.17.40.35_veh-08_00032_01780, d37ded0ed9105d4b]
+
+2025-03-28 12:54:51,201 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:52,041 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:52,042 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:52,042 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:52,042 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.17.13.34_veh-16_00015_01780, 5f821e4d226c53ae]
+
+2025-03-28 12:54:52,043 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:52,734 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:52,735 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:52,735 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:52,735 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.16.29.11_veh-38_04607_06901, 9c7a1161eecb58bb]
+
+2025-03-28 12:54:52,736 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:53,256 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:53,257 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:53,257 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:53,257 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.15.10.57_veh-16_03742_04746, d6e2dcab566059e8]
+
+2025-03-28 12:54:53,257 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:53,489 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:53,489 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:53,490 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:53,490 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.09.16.20.30.08_veh-42_01747_02010, a91e2db20ba05659]
+
+2025-03-28 12:54:53,490 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:54,162 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:54,163 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:54,163 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:54,163 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.17.56.29_veh-47_03034_04012, b4940e201aea5168]
+
+2025-03-28 12:54:54,164 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:55,135 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:55,135 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:55,136 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:55,136 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.14.51.28_veh-26_02653_05399, 92da638d99b35c42]
+
+2025-03-28 12:54:55,136 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:55,617 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:55,618 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:55,618 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:55,618 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.09.16.17.40.35_veh-08_00032_01780, b43d8c2ba9a55cf6]
+
+2025-03-28 12:54:55,619 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:56,498 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:56,499 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:56,499 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:56,499 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.16.29.11_veh-38_04607_06901, f6b1d36eccc7558d]
+
+2025-03-28 12:54:56,499 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:57,052 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:57,053 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:57,053 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:57,053 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.03.12.36.43_veh-38_02267_02731, f0885744997c5f89]
+
+2025-03-28 12:54:57,053 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:57,399 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:57,399 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:57,400 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:57,400 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.10.06.03.07.17_veh-53_01278_02139, c55b923eac7957ca]
+
+2025-03-28 12:54:57,400 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:57,943 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:57,944 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:57,944 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:57,944 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.16.57.59_veh-26_00920_01691, 8e26024dfae453c5]
+
+2025-03-28 12:54:57,945 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:58,349 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:58,349 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:58,350 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:58,350 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.09.16.17.40.35_veh-08_00032_01780, 2f141fdb01d058b5]
+
+2025-03-28 12:54:58,350 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:59,106 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:59,106 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:59,107 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:59,107 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.03.18.47.39_veh-35_00881_02426, c24d3937f10e598f]
+
+2025-03-28 12:54:59,107 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:54:59,767 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:54:59,768 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:54:59,768 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:54:59,768 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.18.44.16_veh-35_02695_04087, a17bf2edc3505cac]
+
+2025-03-28 12:54:59,769 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:00,956 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:00,956 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:00,956 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:00,957 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.05.25.12.30.39_veh-25_04064_04256, 4b721598f721553d]
+
+2025-03-28 12:55:00,957 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:01,424 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:01,424 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:01,425 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:01,425 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.03.14.29.58_veh-16_06171_06386, 7e5b51c6679d5b54]
+
+2025-03-28 12:55:01,425 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:02,728 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:02,729 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:02,729 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:02,730 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.15.07.02_veh-35_00260_05954, 605a60ab7f315e38]
+
+2025-03-28 12:55:02,730 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:03,368 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:03,368 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:03,369 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:03,369 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.21.29.28_veh-16_00854_01891, 32c8462ce0325149]
+
+2025-03-28 12:55:03,369 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:03,949 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:03,949 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:03,950 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:03,950 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.05.25.14.24.08_veh-25_04711_04979, 9f8b1a704e1254cb]
+
+2025-03-28 12:55:03,950 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:04,155 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:04,156 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:04,156 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:04,156 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.09.16.16.20.27_veh-08_00119_00399, 832d9db21c5f58a3]
+
+2025-03-28 12:55:04,156 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:04,603 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:04,604 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:04,604 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:04,604 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.15.02.02_veh-38_00571_01201, fe7f6e7e0c525146]
+
+2025-03-28 12:55:04,604 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:05,208 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:05,209 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:05,209 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:05,209 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.15.10.57_veh-16_01001_02195, 5e2d5054033e528c]
+
+2025-03-28 12:55:05,210 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:05,891 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:05,892 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:05,892 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:05,892 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.18.30.41_veh-12_02870_04378, 6f37e60c93285e8b]
+
+2025-03-28 12:55:05,893 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:06,795 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:06,796 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:06,796 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:06,797 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.13.53.26_veh-26_00707_03205, 88b74bc5f9ba586b]
+
+2025-03-28 12:55:06,797 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:07,275 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:07,276 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:07,276 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:07,276 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.09.16.19.27.01_veh-45_01749_03230, 785891868a9654a9]
+
+2025-03-28 12:55:07,276 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:07,637 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:07,637 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:07,638 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:07,638 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.08.30.17.34.35_veh-40_00636_01192, 00955ffd1cf65852]
+
+2025-03-28 12:55:07,638 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:08,176 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:08,176 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:08,177 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:08,177 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.09.16.17.40.35_veh-08_00032_01780, 92745f022d04501f]
+
+2025-03-28 12:55:08,177 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:09,233 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:09,234 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:09,234 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:09,235 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.15.07.02_veh-35_00260_05954, 9ff77d68edff54bb]
+
+2025-03-28 12:55:09,235 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:10,634 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:10,634 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:10,635 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:10,635 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.05.25.16.54.14_veh-47_03317_03698, a7dacd25b0d35780]
+
+2025-03-28 12:55:10,635 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:11,348 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:11,349 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:11,349 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:11,350 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.21.47.53_veh-35_00972_02652, 7b03dfa55a1b5dca]
+
+2025-03-28 12:55:11,350 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:11,579 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:11,579 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:11,580 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:11,580 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.09.16.16.20.27_veh-08_00119_00399, a3a33d1a83e25a62]
+
+2025-03-28 12:55:11,580 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:12,087 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:12,088 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:12,088 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:12,088 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.21.16.05_veh-14_00016_00935, 32d4ca4339e650fe]
+
+2025-03-28 12:55:12,089 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:12,614 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:12,615 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:12,615 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:12,616 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.20.24.43_veh-38_01668_02298, 6c8fb081cfda53f7]
+
+2025-03-28 12:55:12,616 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:13,850 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:13,851 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:13,851 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:13,851 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.28.15.07.02_veh-35_00260_05954, 6fd7c898cfea58f4]
+
+2025-03-28 12:55:13,851 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:55:14,426 ERROR {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/metrics/metric_engine.py:118}  Running ego_lane_change with error: invalid poses passed to get_route()
+2025-03-28 12:55:14,427 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:55:14,427 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ Metric Engine failed with: invalid poses passed to get_route()
+2025-03-28 12:55:14,427 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.06.03.18.57.27_veh-47_00932_01793, 91175952f6b75fc0]
+
+2025-03-28 12:55:14,427 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!

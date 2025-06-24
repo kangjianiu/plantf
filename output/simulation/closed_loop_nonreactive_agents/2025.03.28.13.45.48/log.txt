@@ -1,0 +1,52 @@
+2025-03-28 13:45:50,293 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/worker_pool_builder.py:19}  Building WorkerPool...
+2025-03-28 13:45:50,294 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:101}  Worker: Sequential
+2025-03-28 13:45:50,295 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:102}  Number of nodes: 1
+Number of CPUs per node: 1
+Number of GPUs per node: 0
+Number of threads across all nodes: 1
+2025-03-28 13:45:50,295 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/worker_pool_builder.py:27}  Building WorkerPool...DONE!
+2025-03-28 13:45:50,295 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:32}  Building experiment folders...
+2025-03-28 13:45:50,295 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:35}  
+
+	Folder where all results are stored: /data/datasets/niukangjia/plantf/output/simulation/closed_loop_nonreactive_agents/2025.03.28.13.45.48
+
+2025-03-28 13:45:50,297 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:70}  Building experiment folders...DONE!
+2025-03-28 13:45:50,297 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_callback_builder.py:52}  Building AbstractCallback...
+2025-03-28 13:45:50,298 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_callback_builder.py:68}  Building AbstractCallback: 0...DONE!
+2025-03-28 13:45:50,298 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:47}  Building simulations...
+2025-03-28 13:45:50,298 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:53}  Extracting scenarios...
+2025-03-28 13:45:50,298 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/common/utils/distributed_scenario_filter.py:83}  Building Scenarios in mode DistributedMode.SINGLE_NODE
+2025-03-28 13:45:50,298 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_building_builder.py:18}  Building AbstractScenarioBuilder...
+2025-03-28 13:45:50,321 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_building_builder.py:21}  Building AbstractScenarioBuilder...DONE!
+2025-03-28 13:45:50,321 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_filter_builder.py:35}  Building ScenarioFilter...
+2025-03-28 13:45:50,322 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_filter_builder.py:44}  Building ScenarioFilter...DONE!
+2025-03-28 13:45:50,326 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:74}  Building metric engines...
+2025-03-28 13:45:50,529 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:76}  Building metric engines...DONE
+2025-03-28 13:45:50,529 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:80}  Building simulations from 1 scenarios...
+2025-03-28 13:45:51,648 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:133}  Building simulations...DONE!
+2025-03-28 13:45:51,648 INFO {/data/datasets/niukangjia/plantf/run_simulation.py:97}  Running simulation...
+2025-03-28 13:45:51,648 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/utils.py:138}  Executing runners...
+2025-03-28 13:45:51,648 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:82}  Starting 1 simulations using Sequential!
+2025-03-28 13:45:51,648 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:116}  Submitting 1 tasks!
+2025-03-28 13:50:27,199 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:127}  Number of successful simulations: 1
+2025-03-28 13:50:27,199 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:128}  Number of failed simulations: 0
+2025-03-28 13:50:27,200 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/utils.py:147}  Finished executing runners!
+2025-03-28 13:50:27,206 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/utils.py:74}  Saved runner reports to /data/datasets/niukangjia/plantf/output/simulation/closed_loop_nonreactive_agents/2025.03.28.13.45.48/runner_report.parquet
+2025-03-28 13:50:27,206 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/time_callback.py:27}  Simulation duration: 00:04:37 [HH:MM:SS]
+2025-03-28 13:50:27,290 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/metric_file_callback.py:79}  Metric files integration: 00:00:00 [HH:MM:SS]
+2025-03-28 13:50:27,751 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/metric_aggregator_callback.py:58}  Running metric aggregator: closed_loop_nonreactive_agents_weighted_average
+2025-03-28 13:50:27,782 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/metric_aggregator_callback.py:69}  Metric aggregator: 00:00:00 [HH:MM:SS]
+2025-03-28 13:50:28,215 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:28,216 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:28,689 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:28,689 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:28,692 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:28,692 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:28,694 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:28,695 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:28,697 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:28,698 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:30,254 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:30,255 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/matplotlib/category.py:223}  Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-28 13:50:33,822 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/metric_summary_callback.py:344}  Metric summary: 00:00:06 [HH:MM:SS]
+2025-03-28 13:50:33,822 INFO {/data/datasets/niukangjia/plantf/run_simulation.py:104}  Finished running simulation!

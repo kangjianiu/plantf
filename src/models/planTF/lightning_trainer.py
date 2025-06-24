@@ -93,11 +93,12 @@ class LightningTrainer(pl.LightningModule):
         return losses["loss"]
 
     def _compute_objectives(self, res, data) -> Dict[str, torch.Tensor]:
-        trajectory, probability, prediction, diffusion_losses = (
+        trajectory, probability, prediction, anchor_cls_loss, anchor_reg_loss = (
             res["trajectory"], # [bs, num_modes, future_steps, 4]
             res["probability"],# [bs, num_modes]
             res["prediction"],
-            res["diffusion_losses"],#[bs,num_modes]
+            res["anchor_cls_loss"],
+            res["anchor_reg_loss"],
         )
         targets = data["agent"]["target"] # [bs, agent_num, future_steps, 3]
         valid_mask = data["agent"]["valid_mask"][:, :, -trajectory.shape[-2] :]
@@ -117,29 +118,31 @@ class LightningTrainer(pl.LightningModule):
         ade = torch.norm(trajectory[..., :2] - ego_target[:, None, :, :2], dim=-1) # [bs, num_modes, future_steps]
         best_mode = torch.argmin(ade.sum(-1), dim=-1) # [bs]
         best_traj = trajectory[torch.arange(trajectory.shape[0]), best_mode] # [bs, future_steps, 4]
-        ego_reg_loss = F.smooth_l1_loss(best_traj, ego_target)
+        ego_reg_loss = F.smooth_l1_loss(best_traj, ego_target)#ego_target:[bs, ego_num, future_steps, 4]
         ego_cls_loss = F.cross_entropy(probability, best_mode.detach()) #[bs, num_modes] [bs]
   
         agent_reg_loss = F.smooth_l1_loss( 
             prediction[agent_mask], agent_target[agent_mask][:, :2]
         )
-        if isinstance(diffusion_losses, list):
-            diffusion_loss = torch.stack(diffusion_losses).float().mean()
-        else:
-            diffusion_loss = diffusion_losses.mean()
+        # if isinstance(diffusion_losses, list):
+        #     diffusion_loss = torch.stack(diffusion_losses).float().mean()
+        # else:
+        #     diffusion_loss = diffusion_losses.mean()
         # print(f"ego_reg_loss: {ego_reg_loss}, ego_cls_loss: {ego_cls_loss}, agent_reg_loss: {agent_reg_loss}, diffusion_losses: {diffusion_loss}")
         # sys.exit(1)
         # ego_reg_loss: 14.728102684020996, ego_cls_loss: 1.7920138835906982, agent_reg_loss: 4.655642986297607, diffusion_losses: 14.878222465515137
 
         # diffusion_loss = 0.0001 # 为了区分同时的两次训练
-        loss = ego_reg_loss + 0.01 * ego_cls_loss + agent_reg_loss + 0 * diffusion_loss # 加loss
+        loss = 1 * ego_reg_loss + 0.1 * ego_cls_loss + 80 * agent_reg_loss + 0.1 * anchor_cls_loss + 80 * anchor_reg_loss
 
         return {
             "loss": loss,
             "reg_loss": ego_reg_loss,
             "cls_loss": ego_cls_loss,
             "pred_loss": agent_reg_loss,
-            "diff_loss": diffusion_loss,
+            "anchor_cls_loss": anchor_cls_loss,
+            "anchor_reg_loss": anchor_reg_loss,
+            # "diff_loss": diffusion_loss,
         }
 
     def _compute_metrics(self, output, data, prefix) -> Dict[str, torch.Tensor]:
@@ -297,14 +300,7 @@ class LightningTrainer(pl.LightningModule):
         }
         inter_params = decay & no_decay
         union_params = decay | no_decay
-        # # 打印decay 和 no_decay，inter_params，union_params的长度
-        # print(f"=============\ndecay: {len(decay)}, no_decay: {len(no_decay)}, inter_params: {len(inter_params)}, union_params: {len(union_params)}")
-        # # 打印下面一行的两个参数数量是否等于所有参数数量
-        # print(f"param_dict.keys(): {len(param_dict.keys())}\n=====")
-        # #打印inter_params
-        # print(f"重复参数inter_params: {inter_params}")
-        # # 打印在param_dict里面但是不在union_params里面的参数名
-        # print(f"=============\n未分类参数param_dict.keys() - union_params: {param_dict.keys() - union_params}")
+
         assert len(inter_params) == 0
 
         assert len(param_dict.keys() - union_params) == 0
@@ -326,8 +322,15 @@ class LightningTrainer(pl.LightningModule):
 
         # Get optimizer
         optimizer = torch.optim.AdamW(
-            optim_groups, lr=self.lr, weight_decay=self.weight_decay
+            optim_groups, lr=self.lr, weight_decay=self.weight_decay,capturable=True
         )
+        
+        # for param_group in optimizer.param_groups:
+        #     for param in param_group["params"]:
+        #         state = optimizer.state[param]
+        #         for key in state:
+        #             if isinstance(state[key], torch.Tensor):
+        #                 state[key] = state[key].cpu()
 
         # Get lr_scheduler
         scheduler = WarmupCosLR(

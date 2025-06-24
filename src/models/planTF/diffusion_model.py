@@ -8,12 +8,14 @@ from .modules.conditional_unet1d import ConditionalUnet1D
 from sklearn.cluster import KMeans
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
 
-class DiffusionModel(nn.Module):
+class DiffusionModel(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecoder
     def __init__(self, feature_dim, num_modes, future_steps):
         super().__init__()
         self.num_modes = num_modes
         self.future_steps = future_steps # 80
         self.model = CrossAttentionUnetModel(feature_dim)#feature_dim = 128
+        # self.diff_decoder = DiffDecoder(feature_dim, num_modes, future_steps)
+        self.feature_dim = feature_dim 
         self.scheduler = DDPMScheduler(
             num_train_timesteps=100,
             beta_start=0.0001,
@@ -41,18 +43,18 @@ class DiffusionModel(nn.Module):
             # nn.Softmax(dim=1)
         )
 
-    def forward(self, ego_instance_feature, map_instance_feature, traj_anchors,prediction):
+    def forward(self, ego_instance_feature, map_instance_feature, traj_anchors,prediction, target):
         # ego [32, 1, 128]         含义：(bs, 1, embed_dim)
         # map [32, 222, 128]  [bs, num_polygons, embed_dim]
         # traj_anchors [num_modes, bs, future_steps, 4]   -> num_modes=锚点数：20
         # prediction:  [bs, num_agents, future_steps, 2] 表示模型对其他代理未来状态的预测。
         if self.training:
-            return self.forward_train(ego_instance_feature, map_instance_feature, traj_anchors, prediction)
+            return self.forward_train(ego_instance_feature, map_instance_feature, traj_anchors, prediction, target)
         else:
             return self.forward_test(ego_instance_feature, map_instance_feature, traj_anchors, prediction)        
 
 
-    def forward_train(self, ego_instance_feature, map_instance_feature, traj_anchors, prediction):
+    def forward_train(self, ego_instance_feature, map_instance_feature, traj_anchors, prediction, target):
         # traj_anchors [num_modes, bs, future_steps, 4]
         # prediction:  [bs, num_agents, future_steps, 2] 表示模型对其他代理未来状态的预测。
         # map          [bs, num_polygons, embed_dim]
@@ -166,66 +168,6 @@ class DiffusionModel(nn.Module):
 
         return trajectories, probability, diffu_noise_losses
     
-
-    def forward_test_bachup(self, ego_instance_feature, map_instance_feature, traj_anchors):
-        bs = ego_instance_feature.shape[0]  # 32
-
-        trajectories = []
-        diffusion_losses = []
-        infer_times = 2 #去噪推理次数
-        for mode in range(self.num_modes):
-            trajs = self.normalize_xy_rotation(traj_anchors[mode], N=self.future_steps, times=1)  # [bs, future_steps, 4]
-            noise = self.pyramid_noise_like(trajs)  # [bs, future_steps, 4]
-
-            timesteps = torch.randint(
-                0,
-                self.scheduler.config.num_train_timesteps,
-                (bs, infer_times),
-                device=traj_anchors.device
-            )  # [bs, infer_times]
-
-            # 初始化 traj_pred 
-            traj_pred = traj_anchors[mode].clone()
-
-            diffusion_loss = 0
-            for k in range(infer_times):
-                # 添加噪声
-                traj_pred = self.scheduler.add_noise(
-                    original_samples=traj_pred,
-                    noise=noise,
-                    timesteps=timesteps[:, k]
-                ).float()
-                # 预测噪声
-                noise_pred = self.model(ego_instance_feature, map_instance_feature, timesteps[:, k], traj_pred)
-                # 由噪声计算轨迹,调用 scheduler.step 时逐样本处理，由于 DDPMScheduler.step 不支持批量时间步，这里通过循环逐样本处理：
-                traj_pred_step = []
-                for b in range(bs):
-                    traj_pred_single = traj_pred[b].unsqueeze(0)  # [1, future_steps, 4]
-                    noise_pred_single = noise_pred[b].unsqueeze(0)  # [1, future_steps, 4]
-                    timestep_single = timesteps[b, k].item()  # 标量
-
-                    step_output = self.scheduler.step(
-                        model_output=noise_pred_single,
-                        timestep=timestep_single,
-                        sample=traj_pred_single
-                    )
-                    traj_pred_step.append(step_output.prev_sample.squeeze(0))  # [future_steps, 4]
-                traj_pred = torch.stack(traj_pred_step, dim=0)  # [bs, future_steps, 4]
-                # 计算损失
-                loss_fn = nn.MSELoss()
-                diffusion_loss = diffusion_loss + loss_fn(noise_pred, noise)
-
-            # 反归一化轨迹
-            trajectory = self.denormalize_xy_rotation(traj_pred, N=self.future_steps, times=1)  # [bs, future_steps, 4]
-            trajectories.append(trajectory)  # [num_modes, bs, future_steps, 4]
-            diffusion_losses.append(diffusion_loss)
-
-        trajectories = torch.stack(trajectories, dim=1)  # (bs, num_modes, future_steps, 4)
-        probability = self.probability_decoder(ego_instance_feature.squeeze(1))  # [bs, num_modes]
-
-        return trajectories, probability, diffusion_losses
-
-
     def normalize_xy_rotation(self, trajectory, N=30, times=10):
         batch, num_pts, dim = trajectory.shape
         vx_vy = trajectory[..., 2:]
@@ -250,7 +192,6 @@ class DiffusionModel(nn.Module):
 
         return trajectory
     
-
     def denormalize_xy_rotation(self, trajectory, N=30, times=10):
         batch, num_pts, dim = trajectory.shape# [32, 80, 4]
         vx_vy = trajectory[..., 2:]
@@ -449,27 +390,62 @@ class CrossAttentionUnetModel(nn.Module):
         )
         return noise_pred
     
+"""
+# def forward_test_bachup(self, ego_instance_feature, map_instance_feature, traj_anchors):
+#     bs = ego_instance_feature.shape[0]  # 32
 
+#     trajectories = []
+#     diffusion_losses = []
+#     infer_times = 2 #去噪推理次数
+#     for mode in range(self.num_modes):
+#         trajs = self.normalize_xy_rotation(traj_anchors[mode], N=self.future_steps, times=1)  # [bs, future_steps, 4]
+#         noise = self.pyramid_noise_like(trajs)  # [bs, future_steps, 4]
 
+#         timesteps = torch.randint(
+#             0,
+#             self.scheduler.config.num_train_timesteps,
+#             (bs, infer_times),
+#             device=traj_anchors.device
+#         )  # [bs, infer_times]
 
+#         # 初始化 traj_pred 
+#         traj_pred = traj_anchors[mode].clone()
 
+#         diffusion_loss = 0
+#         for k in range(infer_times):
+#             # 添加噪声
+#             traj_pred = self.scheduler.add_noise(
+#                 original_samples=traj_pred,
+#                 noise=noise,
+#                 timesteps=timesteps[:, k]
+#             ).float()
+#             # 预测噪声
+#             noise_pred = self.model(ego_instance_feature, map_instance_feature, timesteps[:, k], traj_pred)
+#             # 由噪声计算轨迹,调用 scheduler.step 时逐样本处理，由于 DDPMScheduler.step 不支持批量时间步，这里通过循环逐样本处理：
+#             traj_pred_step = []
+#             for b in range(bs):
+#                 traj_pred_single = traj_pred[b].unsqueeze(0)  # [1, future_steps, 4]
+#                 noise_pred_single = noise_pred[b].unsqueeze(0)  # [1, future_steps, 4]
+#                 timestep_single = timesteps[b, k].item()  # 标量
 
-    # if __name__ == "__main__":
-    # map_feature = torch.randn(2, 100, 256)
-    # instance_feature = torch.randn(2,901,256)
-    # global_cond = instance_feature[:,900:,]
-    # anchor_size = 32
-    # repeated_tensor=global_cond.repeat(1,anchor_size,1)
+#                 step_output = self.scheduler.step(
+#                     model_output=noise_pred_single,
+#                     timestep=timestep_single,
+#                     sample=traj_pred_single
+#                 )
+#                 traj_pred_step.append(step_output.prev_sample.squeeze(0))  # [future_steps, 4]
+#             traj_pred = torch.stack(traj_pred_step, dim=0)  # [bs, future_steps, 4]
+#             # 计算损失
+#             loss_fn = nn.MSELoss()
+#             diffusion_loss = diffusion_loss + loss_fn(noise_pred, noise)
 
-    # # print(repeated_tensor.shape)
-    # expanded_tensor=repeated_tensor.view(-1,256)
-    # # print(expanded_tensor.shape)
-    # model = CrossAttentionUnetModel(256)
-    # noisy_trajs = torch.randn(anchor_size * 2,6,20)
+#         # 反归一化轨迹
+#         trajectory = self.denormalize_xy_rotation(traj_pred, N=self.future_steps, times=1)  # [bs, future_steps, 4]
+#         trajectories.append(trajectory)  # [num_modes, bs, future_steps, 4]
+#         diffusion_losses.append(diffusion_loss)
 
-    # output = model.noise_pred_net(sample=noisy_trajs, 
-    #                     timestep=torch.tensor([0]),
-    #                     global_cond=expanded_tensor)
-    # # print(output.shape)
-    # global_feature = model(instance_feature, map_feature)
-    # # print(global_feature.shape)
+#     trajectories = torch.stack(trajectories, dim=1)  # (bs, num_modes, future_steps, 4)
+#     probability = self.probability_decoder(ego_instance_feature.squeeze(1))  # [bs, num_modes]
+
+#     return trajectories, probability, diffusion_losses
+"""

@@ -236,15 +236,15 @@ class ConditionalUnet1D(nn.Module):
         self.final_conv = final_conv
 
     def forward(self, 
-            sample: torch.Tensor, #[bs, num_modes, future_steps, 4]
+            sample: torch.Tensor, #[bs, future_steps, 4]
             timestep: Union[torch.Tensor, float, int], #[bs]
             local_cond=None, global_cond=None, **kwargs):#global_cond :[bs, embed_dim]
         """
         x: (B,T,input_dim)                     
         timestep: (B,) or int, diffusion step  #[32]
         local_cond: (B,T,local_cond_dim)
-        global_cond: (B,global_cond_dim)       #ego信息[32, 128]
-        output: (B,T,input_dim)                #应该是[256, 32, 2]
+        global_cond: (B,global_cond_dim)       
+        output: (B,T,input_dim)                
         """
         sample = einops.rearrange(sample, 'b h t -> b t h')#[batch_size,4,future_steps] 
         #print(f"============unet1d开始===========\ntimesteps1:{timestep.shape}") # timesteps1: torch.Size([32])

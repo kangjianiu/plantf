@@ -1,0 +1,76 @@
+2025-03-28 12:32:40,455 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/worker_pool_builder.py:19}  Building WorkerPool...
+2025-03-28 12:32:40,457 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:101}  Worker: Sequential
+2025-03-28 12:32:40,457 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:102}  Number of nodes: 1
+Number of CPUs per node: 1
+Number of GPUs per node: 0
+Number of threads across all nodes: 1
+2025-03-28 12:32:40,457 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/worker_pool_builder.py:27}  Building WorkerPool...DONE!
+2025-03-28 12:32:40,457 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:32}  Building experiment folders...
+2025-03-28 12:32:40,457 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:35}  
+
+	Folder where all results are stored: /data/datasets/niukangjia/plantf/output/simulation/closed_loop_nonreactive_agents/2025.03.28.12.32.38
+
+2025-03-28 12:32:40,459 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:70}  Building experiment folders...DONE!
+2025-03-28 12:32:40,459 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_callback_builder.py:52}  Building AbstractCallback...
+2025-03-28 12:32:40,460 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_callback_builder.py:68}  Building AbstractCallback: 0...DONE!
+2025-03-28 12:32:40,460 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:47}  Building simulations...
+2025-03-28 12:32:40,460 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:53}  Extracting scenarios...
+2025-03-28 12:32:40,460 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/common/utils/distributed_scenario_filter.py:83}  Building Scenarios in mode DistributedMode.SINGLE_NODE
+2025-03-28 12:32:40,460 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_building_builder.py:18}  Building AbstractScenarioBuilder...
+2025-03-28 12:32:40,483 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_building_builder.py:21}  Building AbstractScenarioBuilder...DONE!
+2025-03-28 12:32:40,483 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_filter_builder.py:35}  Building ScenarioFilter...
+2025-03-28 12:32:40,484 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_filter_builder.py:44}  Building ScenarioFilter...DONE!
+2025-03-28 12:32:40,488 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:74}  Building metric engines...
+2025-03-28 12:32:40,687 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:76}  Building metric engines...DONE
+2025-03-28 12:32:40,687 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:80}  Building simulations from 1 scenarios...
+2025-03-28 12:32:41,817 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/simulation_builder.py:133}  Building simulations...DONE!
+2025-03-28 12:32:41,817 INFO {/data/datasets/niukangjia/plantf/run_simulation.py:97}  Running simulation...
+2025-03-28 12:32:41,817 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/utils.py:138}  Executing runners...
+2025-03-28 12:32:41,817 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:82}  Starting 1 simulations using Sequential!
+2025-03-28 12:32:41,817 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:116}  Submitting 1 tasks!
+2025-03-28 12:32:49,697 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:32}  ----------- Simulation failed: with the following trace:
+2025-03-28 12:32:49,698 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:34}  Simulation failed with error:
+ The size of tensor a (0) must match the size of tensor b (80) at non-singleton dimension 2
+2025-03-28 12:32:49,698 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:38}  
+Failed simulation [log,token]:
+ [2021.05.25.12.30.39_veh-25_00321_01196, 8de10fd86b825304]
+
+2025-03-28 12:32:49,698 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:40}  ----------- Simulation failed!
+2025-03-28 12:32:49,699 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:123}  Failed Simulation.
+ 'Traceback (most recent call last):
+  File "/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py", line 27, in run_simulation
+    return sim_runner.run()
+  File "/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/simulations_runner.py", line 113, in run
+    trajectory = self.planner.compute_trajectory(planner_input)
+  File "/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/planner/abstract_planner.py", line 108, in compute_trajectory
+    raise e
+  File "/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/planner/abstract_planner.py", line 105, in compute_trajectory
+    trajectory = self.compute_planner_trajectory(current_input)
+  File "/data/datasets/niukangjia/plantf/src/planners/imitation_planner.py", line 136, in compute_planner_trajectory
+    local_trajectory = self._planning(current_input)
+  File "/data/datasets/niukangjia/plantf/src/planners/imitation_planner.py", line 121, in _planning
+    out = self._planner.forward(planner_feature_torch.data)
+  File "/data/datasets/niukangjia/plantf/src/models/planTF/planning_model.py", line 180, in forward
+    trajectory, probability, anchor_cls_loss, anchor_reg_loss = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature,
+  File "/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1130, in _call_impl
+    return forward_call(*input, **kwargs)
+  File "/data/datasets/niukangjia/plantf/src/models/planTF/diffusion_modelv2.py", line 153, in forward
+    return self.forward_test(global_feature, traj_anchors, target)
+  File "/data/datasets/niukangjia/plantf/src/models/planTF/diffusion_modelv2.py", line 284, in forward_test
+    dist = torch.linalg.norm(target_traj.unsqueeze(1)[...,:2] - traj_anchors[...,:2], dim=-1)
+RuntimeError: The size of tensor a (0) must match the size of tensor b (80) at non-singleton dimension 2
+'
+2025-03-28 12:32:49,700 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:127}  Number of successful simulations: 0
+2025-03-28 12:32:49,700 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:128}  Number of failed simulations: 1
+2025-03-28 12:32:49,700 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/runner/executor.py:132}  Failed simulations [log, token]:
+[2021.05.25.12.30.39_veh-25_00321_01196, 8de10fd86b825304] 
+
+2025-03-28 12:32:49,700 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/utils.py:147}  Finished executing runners!
+2025-03-28 12:32:49,981 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/utils.py:74}  Saved runner reports to /data/datasets/niukangjia/plantf/output/simulation/closed_loop_nonreactive_agents/2025.03.28.12.32.38/runner_report.parquet
+2025-03-28 12:32:49,982 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/time_callback.py:27}  Simulation duration: 00:00:09 [HH:MM:SS]
+2025-03-28 12:32:49,983 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/metric_file_callback.py:79}  Metric files integration: 00:00:00 [HH:MM:SS]
+2025-03-28 12:32:49,983 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/metric_aggregator_callback.py:61}  closed_loop_nonreactive_agents_weighted_average: No metric files found for aggregation!
+2025-03-28 12:32:49,983 WARNING {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/metric_aggregator_callback.py:62}  If you didn't expect this, ensure that the challenge name is part of your submitted job name.
+2025-03-28 12:32:49,983 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/metric_aggregator_callback.py:69}  Metric aggregator: 00:00:00 [HH:MM:SS]
+2025-03-28 12:32:49,985 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/simulation/main_callback/metric_summary_callback.py:344}  Metric summary: 00:00:00 [HH:MM:SS]
+2025-03-28 12:32:49,985 INFO {/data/datasets/niukangjia/plantf/run_simulation.py:104}  Finished running simulation!

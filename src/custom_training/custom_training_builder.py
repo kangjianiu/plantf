@@ -69,7 +69,7 @@ def update_config_for_training(cfg: DictConfig) -> None:
     # Log the final configuration after all overrides, interpolations and updates.
     if cfg.log_config:
         logger.info(
-            f"Creating experiment name [{cfg.experiment}] in group [{cfg.group}] with config..."
+            f"{prefix}_Creating experiment name [{cfg.experiment}] in group [{cfg.group}] with config..."
         )
         logger.info("\n" + OmegaConf.to_yaml(cfg))
 
@@ -86,7 +86,7 @@ class TrainingEngine:
         """
         :return: String representation of class without expanding the fields.
         """
-        return f"<{type(self).__module__}.{type(self).__qualname__} object at {hex(id(self))}>"
+        return f"{prefix}_<{type(self).__module__}.{type(self).__qualname__} object at {hex(id(self))}>"
 
 
 def build_lightning_datamodule(
@@ -222,9 +222,9 @@ def build_custom_trainer(cfg: DictConfig) -> pl.Trainer:
         )
     else:
         if cfg.wandb.artifact is not None:
-            os.system(f"wandb artifact get {cfg.wandb.artifact}")
+            os.system(f"{prefix}_wandb artifact get {cfg.wandb.artifact}")
             _, _, artifact = cfg.wandb.artifact.split("/")
-            checkpoint = os.path.join(os.getcwd(), f"artifacts/{artifact}/model.ckpt")
+            checkpoint = os.path.join(os.getcwd(), f"{prefix}_artifacts/{artifact}/model.ckpt")
             run_id = artifact.split(":")[0][-8:]
             cfg.checkpoint = checkpoint
             cfg.wandb.run_id = run_id
@@ -301,16 +301,17 @@ class PrintEpochEndResults(Callback):
 
         log_message = (
             f"\n[Epoch {epoch}] "
-            f"{prefix}_loss: {metrics.get(f'loss/{prefix}_loss', 0.0):.5f}, "
-            f"{prefix}_reg_loss: {metrics.get(f'objectives/{prefix}_reg_loss', 0.0):.5f}, "
-            f"{prefix}_cls_loss: {metrics.get(f'objectives/{prefix}_cls_loss', 0.0):.5f}, "
-            f"{prefix}_prediction_losss: {metrics.get(f'objectives/{prefix}_pred_loss', 0.0):.5f}, "
-            f"{prefix}_diffusion_loss: {metrics.get(f'objectives/{prefix}_diff_loss', 0.0):.5f}, "
-            f"{prefix}_MR: {metrics.get(f'{prefix}/MR', 0.0):.5f}, "
-            f"{prefix}_minADE1: {metrics.get(f'{prefix}/minADE1', 0.0):.5f}, "
-            f"{prefix}_minADE6: {metrics.get(f'{prefix}/minADE6', 0.0):.5f}, "
-            f"{prefix}_minFDE1: {metrics.get(f'{prefix}/minFDE1', 0.0):.5f}, "
-            f"{prefix}_minFDE6: {metrics.get(f'{prefix}/minFDE6', 0.0):.5f}"
+            f"{prefix}_loss: {metrics.get(f'loss/{prefix}_loss', 0.0):.3f}, "
+            f"{prefix}_reg_loss: {metrics.get(f'objectives/{prefix}_reg_loss', 0.0):.3f}, "
+            f"{prefix}_cls_loss: {metrics.get(f'objectives/{prefix}_cls_loss', 0.0):.3f}, "
+            f"{prefix}_pred_losss: {metrics.get(f'objectives/{prefix}_pred_loss', 0.0):.3f}, "
+            f"{prefix}_anchor_reg_loss: {metrics.get(f'objectives/{prefix}_anchor_reg_loss', 0.0):.3f}, "
+            f"{prefix}_anchor_cls_loss: {metrics.get(f'objectives/{prefix}_anchor_cls_loss', 0.0):.3f}, "
+            f"{prefix}_MR: {metrics.get(f'{prefix}/MR', 0.0):.3f}, "
+            f"{prefix}_minADE1: {metrics.get(f'{prefix}/minADE1', 0.0):.3f}, "
+            f"{prefix}_minADE6: {metrics.get(f'{prefix}/minADE6', 0.0):.3f}, "
+            f"{prefix}_minFDE1: {metrics.get(f'{prefix}/minFDE1', 0.0):.3f}, "
+            f"{prefix}_minFDE6: {metrics.get(f'{prefix}/minFDE6', 0.0):.3f}"
 
         )
 

@@ -49,7 +49,7 @@ def process_traj_cumsum(trajectory, num_points=6):
 def main():
     # 参数设置
     num_points = 80        # 参考 kmeans_plan.py，取 80 帧
-    n_clusters = 256       # 参考 kmeans_plan.py，聚类数为 256
+    n_clusters = 80       # 参考 kmeans_plan.py，聚类数为 256
     json_file_path = '/data/datasets/niukangjia/plantf/traj_data/all_db_trajectories_relative_reshape.json'
     output_npy_path = f"/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_{n_clusters}_{num_points}_vxy.npy"
     output_plot_path = f"/data/datasets/niukangjia/plantf/traj_data/kmeans/plan_style_kmeans_{n_clusters}_{num_points}_vxy.png"
