@@ -32,17 +32,17 @@ logger = logging.getLogger(__name__)
         self,
         model: TorchModuleWrapper,
 
-作用:安装pl要求再封装一层,包装planning_model.py中的PlanningModel(TorchModuleWrapper)模型
+    作用:安装pl要求再封装一层,包装planning_model.py中的PlanningModel(TorchModuleWrapper)模型
 
-在 LightningTrainer 类中，模仿学习的具体实现可以通过以下函数找到：
+    在 LightningTrainer 类中，模仿学习的具体实现可以通过以下函数找到：
 
-前向传播：在 _step 函数中，通过调用 self.forward(features["feature"].data) 实现。
-计算损失：在 _step 函数中，通过调用 self._compute_objectives(res, features["feature"].data) 实现。
-计算度量指标：在 _step 函数中，通过调用 self._compute_metrics(res, features["feature"].data, prefix) 实现。
-记录损失和度量指标：在 _step 函数中，通过调用 self._log_step(losses["loss"], losses, metrics, prefix) 实现。
-总结
-在 LightningTrainer 类中，模仿学习的具体实现主要体现在 training_step、_step 和 on_fit_start 函数中。
-通过前向传播、计算损失、计算度量指标和记录损失与度量指标，这些函数共同实现了模仿学习的训练过程。
+    前向传播：在 _step 函数中，通过调用 self.forward(features["feature"].data) 实现。
+    计算损失：在 _step 函数中，通过调用 self._compute_objectives(res, features["feature"].data) 实现。
+    计算度量指标：在 _step 函数中，通过调用 self._compute_metrics(res, features["feature"].data, prefix) 实现。
+    记录损失和度量指标：在 _step 函数中，通过调用 self._log_step(losses["loss"], losses, metrics, prefix) 实现。
+    总结
+    在 LightningTrainer 类中，模仿学习的具体实现主要体现在 training_step、_step 和 on_fit_start 函数中。
+    通过前向传播、计算损失、计算度量指标和记录损失与度量指标，这些函数共同实现了模仿学习的训练过程。
 """
 class LightningTrainer(pl.LightningModule):
     def __init__(
@@ -93,12 +93,12 @@ class LightningTrainer(pl.LightningModule):
         return losses["loss"]
 
     def _compute_objectives(self, res, data) -> Dict[str, torch.Tensor]:
-        trajectory, probability, prediction, anchor_cls_loss, anchor_reg_loss = (
+        trajectory, probability, prediction = (
             res["trajectory"], # [bs, num_modes, future_steps, 4]
             res["probability"],# [bs, num_modes]
             res["prediction"],
-            res["anchor_cls_loss"],
-            res["anchor_reg_loss"],
+            # res["anchor_cls_loss"],
+            # res["anchor_reg_loss"],
         )
         targets = data["agent"]["target"] # [bs, agent_num, future_steps, 3]
         valid_mask = data["agent"]["valid_mask"][:, :, -trajectory.shape[-2] :]
@@ -113,6 +113,7 @@ class LightningTrainer(pl.LightningModule):
             ],
             dim=-1,
         ) # [bs, ego_num, future_steps, 4]
+        
         agent_target, agent_mask = targets[:, 1:], valid_mask[:, 1:] # [bs, agent_num-1, future_steps, 2],    [bs, agent_num-1, future_steps]
 
         ade = torch.norm(trajectory[..., :2] - ego_target[:, None, :, :2], dim=-1) # [bs, num_modes, future_steps]
@@ -124,24 +125,18 @@ class LightningTrainer(pl.LightningModule):
         agent_reg_loss = F.smooth_l1_loss( 
             prediction[agent_mask], agent_target[agent_mask][:, :2]
         )
-        # if isinstance(diffusion_losses, list):
-        #     diffusion_loss = torch.stack(diffusion_losses).float().mean()
-        # else:
-        #     diffusion_loss = diffusion_losses.mean()
-        # print(f"ego_reg_loss: {ego_reg_loss}, ego_cls_loss: {ego_cls_loss}, agent_reg_loss: {agent_reg_loss}, diffusion_losses: {diffusion_loss}")
-        # sys.exit(1)
-        # ego_reg_loss: 14.728102684020996, ego_cls_loss: 1.7920138835906982, agent_reg_loss: 4.655642986297607, diffusion_losses: 14.878222465515137
 
-        # diffusion_loss = 0.0001 # 为了区分同时的两次训练
-        loss = 1 * ego_reg_loss + 0.1 * ego_cls_loss + 80 * agent_reg_loss + 0.1 * anchor_cls_loss + 80 * anchor_reg_loss
-
+        # [Epoch 0] val_loss: 472.086, val_reg_loss: 3.167, val_cls_loss: 3.428, val_pred_losss: 2.445, val_anchor_reg_loss: 3.410, val_anchor_cls_loss: 1.097,
+        # val_MR: 0.664, val_minADE1: 12.738, val_minADE6: 12.566, val_minFDE1: 29.315, val_minFDE6: 28.414
+        loss = 0.7 * ego_reg_loss + 0.2 * ego_cls_loss + 0.1 * agent_reg_loss
+        # loss = 1 * ego_reg_loss + 0.1 * ego_cls_loss + 80 * agent_reg_loss + 0.1 * anchor_cls_loss + 80 * anchor_reg_loss
         return {
             "loss": loss,
             "reg_loss": ego_reg_loss,
             "cls_loss": ego_cls_loss,
             "pred_loss": agent_reg_loss,
-            "anchor_cls_loss": anchor_cls_loss,
-            "anchor_reg_loss": anchor_reg_loss,
+            # "anchor_cls_loss": anchor_cls_loss,
+            # "anchor_reg_loss": anchor_reg_loss,
             # "diff_loss": diffusion_loss,
         }
 

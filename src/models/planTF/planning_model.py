@@ -22,6 +22,8 @@ from .modules.map_encoder import MapEncoder
 from .modules.trajectory_decoder import TrajectoryDecoder
 from .diffusion_model import DiffusionModel
 from .diffusion_modelv2 import DiffusionModelv2
+from .diffusion_modelv3 import DiffusionModelv3
+
 # no meaning, required by nuplan
 trajectory_sampling = TrajectorySampling(num_poses=8, time_horizon=8, interval_length=1)
 
@@ -37,7 +39,7 @@ class PlanningModel(TorchModuleWrapper):
         encoder_depth=4,
         drop_path=0.2,
         num_heads=8,
-        num_modes=80,#6/20
+        num_modes=40,#6/20
         use_ego_history=False,
         state_attn_encoder=True,
         state_dropout=0.75,
@@ -53,9 +55,6 @@ class PlanningModel(TorchModuleWrapper):
         self.history_steps = history_steps
         self.future_steps = future_steps
         self.num_modes = num_modes
-        # print("num_modes:",num_modes)
-        self.num_modes = 80
-        # print("self.num_modes:",self.num_modes)
         # 包含的模块
         self.pos_emb = build_mlp(4, [dim] * 2)
         self.agent_encoder = AgentEncoder(
@@ -80,7 +79,7 @@ class PlanningModel(TorchModuleWrapper):
         )
         self.norm = nn.LayerNorm(dim)
         # self.trajectory_decoder_diffu = DiffusionModel(feature_dim=dim, num_modes=num_modes, future_steps=future_steps)
-        self.trajectory_decoder_diffu = DiffusionModelv2(feature_dim=dim, num_modes=num_modes, future_steps=future_steps)
+        self.trajectory_decoder_diffu = DiffusionModelv3(feature_dim=dim, num_modes=num_modes, future_steps=future_steps)
 
         # self.trajectory_decoder = TrajectoryDecoder(
         #     embed_dim=dim,
@@ -93,6 +92,8 @@ class PlanningModel(TorchModuleWrapper):
         self.apply(self._init_weights)
         # self.print_model_info()
         # sys.exit(1)
+        logger = logging.getLogger(__name__)
+        logger.info(f"nkj planning model num_modes:{num_modes}")
 
     def _init_weights(self, m):
         if isinstance(m, nn.Linear):
@@ -166,7 +167,7 @@ class PlanningModel(TorchModuleWrapper):
 
         prediction = self.agent_predictor(x[:, 1:A]).view(bs, -1, self.future_steps, 2)
         # prediction  [32, 32, 80, 2] (batch_size, num_agents, future_steps, 2) 表示模型对其他代理未来状态的预测。
-        npy_file_path = '/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_80_80_vxy.npy'
+        npy_file_path = f"/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_{self.num_modes}_80_vxy.npy"
         traj_anchors = self.load_cluster_centers(npy_file_path)#shape (num_modes, 80, 4): num_modes个锚点，每个锚点80个点，每个点4个坐标
         traj_anchors = np.array(traj_anchors)  # 将列表转换为 numpy.ndarray
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)
@@ -179,15 +180,13 @@ class PlanningModel(TorchModuleWrapper):
         diffusion_losses = [torch.tensor(0).to(ego_instance_feature.device)]
 
         # trajectory, probability = self.trajectory_decoder(x[:, 0]) # 主代理的嵌入表示,形状为 (batch_size, embed_dim)
-        trajectory, probability, anchor_cls_loss, anchor_reg_loss = self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, 
-                                                                                  other_instance_feature, traj_anchors, prediction, target)
+        trajectory, probability= self.trajectory_decoder_diffu(ego_instance_feature, map_instance_feature, 
+                                                                                  other_instance_feature, traj_anchors, prediction)
 
         out = {
             "trajectory": trajectory,
             "probability": probability,
-            "prediction": prediction,
-            "anchor_cls_loss": anchor_cls_loss,
-            "anchor_reg_loss": anchor_reg_loss,
+            "prediction": prediction
         }
 
         if not self.training:

@@ -1,5 +1,6 @@
 import sys
 import torch
+import logging
 import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
@@ -10,7 +11,7 @@ from sklearn.cluster import KMeans
 from diffusers.schedulers import DDIMScheduler
 from diffusers.schedulers.scheduling_ddpm import DDPMScheduler
 
-class DiffusionModelv2(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecoder
+class DiffusionModelv3(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecoder
     def __init__(self, feature_dim, num_modes, future_steps):
         super().__init__()
         self.num_modes = num_modes
@@ -30,15 +31,7 @@ class DiffusionModelv2(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecode
             nn.Linear(hidden, num_modes),
             # # 加一个softmax层
             # nn.Softmax(dim=1)
-        )
-        self.prob_decoder_anchor = nn.Sequential(
-            nn.Linear(feature_dim, hidden),
-            nn.LayerNorm(hidden),
-            nn.ReLU(inplace=True),
-            nn.Linear(hidden, num_modes),
-            # # 加一个softmax层
-            # nn.Softmax(dim=1)
-        )        
+        )       
         self.fusion_module = FeatureFusion(
             embed_dim=128,
             num_attention_heads=8,
@@ -49,51 +42,10 @@ class DiffusionModelv2(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecode
                 global_cond_dim= 128, # 256 修改成 128，取决于-> global_cond=global_feature,#本质上取决于ego,[32, 128]
                 down_dims=[128, 256],
                 cond_predict_scale=False,
-        )    
+        )
+        logger = logging.getLogger(__name__)
+        logger.info(f"nkj diffusion modelv3 num_modes:{num_modes}")    
         
-        """       
-            # 特征处理模块============================================================
-            # 把CrossAttentionUnetModel对特征的处理挪出来：
-
-            # 自车可学习参数
-            self.ego_feature = nn.Embedding(1, feature_dim)
-            self.feature_dim = feature_dim # 128
-
-            #self.map_feature_pos = self.map_bev_pos.weight[None].repeat(bs, 1, 1)
-            # 位置编码可学习 MAP / instance 
-            # Cross-Attention 
-            self.ego_instance_decoder = nn.MultiheadAttention(embed_dim=feature_dim, num_heads=self.num_heads, batch_first=True)
-            # self.cross_agent_attention = nn.MultiheadAttention(embed_dim=feature_dim, num_heads=num_heads, batch_first=True)
-            self.map_decoder = nn.MultiheadAttention(embed_dim=feature_dim, num_heads=self.num_heads, batch_first=True)
-            # 添加多头注意力机制模块，用来学习其他代理预测信息
-            self.prediction_decoder = nn.MultiheadAttention(embed_dim=feature_dim, num_heads=self.num_heads, batch_first=True)
-            #todo:
-            self.fc1 = nn.Sequential(
-                nn.Linear(feature_dim, 2 * feature_dim),
-                nn.GELU(),
-                nn.Linear(2 * feature_dim, feature_dim)  
-            )
-
-            self.fc2 = nn.Sequential(
-                nn.Linear(feature_dim, 2 * feature_dim),
-                nn.GELU(),
-                nn.Linear(2* feature_dim, feature_dim) 
-            )
-
-            self.ins_cond_layernorm_1 = nn.LayerNorm(self.feature_dim)
-            self.ins_cond_layernorm_2 = nn.LayerNorm(self.feature_dim)
-
-            self.map_cond_layernorm_1 = nn.LayerNorm(self.feature_dim)
-            self.map_cond_layernorm_2 = nn.LayerNorm(self.feature_dim)
-
-            self.map_feature_pos = nn.Embedding(100, self.feature_dim)
-            self.ego_pos_latent = nn.Embedding(1, self.feature_dim)
-
-            # 添加降维模块，将 prediction 的最后维度从 prediction_dim 映射到 feature_dim
-            self.prediction_fc = nn.Linear(160, feature_dim)
-            #特征处理模块================================================
-        """ 
-
     def forward(self, ego_instance_feature, map_instance_feature, other_instance_feature, traj_anchors,prediction):
         # ego [32, 1, 128]         含义：子车代理的嵌入表示(bs, 1, embed_dim)
         # map [32, 222, 128]  [bs, num_polygons, embed_dim] 地图的嵌入表示
@@ -126,24 +78,20 @@ class DiffusionModelv2(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecode
         trajectories = []
         # 预测cls概率
         probability = self.probability_decoder(global_feature.squeeze(1))  # [bs, num_modes]
-        # 生成一个随机时间步，和随机噪声
-        noise = torch.randn(traj_anchors.shape, device=device)  # [bs, num_modes, future_steps, 4]
-        timesteps = torch.randint(
-            0,50,
-            (bs,),
-            device=device
-        )# [bs]
+        noise = torch.randn_like(traj_anchors, device=device)  # [bs, num_modes, future_steps, 4]
+        # 从整个时间步范围(0-99)中均匀采样10个时间步，每个样本独立采样时间步确保训练覆盖完整噪声分布
+        timestep = torch.randint(0, 50, (bs,), device=device)  # [bs] 每个样本独立采样时间步从整个扩散过程的时间步中均匀采样，确保训练覆盖所有噪声水平
         noisy_traj = self.diffusion_scheduler.add_noise(
             original_samples=traj_anchors,
             noise=noise,
-            timesteps=timesteps
+            timesteps=timestep
         ).float()# [bs, num_modes, future_steps, 4]
         # 预测干净样本
         #noise_pred_net接受的输入是[bs, future_steps, 4]，所以需要用for循环每次预测一个模态
         for mode in range(self.num_modes):
             traj_pred = self.noise_pred_net(
                         sample=noisy_traj[:, mode],# [bs, future_steps, 4]
-                        timestep=timesteps,
+                        timestep=timestep,
                         global_cond=global_feature,# [bs, embed_dim]
             )
             # 把预测的轨迹合起来，最后形状是[bs, num_modes, future_steps, 4]
@@ -161,21 +109,21 @@ class DiffusionModelv2(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecode
         # target:  [bs,  future_steps, 3] 代表自车未来状态的真实值。x,y,heading
         bs = global_feature.shape[0]
         device = global_feature.device
-        trajectories = []
         # 假设 self.diffusion_scheduler 是你的扩散模型调度器
         self.diffusion_scheduler.set_timesteps(num_inference_steps=4)
-        # 迭代加num_inference_steps次噪声
-        # Iteratively add noise for num_inference_steps times
-        img = traj_anchors.clone()
-        for t in self.diffusion_scheduler.timesteps:
-            noise_step = torch.randn_like(img, device=device)
-            img = self.diffusion_scheduler.add_noise(
-            original_samples=img,
-            noise=noise_step,
-            timesteps=torch.full((bs,), t, device=device, dtype=torch.long)
-            ).float()
 
-        for t in self.diffusion_scheduler.timesteps:
+        img = traj_anchors.clone()
+        noise = torch.randn_like(img, device=device)  # [bs, num_modes, future_steps, 4]
+        trunc_timesteps = torch.ones((bs,), device=device, dtype=torch.long) * 8
+        img = self.diffusion_scheduler.add_noise(
+            original_samples=img,
+            noise=noise,
+            timesteps=trunc_timesteps
+        ).float()# [bs, num_modes, future_steps, 4]
+
+        roll_timesteps = (np.arange(0, 4) * 10).round()[::-1].copy().astype(np.int64)#roll_timesteps:[0,1]
+        roll_timesteps = torch.from_numpy(roll_timesteps).to(device) # 值：[10,0]
+        for t in roll_timesteps[:]:
             trajectory = []
             for mode in range(0,self.num_modes):
                 traj_pred = self.noise_pred_net(

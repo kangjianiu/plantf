@@ -305,8 +305,6 @@ class PrintEpochEndResults(Callback):
             f"{prefix}_reg_loss: {metrics.get(f'objectives/{prefix}_reg_loss', 0.0):.3f}, "
             f"{prefix}_cls_loss: {metrics.get(f'objectives/{prefix}_cls_loss', 0.0):.3f}, "
             f"{prefix}_pred_losss: {metrics.get(f'objectives/{prefix}_pred_loss', 0.0):.3f}, "
-            f"{prefix}_anchor_reg_loss: {metrics.get(f'objectives/{prefix}_anchor_reg_loss', 0.0):.3f}, "
-            f"{prefix}_anchor_cls_loss: {metrics.get(f'objectives/{prefix}_anchor_cls_loss', 0.0):.3f}, "
             f"{prefix}_MR: {metrics.get(f'{prefix}/MR', 0.0):.3f}, "
             f"{prefix}_minADE1: {metrics.get(f'{prefix}/minADE1', 0.0):.3f}, "
             f"{prefix}_minADE6: {metrics.get(f'{prefix}/minADE6', 0.0):.3f}, "
