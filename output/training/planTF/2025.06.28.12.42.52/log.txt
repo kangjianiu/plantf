@@ -1,0 +1,143 @@
+2025-06-28 12:42:54,227 INFO {/data/datasets/niukangjia/plantf/run_training.py:49}  Logger is configured correctly.
+2025-06-28 12:42:54,333 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:20}  Building experiment folders...
+2025-06-28 12:42:54,333 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/folder_builder.py:22}  Experimental folder: /data/datasets/niukangjia/plantf/output/training/planTF/2025.06.28.12.42.52
+2025-06-28 12:42:54,333 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/worker_pool_builder.py:19}  Building WorkerPool...
+2025-06-28 12:42:54,334 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:101}  Worker: SingleMachineParallelExecutor
+2025-06-28 12:42:54,335 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/utils/multithreading/worker_pool.py:102}  Number of nodes: 1
+Number of CPUs per node: 32
+Number of GPUs per node: 0
+Number of threads across all nodes: 32
+2025-06-28 12:42:54,335 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/worker_pool_builder.py:27}  Building WorkerPool...DONE!
+2025-06-28 12:42:54,335 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:258}  Building training engine...
+2025-06-28 12:42:54,444 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/model_builder.py:18}  Building TorchModuleWrapper...
+2025-06-28 12:42:55,101 INFO {/data/datasets/niukangjia/plantf/src/models/planTF/diffusion_modelv3.py:47}  nkj diffusion modelv3 num_modes:40
+2025-06-28 12:42:55,118 INFO {/data/datasets/niukangjia/plantf/src/models/planTF/planning_model.py:96}  nkj planning model num_modes:40
+2025-06-28 12:42:55,118 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/model_builder.py:21}  Building TorchModuleWrapper...DONE!
+2025-06-28 12:42:55,118 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/splitter_builder.py:18}  Building Splitter...
+2025-06-28 12:42:55,958 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/splitter_builder.py:21}  Building Splitter...DONE!
+2025-06-28 12:42:55,959 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/data_augmentation_builder.py:19}  Building augmentors...
+2025-06-28 12:42:55,961 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/data_augmentation_builder.py:28}  Building augmentors...DONE!
+2025-06-28 12:43:08,612 INFO {/data/pxf/CodingWorkspace/planTF/nuplan-devkit/nuplan/planning/script/builders/scenario_builder.py:171}  Extracted 204791 scenarios for training
+2025-06-28 12:43:08,616 INFO {/data/datasets/niukangjia/plantf/run_training.py:68}  Starting training...
+2025-06-28 12:43:08,619 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/torch/distributed/distributed_c10d.py:228}  Added key: store_based_barrier_key:1 to store for rank: 0
+2025-06-28 12:43:08,619 INFO {/data/ustc/anaconda3/envs/plantf-hpt/lib/python3.9/site-packages/torch/distributed/distributed_c10d.py:262}  Rank 0: Completed store-based barrier for key:store_based_barrier_key:1 with 1 nodes.
+2025-06-28 12:43:10,057 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_datamodule.py:56}  Number of samples in train set: 132384
+2025-06-28 12:43:10,128 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_datamodule.py:56}  Number of samples in validation set: 32407
+2025-06-28 12:43:14,732 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 0] val_loss: 5.831, val_reg_loss: 3.900, val_cls_loss: 4.292, val_pred_losss: 2.803, val_MR: 0.625, val_minADE1: 14.335, val_minADE6: 14.323, val_minFDE1: 28.759, val_minFDE6: 28.735
+2025-06-28 14:16:42,378 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 0] val_loss: 4.249, val_reg_loss: 2.755, val_cls_loss: 2.358, val_pred_losss: 2.311, val_MR: 0.534, val_minADE1: 12.719, val_minADE6: 11.145, val_minFDE1: 28.043, val_minFDE6: 24.661
+2025-06-28 14:16:42,386 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 0] train_loss: 5.303, train_reg_loss: 3.272, train_cls_loss: 2.450, train_pred_losss: 3.152, train_MR: 0.550, train_minADE1: 13.578, train_minADE6: 12.492, train_minFDE1: 29.391, train_minFDE6: 27.309
+2025-06-28 15:49:49,679 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 1] val_loss: 2.708, val_reg_loss: 1.302, val_cls_loss: 3.002, val_pred_losss: 1.495, val_MR: 0.447, val_minADE1: 6.824, val_minADE6: 5.850, val_minFDE1: 19.416, val_minFDE6: 15.613
+2025-06-28 15:49:49,688 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 1] train_loss: 4.007, train_reg_loss: 2.200, train_cls_loss: 2.765, train_pred_losss: 2.393, train_MR: 0.484, train_minADE1: 10.951, train_minADE6: 9.089, train_minFDE1: 25.445, train_minFDE6: 21.174
+2025-06-28 17:23:12,519 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 2] val_loss: 1.459, val_reg_loss: 0.265, val_cls_loss: 3.160, val_pred_losss: 0.802, val_MR: 0.232, val_minADE1: 3.791, val_minADE6: 1.969, val_minFDE1: 9.740, val_minFDE6: 3.825
+2025-06-28 17:23:12,528 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 2] train_loss: 2.522, train_reg_loss: 0.986, train_cls_loss: 3.009, train_pred_losss: 1.538, train_MR: 0.401, train_minADE1: 7.653, train_minADE6: 5.145, train_minFDE1: 18.243, train_minFDE6: 12.155
+2025-06-28 18:56:31,153 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 3] val_loss: 1.133, val_reg_loss: 0.136, val_cls_loss: 3.034, val_pred_losss: 0.539, val_MR: 0.160, val_minADE1: 2.865, val_minADE6: 1.418, val_minFDE1: 6.403, val_minFDE6: 2.977
+2025-06-28 18:56:31,162 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 3] train_loss: 1.608, train_reg_loss: 0.312, train_cls_loss: 3.114, train_pred_losss: 0.959, train_MR: 0.271, train_minADE1: 5.959, train_minADE6: 3.088, train_minFDE1: 12.501, train_minFDE6: 6.227
+2025-06-28 20:29:48,711 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 4] val_loss: 1.078, val_reg_loss: 0.134, val_cls_loss: 3.079, val_pred_losss: 0.460, val_MR: 0.146, val_minADE1: 2.948, val_minADE6: 1.534, val_minFDE1: 6.251, val_minFDE6: 3.066
+2025-06-28 20:29:48,720 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 4] train_loss: 1.338, train_reg_loss: 0.195, train_cls_loss: 3.094, train_pred_losss: 0.728, train_MR: 0.206, train_minADE1: 5.656, train_minADE6: 2.821, train_minFDE1: 11.444, train_minFDE6: 5.460
+2025-06-28 22:02:50,163 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 5] val_loss: 1.003, val_reg_loss: 0.110, val_cls_loss: 2.871, val_pred_losss: 0.440, val_MR: 0.123, val_minADE1: 3.476, val_minADE6: 1.920, val_minFDE1: 7.377, val_minFDE6: 4.069
+2025-06-28 22:02:50,172 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 5] train_loss: 1.259, train_reg_loss: 0.163, train_cls_loss: 3.156, train_pred_losss: 0.641, train_MR: 0.173, train_minADE1: 5.072, train_minADE6: 2.667, train_minFDE1: 10.318, train_minFDE6: 5.172
+2025-06-28 23:35:48,110 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 6] val_loss: 0.997, val_reg_loss: 0.097, val_cls_loss: 3.000, val_pred_losss: 0.411, val_MR: 0.108, val_minADE1: 3.050, val_minADE6: 1.517, val_minFDE1: 6.238, val_minFDE6: 3.120
+2025-06-28 23:35:48,119 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 6] train_loss: 1.207, train_reg_loss: 0.148, train_cls_loss: 3.149, train_pred_losss: 0.592, train_MR: 0.150, train_minADE1: 4.955, train_minADE6: 2.542, train_minFDE1: 10.058, train_minFDE6: 4.901
+2025-06-29 01:09:26,220 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 7] val_loss: 0.961, val_reg_loss: 0.096, val_cls_loss: 2.891, val_pred_losss: 0.395, val_MR: 0.086, val_minADE1: 3.013, val_minADE6: 1.258, val_minFDE1: 6.689, val_minFDE6: 2.596
+2025-06-29 01:09:26,228 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 7] train_loss: 1.187, train_reg_loss: 0.140, train_cls_loss: 3.207, train_pred_losss: 0.559, train_MR: 0.139, train_minADE1: 4.922, train_minADE6: 2.516, train_minFDE1: 9.987, train_minFDE6: 4.847
+2025-06-29 02:42:26,899 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 8] val_loss: 0.993, val_reg_loss: 0.094, val_cls_loss: 3.109, val_pred_losss: 0.381, val_MR: 0.082, val_minADE1: 3.424, val_minADE6: 1.503, val_minFDE1: 6.886, val_minFDE6: 2.969
+2025-06-29 02:42:26,907 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 8] train_loss: 1.150, train_reg_loss: 0.131, train_cls_loss: 3.159, train_pred_losss: 0.533, train_MR: 0.126, train_minADE1: 4.713, train_minADE6: 2.408, train_minFDE1: 9.588, train_minFDE6: 4.631
+2025-06-29 04:15:40,130 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 9] val_loss: 0.915, val_reg_loss: 0.080, val_cls_loss: 2.777, val_pred_losss: 0.379, val_MR: 0.073, val_minADE1: 3.103, val_minADE6: 1.380, val_minFDE1: 6.239, val_minFDE6: 2.734
+2025-06-29 04:15:40,139 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 9] train_loss: 1.120, train_reg_loss: 0.123, train_cls_loss: 3.121, train_pred_losss: 0.512, train_MR: 0.115, train_minADE1: 4.416, train_minADE6: 2.318, train_minFDE1: 9.032, train_minFDE6: 4.484
+2025-06-29 05:48:54,050 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 10] val_loss: 0.936, val_reg_loss: 0.075, val_cls_loss: 2.928, val_pred_losss: 0.372, val_MR: 0.070, val_minADE1: 3.223, val_minADE6: 1.917, val_minFDE1: 7.100, val_minFDE6: 3.803
+2025-06-29 05:48:54,058 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 10] train_loss: 1.117, train_reg_loss: 0.119, train_cls_loss: 3.177, train_pred_losss: 0.497, train_MR: 0.108, train_minADE1: 4.382, train_minADE6: 2.296, train_minFDE1: 8.958, train_minFDE6: 4.472
+2025-06-29 07:21:52,659 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 11] val_loss: 0.937, val_reg_loss: 0.085, val_cls_loss: 2.991, val_pred_losss: 0.349, val_MR: 0.065, val_minADE1: 3.408, val_minADE6: 1.409, val_minFDE1: 6.809, val_minFDE6: 2.537
+2025-06-29 07:21:52,667 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 11] train_loss: 1.104, train_reg_loss: 0.116, train_cls_loss: 3.171, train_pred_losss: 0.485, train_MR: 0.102, train_minADE1: 4.409, train_minADE6: 2.222, train_minFDE1: 8.997, train_minFDE6: 4.331
+2025-06-29 08:55:02,118 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 12] val_loss: 0.935, val_reg_loss: 0.072, val_cls_loss: 2.993, val_pred_losss: 0.357, val_MR: 0.071, val_minADE1: 2.808, val_minADE6: 1.757, val_minFDE1: 6.494, val_minFDE6: 3.668
+2025-06-29 08:55:02,127 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 12] train_loss: 1.090, train_reg_loss: 0.112, train_cls_loss: 3.165, train_pred_losss: 0.474, train_MR: 0.098, train_minADE1: 4.211, train_minADE6: 2.176, train_minFDE1: 8.624, train_minFDE6: 4.224
+2025-06-29 10:28:06,422 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 13] val_loss: 0.910, val_reg_loss: 0.073, val_cls_loss: 2.868, val_pred_losss: 0.356, val_MR: 0.059, val_minADE1: 2.465, val_minADE6: 1.167, val_minFDE1: 5.410, val_minFDE6: 2.557
+2025-06-29 10:28:06,431 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 13] train_loss: 1.083, train_reg_loss: 0.109, train_cls_loss: 3.171, train_pred_losss: 0.466, train_MR: 0.094, train_minADE1: 4.287, train_minADE6: 2.167, train_minFDE1: 8.780, train_minFDE6: 4.215
+2025-06-29 12:01:25,188 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 14] val_loss: 0.858, val_reg_loss: 0.075, val_cls_loss: 2.669, val_pred_losss: 0.340, val_MR: 0.063, val_minADE1: 2.323, val_minADE6: 0.969, val_minFDE1: 4.968, val_minFDE6: 1.747
+2025-06-29 12:01:25,196 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 14] train_loss: 1.078, train_reg_loss: 0.105, train_cls_loss: 3.187, train_pred_losss: 0.459, train_MR: 0.088, train_minADE1: 4.282, train_minADE6: 2.107, train_minFDE1: 8.764, train_minFDE6: 4.095
+2025-06-29 13:34:55,161 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 15] val_loss: 0.886, val_reg_loss: 0.060, val_cls_loss: 2.857, val_pred_losss: 0.341, val_MR: 0.048, val_minADE1: 2.048, val_minADE6: 1.051, val_minFDE1: 4.619, val_minFDE6: 2.071
+2025-06-29 13:34:55,170 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 15] train_loss: 1.065, train_reg_loss: 0.102, train_cls_loss: 3.157, train_pred_losss: 0.453, train_MR: 0.085, train_minADE1: 3.979, train_minADE6: 2.077, train_minFDE1: 8.157, train_minFDE6: 4.059
+2025-06-29 15:08:15,398 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 16] val_loss: 0.888, val_reg_loss: 0.065, val_cls_loss: 2.901, val_pred_losss: 0.327, val_MR: 0.050, val_minADE1: 2.127, val_minADE6: 1.105, val_minFDE1: 4.559, val_minFDE6: 2.059
+2025-06-29 15:08:15,406 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 16] train_loss: 1.055, train_reg_loss: 0.100, train_cls_loss: 3.134, train_pred_losss: 0.447, train_MR: 0.082, train_minADE1: 3.898, train_minADE6: 2.043, train_minFDE1: 8.037, train_minFDE6: 3.992
+2025-06-29 16:41:14,665 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 17] val_loss: 0.904, val_reg_loss: 0.064, val_cls_loss: 3.002, val_pred_losss: 0.323, val_MR: 0.042, val_minADE1: 3.037, val_minADE6: 1.578, val_minFDE1: 6.318, val_minFDE6: 3.111
+2025-06-29 16:41:14,674 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 17] train_loss: 1.063, train_reg_loss: 0.097, train_cls_loss: 3.213, train_pred_losss: 0.441, train_MR: 0.077, train_minADE1: 3.796, train_minADE6: 1.999, train_minFDE1: 7.829, train_minFDE6: 3.887
+2025-06-29 18:14:42,142 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 18] val_loss: 0.894, val_reg_loss: 0.068, val_cls_loss: 2.895, val_pred_losss: 0.334, val_MR: 0.054, val_minADE1: 2.710, val_minADE6: 1.636, val_minFDE1: 5.858, val_minFDE6: 2.869
+2025-06-29 18:14:42,150 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 18] train_loss: 1.056, train_reg_loss: 0.094, train_cls_loss: 3.208, train_pred_losss: 0.436, train_MR: 0.074, train_minADE1: 3.684, train_minADE6: 1.927, train_minFDE1: 7.615, train_minFDE6: 3.750
+2025-06-29 19:48:14,927 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 19] val_loss: 0.882, val_reg_loss: 0.058, val_cls_loss: 2.926, val_pred_losss: 0.321, val_MR: 0.034, val_minADE1: 2.134, val_minADE6: 1.006, val_minFDE1: 4.754, val_minFDE6: 2.147
+2025-06-29 19:48:14,936 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 19] train_loss: 1.056, train_reg_loss: 0.090, train_cls_loss: 3.238, train_pred_losss: 0.431, train_MR: 0.068, train_minADE1: 3.615, train_minADE6: 1.933, train_minFDE1: 7.521, train_minFDE6: 3.801
+2025-06-29 21:21:41,614 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 20] val_loss: 0.857, val_reg_loss: 0.057, val_cls_loss: 2.785, val_pred_losss: 0.325, val_MR: 0.040, val_minADE1: 2.268, val_minADE6: 1.065, val_minFDE1: 5.240, val_minFDE6: 2.129
+2025-06-29 21:21:41,623 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 20] train_loss: 1.049, train_reg_loss: 0.089, train_cls_loss: 3.220, train_pred_losss: 0.428, train_MR: 0.065, train_minADE1: 3.558, train_minADE6: 1.920, train_minFDE1: 7.398, train_minFDE6: 3.765
+2025-06-29 22:54:41,715 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 21] val_loss: 0.910, val_reg_loss: 0.055, val_cls_loss: 3.083, val_pred_losss: 0.319, val_MR: 0.038, val_minADE1: 2.368, val_minADE6: 1.350, val_minFDE1: 5.291, val_minFDE6: 2.757
+2025-06-29 22:54:41,723 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 21] train_loss: 1.044, train_reg_loss: 0.087, train_cls_loss: 3.219, train_pred_losss: 0.425, train_MR: 0.064, train_minADE1: 3.500, train_minADE6: 1.873, train_minFDE1: 7.288, train_minFDE6: 3.654
+2025-06-30 00:27:43,987 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 22] val_loss: 0.906, val_reg_loss: 0.063, val_cls_loss: 3.055, val_pred_losss: 0.315, val_MR: 0.048, val_minADE1: 2.544, val_minADE6: 1.169, val_minFDE1: 5.725, val_minFDE6: 2.281
+2025-06-30 00:27:43,995 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 22] train_loss: 1.043, train_reg_loss: 0.085, train_cls_loss: 3.234, train_pred_losss: 0.421, train_MR: 0.061, train_minADE1: 3.371, train_minADE6: 1.860, train_minFDE1: 7.049, train_minFDE6: 3.627
+2025-06-30 02:01:09,708 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 23] val_loss: 0.800, val_reg_loss: 0.053, val_cls_loss: 2.573, val_pred_losss: 0.310, val_MR: 0.044, val_minADE1: 1.938, val_minADE6: 0.943, val_minFDE1: 4.511, val_minFDE6: 1.972
+2025-06-30 02:01:09,716 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 23] train_loss: 1.028, train_reg_loss: 0.083, train_cls_loss: 3.179, train_pred_losss: 0.418, train_MR: 0.059, train_minADE1: 3.288, train_minADE6: 1.819, train_minFDE1: 6.862, train_minFDE6: 3.567
+2025-06-30 03:34:44,833 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 24] val_loss: 0.845, val_reg_loss: 0.051, val_cls_loss: 2.775, val_pred_losss: 0.318, val_MR: 0.036, val_minADE1: 2.050, val_minADE6: 1.151, val_minFDE1: 4.690, val_minFDE6: 2.341
+2025-06-30 03:34:44,841 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 24] train_loss: 1.023, train_reg_loss: 0.081, train_cls_loss: 3.173, train_pred_losss: 0.415, train_MR: 0.057, train_minADE1: 3.262, train_minADE6: 1.784, train_minFDE1: 6.827, train_minFDE6: 3.502
+2025-06-30 05:07:53,580 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 25] val_loss: 0.877, val_reg_loss: 0.058, val_cls_loss: 2.950, val_pred_losss: 0.308, val_MR: 0.050, val_minADE1: 2.349, val_minADE6: 1.507, val_minFDE1: 5.243, val_minFDE6: 2.891
+2025-06-30 05:07:53,588 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 25] train_loss: 1.022, train_reg_loss: 0.079, train_cls_loss: 3.184, train_pred_losss: 0.412, train_MR: 0.053, train_minADE1: 3.223, train_minADE6: 1.810, train_minFDE1: 6.816, train_minFDE6: 3.554
+2025-06-30 06:41:05,044 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 26] val_loss: 0.861, val_reg_loss: 0.049, val_cls_loss: 2.887, val_pred_losss: 0.312, val_MR: 0.038, val_minADE1: 2.201, val_minADE6: 1.281, val_minFDE1: 5.030, val_minFDE6: 2.564
+2025-06-30 06:41:05,053 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 26] train_loss: 1.015, train_reg_loss: 0.078, train_cls_loss: 3.162, train_pred_losss: 0.410, train_MR: 0.053, train_minADE1: 3.198, train_minADE6: 1.805, train_minFDE1: 6.713, train_minFDE6: 3.524
+2025-06-30 08:14:19,198 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 27] val_loss: 0.880, val_reg_loss: 0.051, val_cls_loss: 2.993, val_pred_losss: 0.307, val_MR: 0.034, val_minADE1: 1.887, val_minADE6: 1.154, val_minFDE1: 4.400, val_minFDE6: 2.325
+2025-06-30 08:14:19,207 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 27] train_loss: 1.004, train_reg_loss: 0.076, train_cls_loss: 3.119, train_pred_losss: 0.408, train_MR: 0.051, train_minADE1: 3.165, train_minADE6: 1.735, train_minFDE1: 6.652, train_minFDE6: 3.397
+2025-06-30 09:47:23,689 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 28] val_loss: 0.829, val_reg_loss: 0.049, val_cls_loss: 2.763, val_pred_losss: 0.303, val_MR: 0.033, val_minADE1: 1.944, val_minADE6: 1.089, val_minFDE1: 4.485, val_minFDE6: 2.267
+2025-06-30 09:47:23,697 INFO {/data/datasets/niukangjia/plantf/src/custom_training/custom_training_builder.py:317}  
+[Epoch 28] train_loss: 1.003, train_reg_loss: 0.075, train_cls_loss: 3.135, train_pred_losss: 0.405, train_MR: 0.050, train_minADE1: 3.147, train_minADE6: 1.748, train_minFDE1: 6.634, train_minFDE6: 3.430

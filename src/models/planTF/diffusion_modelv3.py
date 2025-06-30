@@ -73,32 +73,43 @@ class DiffusionModelv3(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecode
         # map [32, 222, 128]  [bs, num_polygons, embed_dim]
         # traj_anchors [bs, num_modes, future_steps, 4]
         # prediction:  [bs, num_agents, future_steps, 2] 表示模型对其他代理未来状态的预测。
-        bs = global_feature.shape[0]  # 32
+        bs = global_feature.shape[0]
         device = global_feature.device
-        trajectories = []
+        # 假设 self.diffusion_scheduler 是你的扩散模型调度器
+        self.diffusion_scheduler.set_timesteps(num_inference_steps=4)
+
+        img = traj_anchors.clone()
+        noise = torch.randn_like(img, device=device)  # [bs, num_modes, future_steps, 4]
+        # trunc_timesteps = torch.ones((bs,), device=device, dtype=torch.long) * 8
+        timesteps = torch.randint(0,50, (bs,), device=device, dtype=torch.long) # 随机生成timesteps
+        img = self.diffusion_scheduler.add_noise(
+            original_samples=img,
+            noise=noise,
+            timesteps=timesteps
+        ).float()# [bs, num_modes, future_steps, 4]
+
+        roll_timesteps = (np.arange(0, 2) * 10).round()[::-1].copy().astype(np.int64)#roll_timesteps:[0,1]
+        roll_timesteps = torch.from_numpy(roll_timesteps).to(device) # 值：[10,0]
+        for t in roll_timesteps[:]:
+            trajectory = []
+            for mode in range(0,self.num_modes):
+                traj_pred = self.noise_pred_net(
+                            sample=img[:, mode],# [bs, future_steps, 4]
+                            timestep=t,
+                            global_cond=global_feature,# [bs, embed_dim]
+                )
+                # 把预测的轨迹合起来，最后形状是[bs, num_modes, future_steps, 4]
+                trajectory.append(traj_pred)
+            traj_pred = torch.stack(trajectory, dim=1)  # (bs, num_modes, future_steps, 4)
+            #img：([32, 40, 80, 4]) traj_pred.shape:([32, 40, 80, 4])
+            img = self.diffusion_scheduler.step(
+                model_output=traj_pred,
+                timestep=t,
+                sample=img
+            ).prev_sample
+
         # 预测cls概率
         probability = self.probability_decoder(global_feature.squeeze(1))  # [bs, num_modes]
-        noise = torch.randn_like(traj_anchors, device=device)  # [bs, num_modes, future_steps, 4]
-        # 从整个时间步范围(0-99)中均匀采样10个时间步，每个样本独立采样时间步确保训练覆盖完整噪声分布
-        timestep = torch.randint(0, 50, (bs,), device=device)  # [bs] 每个样本独立采样时间步从整个扩散过程的时间步中均匀采样，确保训练覆盖所有噪声水平
-        noisy_traj = self.diffusion_scheduler.add_noise(
-            original_samples=traj_anchors,
-            noise=noise,
-            timesteps=timestep
-        ).float()# [bs, num_modes, future_steps, 4]
-        # 预测干净样本
-        #noise_pred_net接受的输入是[bs, future_steps, 4]，所以需要用for循环每次预测一个模态
-        for mode in range(self.num_modes):
-            traj_pred = self.noise_pred_net(
-                        sample=noisy_traj[:, mode],# [bs, future_steps, 4]
-                        timestep=timestep,
-                        global_cond=global_feature,# [bs, embed_dim]
-            )
-            # 把预测的轨迹合起来，最后形状是[bs, num_modes, future_steps, 4]
-            trajectories.append(traj_pred)
-        traj_pred = torch.stack(trajectories, dim=1)  # (bs, num_modes, future_steps, 4)
-
-        # 计算diffusion loss
         return traj_pred, probability
 
     def forward_test(self,global_feature, traj_anchors):
@@ -121,7 +132,7 @@ class DiffusionModelv3(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecode
             timesteps=trunc_timesteps
         ).float()# [bs, num_modes, future_steps, 4]
 
-        roll_timesteps = (np.arange(0, 4) * 10).round()[::-1].copy().astype(np.int64)#roll_timesteps:[0,1]
+        roll_timesteps = (np.arange(0, 2) * 10).round()[::-1].copy().astype(np.int64)#roll_timesteps:[0,1]
         roll_timesteps = torch.from_numpy(roll_timesteps).to(device) # 值：[10,0]
         for t in roll_timesteps[:]:
             trajectory = []
