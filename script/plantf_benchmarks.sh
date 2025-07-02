@@ -20,7 +20,7 @@ for challenge in $CHALLENGES; do
         worker.threads_per_node=2 \
         experiment_uid=$SPLIT/$PLANNER \
         verbose=true \
-        planner.imitation_planner.planner_ckpt="/data/datasets/niukangjia/plantf/output/training/planTF/2025.03.14.19.26.54/checkpoints/last.ckpt"
+        planner.imitation_planner.planner_ckpt="/data/datasets/niukangjia/plantf/output/training/planTF/2025.06.28.12.42.52/checkpoints/epoch=35-val_minFDE=0.000.ckpt"
 done
 
 ray stop

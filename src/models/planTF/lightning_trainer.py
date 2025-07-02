@@ -128,7 +128,7 @@ class LightningTrainer(pl.LightningModule):
 
         # [Epoch 0] val_loss: 472.086, val_reg_loss: 3.167, val_cls_loss: 3.428, val_pred_losss: 2.445, val_anchor_reg_loss: 3.410, val_anchor_cls_loss: 1.097,
         # val_MR: 0.664, val_minADE1: 12.738, val_minADE6: 12.566, val_minFDE1: 29.315, val_minFDE6: 28.414
-        loss = 0.7 * ego_reg_loss + 0.2 * ego_cls_loss + 0.8 * agent_reg_loss
+        loss = 0.7 * ego_reg_loss + 0.1 * ego_cls_loss + 0.2 * agent_reg_loss
         # loss = 1 * ego_reg_loss + 0.1 * ego_cls_loss + 80 * agent_reg_loss + 0.1 * anchor_cls_loss + 80 * anchor_reg_loss
         return {
             "loss": loss,

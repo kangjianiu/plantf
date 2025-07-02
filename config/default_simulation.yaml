@@ -9,8 +9,10 @@ hydra:
     - config/simulation
     - config/scenario_filter
 
-
+# 添加默认simulation参数
+simulation: closed_loop_nonreactive_agents
 defaults:
+  - _self_ 
   # Add ungrouped items
   - default_experiment  # group: ${oc.env:NUPLAN_EXP_ROOT}/exp 
   - default_common

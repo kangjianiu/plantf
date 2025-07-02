@@ -19,18 +19,22 @@ class DiffusionModelv3(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecode
         self.future_steps = future_steps # 80
         self.feature_dim = feature_dim 
         self.diffusion_scheduler = DDIMScheduler(
-            num_train_timesteps=100,
+            num_train_timesteps=1000,
             beta_schedule="scaled_linear",
             prediction_type="sample",
         )
         hidden = 2 * feature_dim
+        self.traj_feature_extractor = nn.Sequential(
+            nn.Linear(future_steps * 4, hidden),
+            nn.LayerNorm(hidden),
+            nn.ReLU(inplace=True),
+        )
         self.probability_decoder = nn.Sequential(
-            nn.Linear(feature_dim, hidden),
+            nn.Linear(feature_dim + hidden, hidden),
             nn.LayerNorm(hidden),
             nn.ReLU(inplace=True),
             nn.Linear(hidden, num_modes),
-            # # 加一个softmax层
-            # nn.Softmax(dim=1)
+            nn.Softmax(dim=1)
         )       
         self.fusion_module = FeatureFusion(
             embed_dim=128,
@@ -81,7 +85,7 @@ class DiffusionModelv3(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecode
         img = traj_anchors.clone()
         noise = torch.randn_like(img, device=device)  # [bs, num_modes, future_steps, 4]
         # trunc_timesteps = torch.ones((bs,), device=device, dtype=torch.long) * 8
-        timesteps = torch.randint(0,50, (bs,), device=device, dtype=torch.long) # 随机生成timesteps
+        timesteps = torch.randint(0,100, (bs,), device=device, dtype=torch.long) # 随机生成timesteps
         img = self.diffusion_scheduler.add_noise(
             original_samples=img,
             noise=noise,
@@ -109,7 +113,14 @@ class DiffusionModelv3(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecode
             ).prev_sample
 
         # 预测cls概率
-        probability = self.probability_decoder(global_feature.squeeze(1))  # [bs, num_modes]
+        # 提取轨迹特征并与全局特征融合
+        bs, num_modes, future_steps, dim = traj_pred.shape
+        traj_flat = traj_pred.view(bs * num_modes, future_steps * dim)  # [bs*num_modes, future_steps*dim]
+        traj_features = self.traj_feature_extractor(traj_flat).view(bs, num_modes, -1)  # [bs, num_modes, hidden]
+        traj_attention = torch.mean(traj_features, dim=1)  # [bs, hidden]
+        # 融合全局特征和轨迹特征
+        fused_feature = torch.cat([global_feature.squeeze(1), traj_attention], dim=1)  # [bs, feature_dim+hidden]
+        probability = self.probability_decoder(fused_feature)  # [bs, num_modes]
         return traj_pred, probability
 
     def forward_test(self,global_feature, traj_anchors):
@@ -153,7 +164,14 @@ class DiffusionModelv3(nn.Module): # 等价于TrajectoryHead ，TrajectoryDecode
             ).prev_sample
 
         # 预测cls概率
-        probability = self.probability_decoder(global_feature.squeeze(1))  # [bs, num_modes]
+        # 提取轨迹特征并与全局特征融合
+        bs, num_modes, future_steps, dim = traj_pred.shape
+        traj_flat = traj_pred.view(bs * num_modes, future_steps * dim)  # [bs*num_modes, future_steps*dim]
+        traj_features = self.traj_feature_extractor(traj_flat).view(bs, num_modes, -1)  # [bs, num_modes, hidden]
+        traj_attention = torch.mean(traj_features, dim=1)  # [bs, hidden]
+        # 融合全局特征和轨迹特征
+        fused_feature = torch.cat([global_feature.squeeze(1), traj_attention], dim=1)  # [bs, feature_dim+hidden]
+        probability = self.probability_decoder(fused_feature)  # [bs, num_modes]
         return traj_pred, probability
                 
     def normalize_xy_rotation(self, trajectory, N=30, times=10):
