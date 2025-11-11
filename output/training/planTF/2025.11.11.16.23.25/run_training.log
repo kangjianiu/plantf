@@ -1,0 +1,27 @@
+[2025-11-11 16:23:27,341][__main__][INFO] - Logger is configured correctly.
+[2025-11-11 16:23:27,447][nuplan.planning.script.builders.folder_builder][INFO] - Building experiment folders...
+[2025-11-11 16:23:27,448][nuplan.planning.script.builders.folder_builder][INFO] - Experimental folder: /data/datasets/niukangjia/plantf/output/training/planTF/2025.11.11.16.23.25
+[2025-11-11 16:23:27,448][nuplan.planning.script.builders.worker_pool_builder][INFO] - Building WorkerPool...
+[2025-11-11 16:23:27,468][nuplan.planning.utils.multithreading.worker_pool][INFO] - Worker: SingleMachineParallelExecutor
+[2025-11-11 16:23:27,468][nuplan.planning.utils.multithreading.worker_pool][INFO] - Number of nodes: 1
+Number of CPUs per node: 32
+Number of GPUs per node: 0
+Number of threads across all nodes: 32
+[2025-11-11 16:23:27,468][nuplan.planning.script.builders.worker_pool_builder][INFO] - Building WorkerPool...DONE!
+[2025-11-11 16:23:27,468][src.custom_training.custom_training_builder][INFO] - Building training engine...
+[2025-11-11 16:23:27,672][nuplan.planning.script.builders.model_builder][INFO] - Building TorchModuleWrapper...
+[2025-11-11 16:23:32,757][src.models.planTF.diffusion_modelv3][INFO] - nkj diffusion modelv3 num_modes:80
+[2025-11-11 16:23:32,789][src.models.planTF.planning_model][INFO] - nkj planning model num_modes:80
+[2025-11-11 16:23:32,789][nuplan.planning.script.builders.model_builder][INFO] - Building TorchModuleWrapper...DONE!
+[2025-11-11 16:23:32,790][nuplan.planning.script.builders.splitter_builder][INFO] - Building Splitter...
+[2025-11-11 16:23:33,646][nuplan.planning.script.builders.splitter_builder][INFO] - Building Splitter...DONE!
+[2025-11-11 16:23:33,646][nuplan.planning.script.builders.data_augmentation_builder][INFO] - Building augmentors...
+[2025-11-11 16:23:33,671][nuplan.planning.script.builders.data_augmentation_builder][INFO] - Building augmentors...DONE!
+[2025-11-11 16:24:33,091][nuplan.planning.script.builders.scenario_builder][INFO] - Extracted 204791 scenarios for training
+[2025-11-11 16:24:33,130][__main__][INFO] - Starting training...
+[2025-11-11 16:24:33,186][torch.distributed.distributed_c10d][INFO] - Added key: store_based_barrier_key:1 to store for rank: 0
+[2025-11-11 16:24:33,187][torch.distributed.distributed_c10d][INFO] - Rank 0: Completed store-based barrier for key:store_based_barrier_key:1 with 1 nodes.
+[2025-11-11 16:24:40,348][src.custom_training.custom_datamodule][INFO] - Number of samples in train set: 132384
+[2025-11-11 16:24:40,404][src.custom_training.custom_datamodule][INFO] - Number of samples in validation set: 32407
+[2025-11-11 16:25:24,965][root][INFO] - 
+[Epoch 0] val_loss: 3.586, val_reg_loss: 3.556, val_cls_loss: 4.383, val_pred_losss: 3.294, val_MR: 0.625, val_minADE1: 13.786, val_minADE6: 13.760, val_minFDE1: 27.419, val_minFDE6: 27.348
