@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Navigate to the project directory
-cd /data/datasets/niukangjia/plantf
+cd /home/nkj/ws/plantf
 
 # Add all changes to staging
 git add .

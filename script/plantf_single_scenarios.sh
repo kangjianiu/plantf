@@ -10,4 +10,4 @@ python run_simulation.py \
     scenario_filter=single_right_turn \
     worker=sequential \
     verbose=true \
-    planner.imitation_planner.planner_ckpt='/data/datasets/niukangjia/plantf/output/training/planTF/2025.07.01.11.04.10/checkpoints/epoch-8-val_minFDE-0.000.ckpt'
+    planner.imitation_planner.planner_ckpt='./checkpoints/epoch-8-val_minFDE-0.000.ckpt'

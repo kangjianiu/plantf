@@ -167,7 +167,7 @@ class PlanningModel(TorchModuleWrapper):
 
         prediction = self.agent_predictor(x[:, 1:A]).view(bs, -1, self.future_steps, 2)
         # prediction  [32, 32, 80, 2] (batch_size, num_agents, future_steps, 2) 表示模型对其他代理未来状态的预测。
-        npy_file_path = f"/data/datasets/niukangjia/plantf/traj_data/kmeans/cluster_centers_plan_style_{self.num_modes}_80_vxy.npy"
+        npy_file_path = f"/home/nkj/ws/plantf/traj_data/kmeans/cluster_centers_plan_style_{self.num_modes}_80_vxy.npy"
         traj_anchors = self.load_cluster_centers(npy_file_path)#shape (num_modes, 80, 4): num_modes个锚点，每个锚点80个点，每个点4个坐标
         traj_anchors = np.array(traj_anchors)  # 将列表转换为 numpy.ndarray
         traj_anchors = torch.tensor(traj_anchors, dtype=torch.float32).to(ego_instance_feature.device)

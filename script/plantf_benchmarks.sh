@@ -9,7 +9,7 @@ CHALLENGES="closed_loop_nonreactive_agents closed_loop_reactive_agents open_loop
 
 # # ray start --head --env PYTHONPATH="$PYTHONPATH"
 # ray start --head --env PYTHONPATH="/data/datasets/niukangjia/plantf:$PYTHONPATH"
-export PYTHONPATH="/data/datasets/niukangjia/plantf:$PYTHONPATH"
+export PYTHONPATH="/home/nkj/ws/plantf:$PYTHONPATH"
 ray start --head
 for challenge in $CHALLENGES; do
     python run_simulation.py \
@@ -20,7 +20,7 @@ for challenge in $CHALLENGES; do
         worker.threads_per_node=2 \
         experiment_uid=$SPLIT/$PLANNER \
         verbose=true \
-        planner.imitation_planner.planner_ckpt="/data/datasets/niukangjia/plantf/output/training/planTF/2025.06.28.12.42.52/checkpoints/epoch=35-val_minFDE=0.000.ckpt"
+        planner.imitation_planner.planner_ckpt="./checkpoints/epoch=35-val_minFDE=0.000.ckpt"
 done
 
 ray stop

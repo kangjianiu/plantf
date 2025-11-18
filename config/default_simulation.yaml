@@ -40,7 +40,7 @@ defaults:
   - override hydra/job_logging: none                            # Disable hydra's logging
   - override hydra/hydra_logging: none                          # Disable hydra's logging
 
-group: /data/datasets/niukangjia/plantf/output   
+# group: /data/datasets/niukangjia/plantf/output   
 experiment_name: 'simulation'
 aggregated_metric_folder_name: 'aggregator_metric'         # Aggregated metric folder name
 aggregator_save_path: ${output_dir}/${aggregated_metric_folder_name}

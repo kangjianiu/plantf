@@ -33,7 +33,7 @@ defaults:
   - scenario_type_weights: default_scenario_type_weights
   - custom_trainer: null
 
-group: /data/datasets/niukangjia/plantf/output
+# group: /data/datasets/niukangjia/plantf/output
 nuplan_trainer: false
 experiment_name: "training"
 objective_aggregate_mode: ??? # How to aggregate multiple objectives, can be 'mean', 'max', 'sum'
